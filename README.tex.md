@@ -1,5 +1,5 @@
-# eFEM
-Finite Element code in the [Julia language](https://julialang.org/) focused on fluid-dynamics applications
+# eFEMpart
+Finite Element code in the [Julia language](https://julialang.org/) focused on fluid-dynamics applications, with possibility of including a particle simulator. This is in contrast to a previous "eFEM" package, which did not include the particle simulator code. 
 
 This repository allows the use of Finite Elements discretizations to solve
 common problems in fluid dynamics. 
