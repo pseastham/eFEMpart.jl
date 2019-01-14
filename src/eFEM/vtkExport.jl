@@ -87,8 +87,8 @@ end
   New scalar + vector solutions -- exports linear element visualization
 """
 function vtksave(mesh::T,sd::ScalarData,sn::ScalarNames,vd::VectorData,vn::VectorNames,path::Path;time=0.0) where T<:AbstractMesh
-  if true #mesh is Q2!!!! (or fluid)
-  end
+  #if true #mesh is Q2!!!! (or fluid)
+  #end
   Nscalars = length(sd.scalarArr)
   Nvectors = length(vd.vectorArr)
 
@@ -124,7 +124,7 @@ function vtksave(mesh::T,sd::ScalarData,sn::ScalarNames,vd::VectorData,vn::Vecto
         newvector[ti,2,k] = vL[ti]
       end
     end
-  elseif mesh.order == :Linear
+  else
     newscalar = zeros(Float64,size(xyp,1),Nscalars)
     for j=1:Nscalars
       newscalar[:,j] = sd.scalarArr[j]
@@ -137,8 +137,6 @@ function vtksave(mesh::T,sd::ScalarData,sn::ScalarNames,vd::VectorData,vn::Vecto
         newvector[ti,2,k] = vd.vectorArr[k][2][ti]
       end
     end  
-  else
-    error("this wasn't set up!") 
   end
 
   # creates folder if it doesn't already exist
