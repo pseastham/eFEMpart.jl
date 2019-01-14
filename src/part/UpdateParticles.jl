@@ -1,3 +1,5 @@
+# Code to be loaded into eFEMpart
+
 # File containing functions to update particle positions based on different forces
 
 # Uses:

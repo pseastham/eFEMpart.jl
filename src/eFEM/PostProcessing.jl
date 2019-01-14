@@ -1,6 +1,4 @@
-# This file will contain common post-processing procedures, such as computing:
-#   - stress field 
-#   - ?
+# Code to be loaded into eFEMpart
 
 function computeStress(mesh::FluidMesh,fluidsol::FluidSolution,param::P) where P<:AbstractConstantParameter
     Nnodes = length(mesh.xy)

@@ -1,3 +1,4 @@
+# Code to be loaded into eFEMpart
 
 abstract type AbstractFileType end
 

@@ -1,4 +1,4 @@
-# File loaded into FEM2D
+# File loaded into eFEMpart
 
 """
   scalarDirichlet!(dirichletNodes,dBCarr,Stiff,F)
@@ -243,36 +243,3 @@ function fluidBC!(mesh::FluidMesh,prob::Problem,
   LinOp.Op, LinOp.rhs = fluidNeumann(mesh::FluidMesh,prob::Problem,
                                    LinOp::LinearOperator)
 end
-
-
-"""
-  fluidDefineBC(xy,dUNodes,dVNodes,nNodes,uBCf,vBCf,ffx,ffy) -> uBCarr,vBCarr,nBCarr,farr
-
-Defines fluid dirichlet boundary conditions, assuming that the neumann boundary condition is zero (no fluid acceleration in normal direction to boundary). Also assumes zero forcing (although a zero forcing array is returned to aid extension to nontrivial forcing case).
-
-Horizontal and Velocity dirichlet components are split in case of axisymmetric domain
-
-uBCarr = lenD x 1 array, where lenD is the number of u dirichlet nodes
-vBCarr = lenD x 1 array, where lenD is the number of v dirichlet nodes
-nBCarr = lenN x 2 array, where lenN is the number of neumann nodes
-farr   = lenXY x 2 array, where lenXY is the number of total nodes
-"""
-#function fluidDefineBC(xy,xyp,dUNodes,dVNodes,nNodes,uBCf,vBCf,ffx,ffy,g)
- # lenN  = length(nNodes)
-
-  # dirichlet boundaries
- # uBCarr = uBCf.(xy[dUNodes,1],xy[dUNodes,2])
-  #vBCarr = vBCf.(xy[dVNodes,1],xy[dVNodes,2])
-
-  # neumann boundaries
-  #nBCarr = zeros(lenN,2)
-
-  # compute forcing vectors
-  #fArrX = ffx.(xy[:,1],xy[:,2])
-  #fArrY = ffy.(xy[:,1],xy[:,2])
-  #farr  = hcat(fArrX,fArrY)
-
-  #garr  = g.(xyp[:,1],xyp[:,2])
-
-  #return uBCarr,vBCarr,nBCarr,farr,garr
-#end

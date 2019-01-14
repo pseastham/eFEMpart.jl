@@ -2,6 +2,16 @@
 2. remove all outdated vtk save formats
 3. learn to apply periodic boundary conditions
 4. change laplace example to reflect #1 and #2
-5. 
-6. 
-7. 
+5. Add cell lists for tracer-particle visualization code to make it run faster
+6. integrate quadrature rules into elements/matrix generation
+7. improve efficiency of Problem generation (in ProblemTypes.jl)
+8. improve efficiency of solution interpolation (in MeshTransform.jl)
+9. all drivers require the inclusion of a parameter list
+10. clean up assembler/matrix generators. too much unused code and 
+    I can't tell which is outdated and which isn't
+11.
+12.
+13.
+14.
+15.
+

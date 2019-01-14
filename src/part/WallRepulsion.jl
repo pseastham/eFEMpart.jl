@@ -1,4 +1,4 @@
-# File to be loaded into SinkholeModule.jl
+# File to be loaded into eFEMpart
 
 # Functions for computing contact forces of 
 # particles and walls via LJ potentials

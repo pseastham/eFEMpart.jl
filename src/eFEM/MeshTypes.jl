@@ -1,3 +1,4 @@
+# Code to be loaded into eFEMpart
 
 abstract type AbstractMesh end
 abstract type AbstractDictList end
@@ -24,7 +25,6 @@ struct Element
   NodeList::Vector{Int}
 end
 
-# need to add boundaries in a smart way, later
 struct ScalarMesh <: AbstractMesh
   xy::Vector{Node}
   cm::Vector{Element}
@@ -32,7 +32,6 @@ struct ScalarMesh <: AbstractMesh
   order::Symbol
 end
 
-# need to add boundaries in a smart way, later
 struct FluidMesh <: AbstractMesh
   xy::Vector{Node}
   cm::Vector{Element}

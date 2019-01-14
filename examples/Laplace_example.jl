@@ -32,5 +32,8 @@ function laplace_example()
   sol = solve(prob,mesh)
 
   # save solution
-  vtksave(mesh,prob,sol)
+  vtkname = Path("solutions","laplace_example")
+  sd = ScalarData(sol.u)
+  sn = ScalarNames("temperature")
+  vtksave(mesh,sd,sn,vtkname)
 end

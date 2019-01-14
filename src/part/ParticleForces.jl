@@ -1,3 +1,5 @@
+# File to be loaded into eFEMpart
+
 # This file contains functions used to compute forces on particles
 
 # updates position of particle by computing velocity,

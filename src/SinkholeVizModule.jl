@@ -4,7 +4,7 @@
 
 module SinkholeVizModule
 
-using SinkholeModule, Plots, LaTeXStrings
+using eFEMpart, Plots, LaTeXStrings
 font = Plots.font("DejaVu Sans", 14)
 pyplot(label="",color="black",size=(800,800),border=true,
         guidefont=font, xtickfont=font, ytickfont=font, legendfont=font,

@@ -1,14 +1,13 @@
-# File to be loaded into eFEM.jl
-
+# File to be loaded into eFEMpart
 
 # -- Types for surface quadratures
 
-type Point 
+mutable struct Point 
     x::Float64
     y::Float64
 end
 
-type Surface
+mutable struct Surface
     P::Point
     Q::Point
 end

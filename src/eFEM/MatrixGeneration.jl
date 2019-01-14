@@ -1,4 +1,4 @@
-# functions to be loaded into eFEM
+# functions to be loaded into eFEMpart
 
 ####################################
 ###### Application Functions #######

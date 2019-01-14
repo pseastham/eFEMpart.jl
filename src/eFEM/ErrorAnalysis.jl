@@ -1,26 +1,27 @@
-# File to be loaded into FEM2D.jl
+# File to be loaded into eFEMpart
 
 """
   DomainNorm(xy,cm,u;normID='Inf')
   
-Computes either the L1, L2, or Linf norm on a given domain. Expects quadrilateral elements, and order 1 or 2 polynomial basis.
+Computes either the L-1, L-2, or L-inf norm on a given domain. Expects quadrilateral elements, and order 1 or 2 polynomial basis.
 
 ASSUMPTIONS:
 - Uses strings for L-norm specification ... change this to symbols
 
 INPUT:
-  xy:    [scalar array]
+  xy:     [scalar array]
             Node List for node positions
-  cm:    [Matrix]
+  cm:     [Matrix]
             Connectivity Matrix
-  u:     [Array]
-            Scalar field to put in integrand       
-
+  u:      [Array]
+            Scalar field to put in integrand
+  normID: [Symbol]   
+            indicates L-1,2,Inf norm
 OUTPUT:
   norm:  [scalar array]
-            Norm of value u
+            (1,2,Inf)-Norm of field u
 """
-function DomainNorm(xy,cm,u;normID="Inf")
+function DomainNorm(xy,cm,u;normID=:Inf)
   norm  = 0.0
   Nel   = length(cm)
   ngpt  = length(cm[1].NodeList)
@@ -30,7 +31,7 @@ function DomainNorm(xy,cm,u;normID="Inf")
   w,s,t = GaussQuadPoints2D(order+1)
     
   # L1 or L2 norm
-  if (normID=="1" || normID=="2")
+  if (normID==:1 || normID==:2)
     normIDnum = str2float(normID)
     
     for el=1:Nel
@@ -48,12 +49,12 @@ function DomainNorm(xy,cm,u;normID="Inf")
     end
 
     # take sqrt of norm value for L2 norm    
-    if normID=="2"
+    if normID==:2
       norm = sqrt(norm)
     end
     
   # infinity norm (aka max norm)
-  elseif normID=="Inf"
+  elseif normID==:Inf
     norm = maximum(abs,u)
   else
     error("invalid normID given. Choices are '1', '2', or 'Inf'.")    

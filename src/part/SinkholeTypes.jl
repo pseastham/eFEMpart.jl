@@ -1,13 +1,10 @@
+# Code to be loaded into eFEMpart
+
 # This file defines new types to be used in Sinkhole project
 
 # ==============================================================================
 # TYPE DEFINITIONS
 # ==============================================================================
-mutable struct Point
-    x::Float64
-    y::Float64
-end
-
 abstract type AbstractWall end
 
 mutable struct LineWall <: AbstractWall

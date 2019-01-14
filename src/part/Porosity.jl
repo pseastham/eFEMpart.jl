@@ -1,8 +1,8 @@
+# Code to be loaded into eFEMpart
+
 # This file contains functions to convert the discrete
 # sand particles into a continuous porosity field discretized onto
 # a FEM mesh
-
-using eFEM
 
 # Finds area of quadrilateral using Heron's formula for triangle areas
 function QuadArea(quad::Vector{Vector{Float64}})

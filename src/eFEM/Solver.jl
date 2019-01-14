@@ -1,6 +1,4 @@
-# solver file to be loaded into eFEM.jl
-
-#using IterativeSolvers
+# solver file to be loaded into eFEMpart
 
 ################################
 ###### General Framework #######

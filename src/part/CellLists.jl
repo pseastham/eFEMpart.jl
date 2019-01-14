@@ -1,3 +1,5 @@
+# code to be loaded into eFEMpart
+
 # This contains functions for generating cell lists for keeping track of
 # near-field interaction forces to avoid computational cost of summing
 # many unnecessary zeros

@@ -1,4 +1,4 @@
-# File to be loaded into eFEM
+# File to be loaded into eFEMpart
 
 """
 FEMForwardEuler()

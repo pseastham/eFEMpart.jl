@@ -1,4 +1,4 @@
-# File loaded into eFEM
+# File loaded into eFEMpart
 
 ### Abstract Types ###
 

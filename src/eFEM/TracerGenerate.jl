@@ -1,4 +1,4 @@
-# to be loaded into eFEM
+# to be loaded into eFEMpart
 # code to generate tracers for flow fields
 
 abstract type AbstractTracerInfo end
@@ -26,7 +26,7 @@ struct TracerBoxSource <: AbstractTracerSource
 
 end
 
-function GenerateTracers(mesh::FluidMesh,u,v,TI::TracerInfo,file_name)
+function GenerateTracers(mesh::FluidMesh,u::Vector{T},v::Vector{T},TI::TracerInfo,file_name::String) where T<:Real
     NTracers = length(TI.TracerArr)
 
     # Generate time array

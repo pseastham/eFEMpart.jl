@@ -1,4 +1,4 @@
-# File to be loaded into SinkholeModule
+# File to be loaded into eFEMpart
 
 # allows for perfect reflection when particle encounters a wall
 # OBSOLETE with new way of governing interactions, namely, with LJ 

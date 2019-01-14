@@ -1,4 +1,4 @@
-# File to be loaded into eFEM
+# File to be loaded into eFEMpart
 
 function meshgrid{T}(vx::AbstractVector{T}, vy::AbstractVector{T})
 	m, n = length(vy), length(vx)
