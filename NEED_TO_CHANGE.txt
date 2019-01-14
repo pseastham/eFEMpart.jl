@@ -1,0 +1,7 @@
+1. modify Problem datatype to not include variable name.
+2. remove all outdated vtk save formats
+3. learn to apply periodic boundary conditions
+4. change laplace example to reflect #1 and #2
+5. 
+6. 
+7. 
