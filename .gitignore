@@ -4,3 +4,4 @@
 *.jld
 
 // specific files
+examples/solutions/*
