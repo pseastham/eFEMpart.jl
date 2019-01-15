@@ -22,10 +22,12 @@ eFEMpart is not supported as of yet on Windows. Sorry.
 
 # Dependencies
 
-The following packages need to be installed as dependencies:
+The following packages can optionally be installed as dependencies:
 
-- SparseArrays (link)
-- 
+- [JLD](https://github.com/JuliaIO/JLD.jl)
+- [Plots](http://docs.juliaplots.org/latest/)
+
+To add any of the above, follow the [instructions for installing packages](https://docs.julialang.org/en/v1.0/stdlib/Pkg/#Pkg.add)
 
 # Meshes
 
