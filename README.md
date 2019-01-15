@@ -10,7 +10,7 @@ common problems in fluid dynamics.
 
 - download Julia 1.0.* from (link to download page)
 - copy eFEMpart folder into location where it won't move
-- add above folder path into '~/,julia/config.startup.jl' file. It's possible that you will need to create this file yourself.
+- add above folder path into '~/,julia/config/startup.jl' file. It's possible that you will need to create this file yourself. To add the path, include the line `push!(LOAD_PATH,"/home/peastham/Projects/eFEMpart/src/")` into the `startup.jl` file. In the future I'll probably write a script that does this for you.
 
 ## Mac OS
 
