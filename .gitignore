@@ -5,3 +5,6 @@
 
 // specific files
 examples/solutions/*
+tests/pde-validation/*/data/*
+tests/pde-validation/*/figures/*
+tests/pde-validation/*/solutions/*
