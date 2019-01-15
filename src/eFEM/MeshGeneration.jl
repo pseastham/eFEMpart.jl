@@ -350,7 +350,7 @@ function pMesh(xy,cm)
     for i=1:4
       c = cm[el,i]
       if c in nodeCheckarr
-        cmp[elCounter,i] = findfirst(nodeCheckarr,c)
+        cmp[elCounter,i] = something(findfirst(isequal(c),nodeCheckarr),0)
       else
         push!(nodeCheckarr,c)
         xyp[nodeCounter,:] = @view xy[c,:]
@@ -378,7 +378,7 @@ function lowerUV(xy,cm,u,v)
   NumPNodes = length(unique(cm[:,1:4]))
   q1u   = zeros(NumPNodes,1)
   q1v   = zeros(NumPNodes,1)
-  cmp = 0*Array{Int}(Nel,4)
+  cmp = 0*Array{Int}(undef,Nel,4)
   nodeCheckarr::Array{Int,1} = []
 
   elCounter = 1
@@ -388,7 +388,7 @@ function lowerUV(xy,cm,u,v)
     for i=1:4
       c = cm[el,i]
       if c in nodeCheckarr
-        cmp[elCounter,i] = findfirst(nodeCheckarr,c)
+        cmp[elCounter,i] = something(findfirst(isequal(c),nodeCheckarr),0)
       else
         push!(nodeCheckarr,c)
         q1u[nodeCounter] = u[c]

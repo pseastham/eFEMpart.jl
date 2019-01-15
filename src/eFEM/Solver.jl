@@ -235,7 +235,7 @@ Computes and decomposes the array-solution U into vector velocity [u,v] and scal
 """
 function fluidSolve(mesh::FluidMesh,prob::Problem,
                     LinOp::AbstractLinearOperator;PRINT=false)
-  soln = lufact(LinOp.Op)\LinOp.rhs
+  soln = lu(LinOp.Op)\LinOp.rhs
   #soln = zeros(Float64,length(LinOp.rhs))
   #gmres!(soln,LinOp.Op,LinOp.rhs)
 
@@ -264,7 +264,7 @@ Computes and decomposes the array-solution U into vector velocity [u,v] and scal
 function fluidSolve!(sol::FluidSolution,
                      mesh::FluidMesh,prob::Problem,
                      LinOp::AbstractLinearOperator;PRINT=false)
-  soln = lufact(LinOp.Op)\LinOp.rhs
+  soln = lu(LinOp.Op)\LinOp.rhs
 
   # decompose solution
   NumUnodes = length(mesh.xy)

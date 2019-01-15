@@ -52,23 +52,23 @@ function assembleHalfFluid(mesh,localmat,parameter...)
   nNodesPerElmQ1 = 4
   nNodesPerElmQ2 = 9
 
-  xN = Array{Float64}(nNodesPerElmQ2)
-  yN = Array{Float64}(nNodesPerElmQ2)
-  phi    = Array{Float64}(nNodesPerElmQ2)
-  dphids = Array{Float64}(nNodesPerElmQ2)
-  dphidt = Array{Float64}(nNodesPerElmQ2) 
-  dphidx = Array{Float64}(nNodesPerElmQ2)
-  dphidy = Array{Float64}(nNodesPerElmQ2)
-  psi    = Array{Float64}(nNodesPerElmQ1)
-  dpsids = Array{Float64}(nNodesPerElmQ1)
-  dpsidt = Array{Float64}(nNodesPerElmQ1) 
-  dpsidx = Array{Float64}(nNodesPerElmQ1)
-  dpsidy = Array{Float64}(nNodesPerElmQ1)
+  xN = Array{Float64}(undef,nNodesPerElmQ2)
+  yN = Array{Float64}(undef,nNodesPerElmQ2)
+  phi    = Array{Float64}(undef,nNodesPerElmQ2)
+  dphids = Array{Float64}(undef,nNodesPerElmQ2)
+  dphidt = Array{Float64}(undef,nNodesPerElmQ2) 
+  dphidx = Array{Float64}(undef,nNodesPerElmQ2)
+  dphidy = Array{Float64}(undef,nNodesPerElmQ2)
+  psi    = Array{Float64}(undef,nNodesPerElmQ1)
+  dpsids = Array{Float64}(undef,nNodesPerElmQ1)
+  dpsidt = Array{Float64}(undef,nNodesPerElmQ1) 
+  dpsidx = Array{Float64}(undef,nNodesPerElmQ1)
+  dpsidy = Array{Float64}(undef,nNodesPerElmQ1)
 
-  Axt = Array{Float64}(nNodesPerElmQ2,nNodesPerElmQ2)
-  Ayt = Array{Float64}(nNodesPerElmQ2,nNodesPerElmQ2)
-  Bxt = Array{Float64}(nNodesPerElmQ1,nNodesPerElmQ2)
-  Byt = Array{Float64}(nNodesPerElmQ1,nNodesPerElmQ2)
+  Axt = Array{Float64}(undef,nNodesPerElmQ2,nNodesPerElmQ2)
+  Ayt = Array{Float64}(undef,nNodesPerElmQ2,nNodesPerElmQ2)
+  Bxt = Array{Float64}(undef,nNodesPerElmQ1,nNodesPerElmQ2)
+  Byt = Array{Float64}(undef,nNodesPerElmQ1,nNodesPerElmQ2)
 
   IA1 = zeros(Float64,nElm,nNodesPerElmQ2,nNodesPerElmQ2)
   JA1 = zeros(Float64,nElm,nNodesPerElmQ2,nNodesPerElmQ2)
@@ -156,15 +156,15 @@ function assembleFullFluid_WRONG(mesh,localmat,parameter...)
   dpsidx = copy(tempArr4); dpsidy = copy(tempArr4)
 
   # top left
-  Axt  = Array{Float64}(nNodesPerElmQ2,nNodesPerElmQ2)
+  Axt  = Array{Float64}(undef,nNodesPerElmQ2,nNodesPerElmQ2)
   # top right
-  A12t = Array{Float64}(nNodesPerElmQ2,nNodesPerElmQ2)
+  A12t = Array{Float64}(undef,nNodesPerElmQ2,nNodesPerElmQ2)
   # bottom left
-  A21t = Array{Float64}(nNodesPerElmQ2,nNodesPerElmQ2)
+  A21t = Array{Float64}(undef,nNodesPerElmQ2,nNodesPerElmQ2)
   # bottom right
-  Ayt  = Array{Float64}(nNodesPerElmQ2,nNodesPerElmQ2)
-  Bxt = Array{Float64}(nNodesPerElmQ1,nNodesPerElmQ2)
-  Byt = Array{Float64}(nNodesPerElmQ1,nNodesPerElmQ2)
+  Ayt  = Array{Float64}(undef,nNodesPerElmQ2,nNodesPerElmQ2)
+  Bxt = Array{Float64}(undef,nNodesPerElmQ1,nNodesPerElmQ2)
+  Byt = Array{Float64}(undef,nNodesPerElmQ1,nNodesPerElmQ2)
 
   IA11 = zeros(Float64,nElm,nNodesPerElmQ2,nNodesPerElmQ2)
   JA11 = copy(IA11); SA11 = copy(IA11);
@@ -238,8 +238,8 @@ function assembleFullFluid(mesh,localmat,parameter...)
 
   w,s,t = GaussQuadPoints2D(3)
 
-  tempArr4 = Array{Float64}(nNodesPerElmQ1)
-  tempArr9 = Array{Float64}(nNodesPerElmQ2)
+  tempArr4 = Array{Float64}(undef,nNodesPerElmQ1)
+  tempArr9 = Array{Float64}(undef,nNodesPerElmQ2)
 
   xN     = copy(tempArr9); yN     = copy(tempArr9)
 
@@ -250,14 +250,14 @@ function assembleFullFluid(mesh,localmat,parameter...)
   dpsidx = copy(tempArr4); dpsidy = copy(tempArr4)
 
   # generate temporary element block matrices
-  At = Array{Float64}(nNodesPerElmQ2,nNodesPerElmQ2)
-  Bt = Array{Float64}(nNodesPerElmQ2,nNodesPerElmQ2)
-  Ct = Array{Float64}(nNodesPerElmQ2,nNodesPerElmQ1)
-  Dt = Array{Float64}(nNodesPerElmQ2,nNodesPerElmQ2)
-  Et = Array{Float64}(nNodesPerElmQ2,nNodesPerElmQ2)
-  Ft = Array{Float64}(nNodesPerElmQ2,nNodesPerElmQ1)  
-  Gt = Array{Float64}(nNodesPerElmQ1,nNodesPerElmQ2)
-  Ht = Array{Float64}(nNodesPerElmQ1,nNodesPerElmQ2)
+  At = Array{Float64}(undef,nNodesPerElmQ2,nNodesPerElmQ2)
+  Bt = Array{Float64}(undef,nNodesPerElmQ2,nNodesPerElmQ2)
+  Ct = Array{Float64}(undef,nNodesPerElmQ2,nNodesPerElmQ1)
+  Dt = Array{Float64}(undef,nNodesPerElmQ2,nNodesPerElmQ2)
+  Et = Array{Float64}(undef,nNodesPerElmQ2,nNodesPerElmQ2)
+  Ft = Array{Float64}(undef,nNodesPerElmQ2,nNodesPerElmQ1)  
+  Gt = Array{Float64}(undef,nNodesPerElmQ1,nNodesPerElmQ2)
+  Ht = Array{Float64}(undef,nNodesPerElmQ1,nNodesPerElmQ2)
 
   IA = zeros(Float64,nElm,nNodesPerElmQ2,nNodesPerElmQ2)
   JA = copy(IA); SA = copy(IA)
@@ -380,8 +380,8 @@ function assembleMPB(mesh,localmat,parameter...)
 
   w,s,t = GaussQuadPoints2D(3)
 
-  tempArr4 = Array{Float64}(nNodesPerElmQ1)
-  tempArr9 = Array{Float64}(nNodesPerElmQ2)
+  tempArr4 = Array{Float64}(undef,nNodesPerElmQ1)
+  tempArr9 = Array{Float64}(undef,nNodesPerElmQ2)
 
   xN     = copy(tempArr9); yN     = copy(tempArr9)
 
@@ -392,12 +392,12 @@ function assembleMPB(mesh,localmat,parameter...)
   dpsidx = copy(tempArr4); dpsidy = copy(tempArr4)
 
   # generate temporary element block matrices
-  At = Array{Float64}(nNodesPerElmQ2,nNodesPerElmQ2)
-  Ct = Array{Float64}(nNodesPerElmQ2,nNodesPerElmQ1)
-  Et = Array{Float64}(nNodesPerElmQ2,nNodesPerElmQ2)
-  Ft = Array{Float64}(nNodesPerElmQ2,nNodesPerElmQ1)  
-  Gt = Array{Float64}(nNodesPerElmQ1,nNodesPerElmQ2)
-  Ht = Array{Float64}(nNodesPerElmQ1,nNodesPerElmQ2)
+  At = Array{Float64}(undef,nNodesPerElmQ2,nNodesPerElmQ2)
+  Ct = Array{Float64}(undef,nNodesPerElmQ2,nNodesPerElmQ1)
+  Et = Array{Float64}(undef,nNodesPerElmQ2,nNodesPerElmQ2)
+  Ft = Array{Float64}(undef,nNodesPerElmQ2,nNodesPerElmQ1)  
+  Gt = Array{Float64}(undef,nNodesPerElmQ1,nNodesPerElmQ2)
+  Ht = Array{Float64}(undef,nNodesPerElmQ1,nNodesPerElmQ2)
 
   IA = zeros(Float64,nElm,nNodesPerElmQ2,nNodesPerElmQ2)
   JA = copy(IA); SA = copy(IA)

@@ -1,5 +1,10 @@
 module eFEMpart
 
+# for access to SparseMatrixCSC
+using SparseArrays
+# for access to lufact
+using LinearAlgebra
+
 # ======================================================
 # EXPORTED FUNCTIONS
 # ======================================================

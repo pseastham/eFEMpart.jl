@@ -156,7 +156,7 @@ function fluidVDirichlet!(xy,xyp,dVNodes,dVBCarr,Stiff,F)
   np = length(xyp)
   vLength = length(dVNodes)
 
-  d  = nu + dVNodes
+  d  = nu .+ dVNodes
   s1 = 1:nu
   s2 = (nu+1):2*nu
   s3 = (2*nu+1):(2*nu+np)
