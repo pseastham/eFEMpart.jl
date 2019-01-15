@@ -2,7 +2,7 @@
 # Kept in seperate module to avoid loading time of Plots during normal
 #   run-time
 
-module SinkholeVizModule
+module partViz
 
 using eFEMpart, Plots, LaTeXStrings
 font = Plots.font("DejaVu Sans", 14)
@@ -135,4 +135,4 @@ function plotParticle!(particle::Particle,plotObj::Plots.Plot,colorSym::Symbol,r
     plot!(plotObj,xs,ys)
 end
 
-end # SinkholePlotModule
+end # partViz
