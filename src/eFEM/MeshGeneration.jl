@@ -5,13 +5,13 @@ function meshgrid(vx::AbstractVector{T}, vy::AbstractVector{T}) where T
   vx = reshape(vx, 1, n)
   vy = reshape(vy, m, 1)
 
-  return (repmat(vx, m, 1)', repmat(vy, 1, n)')
+  return (repeat(vx, m, 1)', repeat(vy, 1, n)')
 end
 
 # square [x0, x1, y0, y1]
 function squareMesh(square,N,order)
-  x = linspace(square[1],square[2],N)
-  y = linspace(square[3],square[4],N)
+  x = range(square[1],stop=square[2],length=N)
+  y = range(square[3],stop=square[4],length=N)
 
   # create nodes
   X,Y = meshgrid(x,y)
@@ -24,7 +24,7 @@ function squareMesh(square,N,order)
   topNode = ni:ni:nNodes-ni;
   t2nidxMap = deleteat!(collect(t2nidxMap),collect(topNode))
   k = t2nidxMap;
-  cm = [k k+1 k+ni+1 k+ni]
+  cm = [k k.+1 k.+ni.+1 k.+ni]
 
   if order==2
     xy,cm = Order1ToOrder2(xy,cm)
@@ -184,7 +184,7 @@ function Order1ToOrder2(xy,cm)
 
   xNew = Float64[]
   yNew = Float64[]
-  cmNew = Array{Int}(nElm,9)
+  cmNew = Array{Int}(undef,nElm,9)
 
   cmNew[:,1:4] = cm   # will throw error if cm isn't quad
 
@@ -222,7 +222,7 @@ function Order1ToOrder2(xy,cm)
     end
   end
 
-  xyNew = Array{Float64}(newNodeInd-1,2)
+  xyNew = Array{Float64}(undef,newNodeInd-1,2)
 
   for i=1:(newNodeInd-1)
     if i <= nNodesOld
@@ -263,7 +263,7 @@ function deleteDuplicates(xy,cm)
            isMachZero(xy[i,2],xy[j,2]) &&
            i!=j
           # find other index for node j
-          kjfind = findfirst(cm,j)
+          kjfind = something(findfirst(isequal(j), cm), 0)
           # 1) assign corresponding node index to cm of other node
           cmNew[kjfind] = i
           # 3) add other node to list so that it isn't crossed later on
@@ -285,7 +285,7 @@ function deleteDuplicates(xy,cm)
            isMachZero(xy[i,2],xy[j,2]) &&
            i!=j
           # find other index for node j
-          kjfind = findfirst(cmNew,j)
+          kjfind = something(findfirst(isequal(j), cmNew), 0)
           # 1) assign corresponding node index to cm of other node
           cmNew[kjfind] = i
           # 3) add other node to list so that it isn't crossed later on

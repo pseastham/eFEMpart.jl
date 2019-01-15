@@ -20,6 +20,13 @@ I'll get back to you on this one...
 
 eFEMpart is not supported as of yet on Windows. Sorry.
 
+# Dependencies
+
+The following packages need to be installed as dependencies:
+
+- SparseArrays (link)
+- 
+
 # Meshes
 
 For simple geometries (rectangles...), you can use the built-in 

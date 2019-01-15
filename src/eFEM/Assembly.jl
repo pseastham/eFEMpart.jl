@@ -13,19 +13,19 @@ function assembleScalar(mesh,localmat,parameter)
   nGaussNodes = nNodesPerElm  # possibly not true for axisymmetric quadrature
 
   #tempArr = Array{Float64}(nNodesPerElm)
-  xN      = Array{Float64}(nNodesPerElm)
-  yN      = Array{Float64}(nNodesPerElm)
-  phi     = Array{Float64}(nNodesPerElm)
-  dphidx  = Array{Float64}(nNodesPerElm)
-  dphidy  = Array{Float64}(nNodesPerElm)
-  dphids  = Array{Float64}(nNodesPerElm)
-  dphidt  = Array{Float64}(nNodesPerElm)
+  xN      = Array{Float64}(undef,nNodesPerElm)
+  yN      = Array{Float64}(undef,nNodesPerElm)
+  phi     = Array{Float64}(undef,nNodesPerElm)
+  dphidx  = Array{Float64}(undef,nNodesPerElm)
+  dphidy  = Array{Float64}(undef,nNodesPerElm)
+  dphids  = Array{Float64}(undef,nNodesPerElm)
+  dphidt  = Array{Float64}(undef,nNodesPerElm)
 
-  At  = Array{Float64}(nNodesPerElm,nNodesPerElm)
+  At  = Array{Float64}(undef,nNodesPerElm,nNodesPerElm)
 
-  I = Array{Int64}(nElm,nNodesPerElm,nNodesPerElm)
-  J = Array{Int64}(nElm,nNodesPerElm,nNodesPerElm)
-  S = Array{Float64}(nElm,nNodesPerElm,nNodesPerElm)
+  I = Array{Int64}(undef,nElm,nNodesPerElm,nNodesPerElm)
+  J = Array{Int64}(undef,nElm,nNodesPerElm,nNodesPerElm)
+  S = Array{Float64}(undef,nElm,nNodesPerElm,nNodesPerElm)
 
   # compute phi,dphids,dphidt
   w,s,t = GaussQuadPoints2D(order+1)

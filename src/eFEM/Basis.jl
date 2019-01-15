@@ -33,9 +33,9 @@ function shape2D(s::T,t::T,order::Int) where T<:Real
 
   # linear element
   if order == 1
-    phi    = Array{tt}(4)
-    dphids = Array{tt}(4)
-    dphidt = Array{tt}(4)
+    phi    = Array{tt}(undef,4)
+    dphids = Array{tt}(undef,4)
+    dphidt = Array{tt}(undef,4)
 
     phi[1]    = 0.25*(ein-s)*(ein-t)
     phi[2]    = 0.25*(ein+s)*(ein-t)
@@ -52,9 +52,9 @@ function shape2D(s::T,t::T,order::Int) where T<:Real
   
   # quadratic element
   elseif order == 2
-    phi    = Array{tt}(9)
-    dphids = Array{tt}(9)
-    dphidt = Array{tt}(9)
+    phi    = Array{tt}(undef,9)
+    dphids = Array{tt}(undef,9)
+    dphidt = Array{tt}(undef,9)
 
     ells1  = 0.5*s*(s-ein); ellt1 = 0.5*t*(t-ein);
     ells2  = ein-(s*s);     ellt2 = ein-(t*t);
