@@ -370,9 +370,9 @@ OUTPUT:
 """
 function GaussQuadPoints2D(order::Int;tt=Float64::DataType)
   if order==2        # 2x2 Gauss points
-    w = Array{tt,1}(4)
-    s = Array{tt,1}(4)
-    t = Array{tt,1}(4)
+    w = Array{tt,1}(undef,4)
+    s = Array{tt,1}(undef,4)
+    t = Array{tt,1}(undef,4)
 
     gpt=1.0e0/sqrt(3.0e0);
     s[1] = -gpt; t[1] = -gpt; w[1]=1.0;

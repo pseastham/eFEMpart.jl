@@ -26,6 +26,9 @@ The following packages can optionally be installed as dependencies:
 
 - [JLD](https://github.com/JuliaIO/JLD.jl)
 - [Plots](http://docs.juliaplots.org/latest/)
+- [PyPlot](https://github.com/JuliaPy/PyPlot.jl)
+- [PyCall](https://github.com/JuliaPy/PyCall.jl)
+- [LaTeXStrings](https://github.com/stevengj/LaTeXStrings.jl)
 
 To add any of the above, follow the [instructions for installing packages](https://docs.julialang.org/en/v1.0/stdlib/Pkg/#Pkg.add)
 

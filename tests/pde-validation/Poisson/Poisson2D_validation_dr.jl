@@ -2,7 +2,7 @@ using eFEMpart, JLD
 
 function main()
   function computeNorms(N,order)
-    tic()
+    start = time()
     # load mesh
     mesh = squareMesh([-2,2,-1,1],N,order)
     varname      = "temperature"
@@ -17,7 +17,7 @@ function main()
     param = PoissonParam(1.0)
     sol = solve(prob,mesh)
 
-    time=toq()
+    elapsed=time()-start
 
     # compute condition number of operator matrix
     #LinOp = GenerateSystem(mesh,prob,param)
@@ -40,7 +40,7 @@ function main()
     L2   = DomainNorm(mesh.xy,mesh.cm,err;normID="2")
     Linf = DomainNorm(mesh.xy,mesh.cm,err;normID="Inf")
 
-    return κ,h,L1,L2,Linf,time
+    return κ,h,L1,L2,Linf,elapsed
   end
 
   Narr    = [4,4,8,16,32]#,64,128]#,256]
