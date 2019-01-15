@@ -1,10 +1,12 @@
 # NOT CURRENTLY WORKING !!! NEED TO ADD TIME STEPPING ROUTINES TO eFEM
 
-using eFEM, JLD
+using eFEMpart, JLD
+
+using LinearAlgebra # for condition number calculation
 
 function main()
   function computeNorms(dt,i)
-    tic()
+    start = time()
     mesh = squareMesh([-2,2.0,-1.,1.],16,2);
     Tfinal = 0.5
     varname      = "temperature"
@@ -33,7 +35,7 @@ function main()
     # print problem
     #vtksave(mesh,prob,param,sol,fn)
 
-    time=toq()
+    elapsed = time()-start
 
     # generate exact solution
     Uexact(x,y) = exp(-(pi/2)^2*Tfinal)*sin(pi*x/2)
@@ -47,7 +49,7 @@ function main()
     L2   = DomainNorm(mesh.xy,mesh.cm,err;normID="2")
     Linf = DomainNorm(mesh.xy,mesh.cm,err;normID="Inf")
 
-    return L1,L2,Linf,time
+    return L1,L2,Linf,elapsed
   end
 
   start = 1e-4

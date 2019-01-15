@@ -1,5 +1,7 @@
 using eFEMpart, JLD
 
+using LinearAlgebra # for condition number calculation
+
 function main()
   function computeNorms(N,order)
     start = time()

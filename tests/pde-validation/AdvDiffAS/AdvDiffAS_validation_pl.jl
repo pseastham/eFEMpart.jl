@@ -4,7 +4,7 @@ pyplot(size=(1200,800),linewidth=4,xscale=:log10,yscale=:log10,
        xtickfont=font,ytickfont=font,markersize=8,
        legendfont=font,guidefont=font,titlefont=font,
        xlabel="Δx",ylabel="||error||",
-       title="Axisymmetric Advection Diffusion Equation Convergence")
+       title="Axisymmetric Advection Diffusion Equation Convergence",grid=false)
 
 function main()
     # import *.pat files
@@ -32,17 +32,17 @@ function main()
     p1 = plot(harr,o1L1arr,color=:red,linestyle=:dash,label="L1 (linear ϕ)")
     plot!(p1,harr,o1L2arr,color=:blue,linestyle=:dash,label="L2")
     plot!(p1,harr,o1LInfarr,color=:green,linestyle=:dash,label="Linf")
-    scatter!(p1,harr,o1L1arr,label="L1",color=:red,label="")
-    scatter!(p1,harr,o1L2arr,label="L2",color=:blue,label="")
-    scatter!(p1,harr,o1LInfarr,label="Linf",color=:green,label="")
+    scatter!(p1,harr,o1L1arr,color=:red,label="")
+    scatter!(p1,harr,o1L2arr,color=:blue,label="")
+    scatter!(p1,harr,o1LInfarr,color=:green,label="")
     plot!(p1,harr,harr.^2,color=:black,linestyle=:dash,label="O(Δx^2)")
 
     plot!(p1,harr,o2L1arr,color=:red,label="L1 (quadratic ϕ)")
     plot!(p1,harr,o2L2arr,color=:blue,label="L2")
     plot!(p1,harr,o2LInfarr,color=:green,label="Linf")
-    scatter!(p1,harr,o2L1arr,color=:red,label="L1",color=:black,label="")
-    scatter!(p1,harr,o2L2arr,color=:blue,label="L2",color=:black,label="")
-    scatter!(p1,harr,o2LInfarr,color=:green,label="Linf",color=:black,label="") 
+    scatter!(p1,harr,o2L1arr,color=:red,label="")
+    scatter!(p1,harr,o2L2arr,color=:blue,label="")
+    scatter!(p1,harr,o2LInfarr,color=:green,label="") 
     plot!(p1,harr,0.01*harr.^4,color=:black,label="O(Δx^4)")   
 
     # time plots

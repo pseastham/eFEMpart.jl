@@ -1,8 +1,10 @@
 using eFEMpart, JLD
 
+using LinearAlgebra # for condition number calculation
+
 function main()
   function computeNorms(N)
-    tic()
+    start = time()
     # load mesh
     mesh = squareMeshFluid([-2,2,-1,1],N)
 
@@ -45,7 +47,7 @@ function main()
     prob = Problem(mesh,Nodes,bcfun,OperatorType)
     sol = solve(prob,mesh,param)
 
-    time=toq()
+    elapsed = time() - start
 
     # compute condition number of operator matrix
     #LinOp = GenerateSystem(mesh,prob,param)
@@ -92,7 +94,7 @@ function main()
     fn = Path("exact_var")
     vtksave(mesh,sD,sN,vD,vN,fn)
 
-    return κ,h,L1v,L2v,Linfv,L1p,L2p,Linfp,time
+    return κ,h,L1v,L2v,Linfv,L1p,L2p,Linfp,elapsed
   end
 
   Narr     = [4,4,8,16,32]#,64,96]

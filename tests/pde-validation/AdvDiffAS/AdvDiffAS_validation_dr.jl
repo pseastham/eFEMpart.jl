@@ -1,8 +1,10 @@
-using eFEM, JLD
+using eFEMpart, JLD
+
+using LinearAlgebra # for condition number calculation
 
 function main()
   function computeNorms(N,order)
-    tic()
+    start = time()
     # load mesh
     mesh = squareMesh([-2,2,0,1],N,order)
     
@@ -23,13 +25,14 @@ function main()
 
     prob = Problem(mesh,Nodes,bcfun,varname,OperatorType)
     sol = solve(prob,mesh,param)
-    time=toq()
+
+    elapsed = time() - start
     
     # compute condition number of operator matrix
-    LinOp = GenerateSystem(mesh,prob,param)
-    ApplyBC!(LinOp,mesh,prob,param,OperatorType)
-    κ = cond(Array(LinOp.Op),2)
-    #κ = -1.0
+    #LinOp = GenerateSystem(mesh,prob,param)
+    #ApplyBC!(LinOp,mesh,prob,param,OperatorType)
+    #κ = cond(Array(LinOp.Op),2)
+    κ = 0.5
 
     # compute mesh h
     h = hCalc(mesh)
@@ -46,7 +49,7 @@ function main()
     L2   = DomainNorm(mesh.xy,mesh.cm,err;normID="2")
     Linf = DomainNorm(mesh.xy,mesh.cm,err;normID="Inf")  
     
-    return κ,h,L1,L2,Linf,time
+    return κ,h,L1,L2,Linf,elapsed
   end
 
   Narr    = [8,8,16,32]#,64]#,128]#,256]

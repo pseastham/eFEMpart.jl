@@ -144,8 +144,8 @@ function assembleFullFluid_WRONG(mesh,localmat,parameter...)
 
   w,s,t = GaussQuadPoints2D(3)
 
-  tempArr4 = Array{Float64}(nNodesPerElmQ1)
-  tempArr9 = Array{Float64}(nNodesPerElmQ2)
+  tempArr4 = Array{Float64}(undef,nNodesPerElmQ1)
+  tempArr9 = Array{Float64}(undef,nNodesPerElmQ2)
 
   xN     = copy(tempArr9); yN     = copy(tempArr9)
 
