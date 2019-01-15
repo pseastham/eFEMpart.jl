@@ -41,7 +41,8 @@ export squareMesh,
        axisymMesh,
        axisymFluid,
        FluidMesh,
-       Mesh
+       Mesh,
+       meshgrid
 
 # MeshTransform.jl
 export pointTransform,
