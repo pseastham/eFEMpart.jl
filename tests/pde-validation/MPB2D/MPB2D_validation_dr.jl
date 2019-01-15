@@ -1,4 +1,4 @@
-using eFEM, JLD
+using eFEMpart, JLD
 
 function main()
   function computeNorms(N)

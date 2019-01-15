@@ -1,5 +1,8 @@
 # File to be loaded into eFEMpart
 
+# to load SparseMatrixCSC functionality
+using SparseArrays
+
 abstract type AbstractSolution  end
 abstract type AbstractLinearOperator end
 

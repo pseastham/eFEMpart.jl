@@ -7,7 +7,7 @@ pyplot(size=(1200,800),linewidth=4,xscale=:log10,yscale=:log10,
        title="Poisson Equation Convergence")
 
 function main()
-    # import *.pat files
+    # import jld files
     jldfile = "data/TEMPpoisson_validation.jld"
 
     o1L1arr   = load(jldfile,"o1L1arr")

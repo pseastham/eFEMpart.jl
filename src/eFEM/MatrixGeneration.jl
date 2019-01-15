@@ -62,6 +62,7 @@ function Stokes2DMatrix(mesh::FluidMesh,prob,param::T) where T<:AbstractVariable
     # new alternative -- not working
     #Stiff = assembleFullFluid(mesh,localStokesAlternateVar2D!,param.μ)
     
+    error("Stokes 2D variable viscosity not working right now")
     # old original -- THIS ONE IS WORKING
     Stiff = assembleFullFluid_WRONG(mesh,localStokesVar2D_WRONG!,param.μ)
     

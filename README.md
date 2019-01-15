@@ -4,6 +4,22 @@ Finite Element code in the [Julia language](https://julialang.org/) focused on f
 This repository allows the use of Finite Elements discretizations to solve
 common problems in fluid dynamics. 
 
+# Installation
+
+## Linux
+
+- download Julia 1.0.* from (link to download page)
+- copy eFEMpart folder into location where it won't move
+- add above folder path into '~/,julia/config.startup.jl' file. It's possible that you will need to create this file yourself.
+
+## Mac OS
+
+I'll get back to you on this one...
+
+## Windows
+
+eFEMpart is not supported as of yet on Windows. Sorry.
+
 # Meshes
 
 For simple geometries (rectangles...), you can use the built-in 

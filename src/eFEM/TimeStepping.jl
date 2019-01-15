@@ -80,7 +80,7 @@ end
 Displays progress bar
 """
 function progressBarDisplay(percentage,printCounter,printTotal,timer)
-  const TERMINALLENGTH = 80
+  TERMINALLENGTH = 80
 
   percent = string("\r  [",percentage,"%]")
   skip1  = 14-length(percent)

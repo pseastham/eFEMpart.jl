@@ -1,6 +1,6 @@
 # File to be loaded into eFEMpart
 
-function meshgrid{T}(vx::AbstractVector{T}, vy::AbstractVector{T})
+function meshgrid(vx::AbstractVector{T}, vy::AbstractVector{T}) where T
 	m, n = length(vy), length(vx)
   vx = reshape(vx, 1, n)
   vy = reshape(vy, m, 1)

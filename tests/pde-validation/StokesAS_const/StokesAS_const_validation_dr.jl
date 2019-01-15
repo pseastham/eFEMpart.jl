@@ -1,4 +1,4 @@
-using eFEM, JLD
+using eFEMpart, JLD
 
 function main()
   function computeNorms(N)
@@ -41,10 +41,10 @@ function main()
     time=toq()
     
     # compute condition number of operator matrix
-    LinOp = GenerateSystem(mesh,prob,param)
-    ApplyBC!(LinOp,mesh,prob,param,OperatorType)
-    κ = cond(Array(LinOp.Op),2)
-    #κ = 0.5
+    #LinOp = GenerateSystem(mesh,prob,param)
+    #ApplyBC!(LinOp,mesh,prob,param,OperatorType)
+    #κ = cond(Array(LinOp.Op),2)
+    κ = 0.5
 
     # compute mesh h
     h = hCalc(mesh)
