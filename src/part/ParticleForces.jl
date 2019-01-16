@@ -97,7 +97,7 @@ function CohesionForceCL(particle,j,pList,ϵ,rm,cl)
         nCells = vcat(pcc,cl[pcc].NeighborList)
 
         # find particles in all relevant cells
-        pclose = Array{Int,1}(0)
+        pclose = Array{Int,1}(undef,0)
         for i=1:length(nCells)
             ncl = length(cl[nCells[i]].ParticleList)
             if ncl > 0

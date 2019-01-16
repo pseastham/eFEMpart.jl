@@ -13,7 +13,7 @@ function CellGenerate(particleList::Vector{Particle},
   Ny = Int(ceil((Y1 - Y0)/rm))
   Nparticles = length(particleList)
 
-  CellList = Array{Cell}(Nx*Ny)
+  CellList = Array{Cell}(undef,Nx*Ny)
 
   k=1
   for i=0:(Nx-1), j=1:Ny

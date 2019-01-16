@@ -27,7 +27,7 @@ function NearestPoint(particle::Particle,wall::CircleWall)
     px=particle.xpos; py=particle.ypos
     cx=wall.center.x; cy=wall.center.y
     r = wall.radius
-    θ = atan2(py-cy,px-cx)
+    θ = atan(py-cy,px-cx)
 
     sx = cx + r*cos(θ)
     sy = cy + r*sin(θ)
@@ -38,7 +38,7 @@ function NearestPoint(particle::Particle,wall::ArcWall)
     px= particle.xpos; py=particle.ypos
     cx= wall.nodes[2].x; cy=wall.nodes[2].y
     r = sqrt((cx-wall.nodes[1].x)^2 + (cy-wall.nodes[1].y)^2)
-    θ = atan2(py-cy,px-cx)
+    θ = atan(py-cy,px-cx)
 
     sx = cx + r*cos(θ)
     sy = cy + r*sin(θ)
@@ -70,7 +70,7 @@ function GenerateQuadNodes(p::Particle,wall::CircleWall,s::Vector{Float64},k::Fl
     px=p.xpos; py=p.ypos
     cx=wall.center.x; cy=wall.center.y
     r = wall.radius
-    θcenter = atan2(py-cy,px-cx)
+    θcenter = atan(py-cy,px-cx)
     θmin = θcenter - pi/2
     Δθ = pi/(N-1)
 
@@ -83,7 +83,7 @@ function GenerateQuadNodes(p::Particle,wall::ArcWall,s::Vector{Float64},k::Float
     px=p.xpos; py=p.ypos
     cx= wall.nodes[2].x; cy=wall.nodes[2].y
     r = sqrt((cx-wall.nodes[1].x)^2 + (cy-wall.nodes[1].y)^2)
-    θcenter = atan2(py-cy,px-cx)
+    θcenter = atan(py-cy,px-cx)
     θmin = θcenter - pi/2
     Δθ = 2*pi/(N-1)
 
@@ -115,9 +115,9 @@ function isInLine(wall::ArcWall,sx,sy)
     radius = sqrt((cx-wall.nodes[1].x)^2 + (cy-wall.nodes[1].y)^2)
     val = abs(radius - sqrt((cx-sx)^2 + (cy-sy)^2))
 
-    θ1 = atan2(wall.nodes[1].y-cy,wall.nodes[1].x-cx)
-    θ2 = atan2(wall.nodes[3].y-cy,wall.nodes[3].x-cx)
-    θs = atan2(sy-cy,sx-cx)
+    θ1 = atan(wall.nodes[1].y-cy,wall.nodes[1].x-cx)
+    θ2 = atan(wall.nodes[3].y-cy,wall.nodes[3].x-cx)
+    θs = atan(sy-cy,sx-cx)
 
     TOL = 1e-12
     isOn = false
@@ -168,8 +168,8 @@ function WallTrapQuad(p::Particle,wall::CircleWall,
                     xquad::Vector{Float64},yquad::Vector{Float64},
                     ϵ::Float64,rm::Float64)
     cx = wall.center.x; cy = wall.center.y
-    θ1 = atan2(yquad[1]-cy,xquad[1]-cx)
-    θ2 = atan2(yquad[2]-cy,xquad[2]-cx)
+    θ1 = atan(yquad[1]-cy,xquad[1]-cx)
+    θ2 = atan(yquad[2]-cy,xquad[2]-cx)
     Δs = abs(wall.radius*(θ2-θ1))
     N = length(xquad)
     quadSumX = 0.0
@@ -203,8 +203,8 @@ function WallTrapQuad(p::Particle,wall::ArcWall,
                     xquad::Vector{Float64},yquad::Vector{Float64},
                     ϵ::Float64,rm::Float64)
     cx = wall.nodes[2].x; cy = wall.nodes[2].y
-    θ1 = atan2(yquad[1]-cy,xquad[1]-cx)
-    θ2 = atan2(yquad[2]-cy,xquad[2]-cx)
+    θ1 = atan(yquad[1]-cy,xquad[1]-cx)
+    θ2 = atan(yquad[2]-cy,xquad[2]-cx)
     radius = sqrt((cx - wall.nodes[1].x)^2 + (cy - wall.nodes[1].y)^2)
 
     if θ1 > θ2
