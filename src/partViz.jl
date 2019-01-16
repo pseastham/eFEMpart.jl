@@ -9,10 +9,10 @@ using eFEMpart
 
 using Plots, LaTeXStrings
 
-font = Plots.font("DejaVu Sans", 14)
-pyplot(size=(800,800),border=true,
-        guidefont=font, xtickfont=font, ytickfont=font, legendfont=font,
-        markersize=8,linewidth=3,ratio=:equal,grid=false)
+#font = Plots.font("DejaVu Sans", 14)
+#pyplot(size=(800,800),border=true,
+#        guidefont=font, xtickfont=font, ytickfont=font, legendfont=font,
+#        markersize=8,linewidth=3,ratio=:equal,grid=false)
 
 # functions from partViz
 export plotPoints,
@@ -24,7 +24,8 @@ export @animate,
        plot,
        gif,
        Animation,
-       frame
+       frame,
+       pyplot
 
 function plotWalls(wallList::Vector{T},rm::Float64) where T<:AbstractWall
   N = length(wallList)
