@@ -319,7 +319,7 @@ function DarcyVelocity(mesh,alpha::Vector{Float64},p::Vector{Float64})
       u[c[i]] += -αg*dpdx/jac
       v[c[i]] += -αg*dpdy/jac
     end
-    nodeCounter[c] += 1
+    nodeCounter[c] .+= 1
   end
 
   # take average

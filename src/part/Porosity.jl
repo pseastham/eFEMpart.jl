@@ -93,7 +93,7 @@ function SandToPorosityGaussianSingleParticle!(particle,mesh,rm,femCL,σ,porosit
         nbs = vcat(pcc,femCL[pcc].NeighborList)
 
         # find particles in all relevant cells
-        pclose = Array{Int,1}(0)
+        pclose = Array{Int,1}(undef,0)
         for i=1:length(nbs)
             ncl = length(femCL[nbs[i]].ParticleList)
             if ncl > 0

@@ -25,7 +25,8 @@ export @animate,
        gif,
        Animation,
        frame,
-       pyplot
+       pyplot,
+       scatter!
 
 function plotWalls(wallList::Vector{T},rm::Float64) where T<:AbstractWall
   N = length(wallList)
