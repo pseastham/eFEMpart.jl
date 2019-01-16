@@ -110,7 +110,8 @@ Point,                   # mutable type for points
 ParticleList             # Initializes list of particles
 
 # CellLists.jl
-export CellGenerate             # Generates cell lists from either a list
+export Cell,
+       CellGenerate      # Generates cell lists from either a list
                          #   of particles or a mesh
 
 # Porosity.jl
