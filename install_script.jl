@@ -3,12 +3,15 @@
 using Pkg
 
 function install()
-    # add check that current directory is in eFEMpart
     checkIneFEMpart()
     intro()
+
     skipline()
+    
     checkOK()
+    
     skipline()
+    
     checkJuliaVersion()
     addStartupFile()
     addModules()
@@ -52,9 +55,6 @@ function checkOK()
 
     keepasking = true
     while keepasking
-        keepasking=false
-        break
-
         OK = input("Is this OK? (y/n) ")
         
         if OK == "y"
