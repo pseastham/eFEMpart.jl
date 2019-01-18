@@ -1,16 +1,15 @@
 using eFEMpart
+include("Laplace_example_param.jl")
 
-function laplace_example()
-  # define mesh through eFEMpart code; 
-  # alternative is to load GMSH mesh
-  Nintervals = 32
-  basisorder = 2
-  xmin = -2.0; xmax = 2.0
-  ymin = -1.0; ymax = 1.0
-  mesh = squareMesh([xmin,xmax,ymin,ymax],Nintervals,basisorder)
+function laplace_example(p::Lap_Para)
+  # load parameters
+  p = Lap_Para()
+
+  # define mesh through eFEMpart code
+  mesh = squareMesh([p.xmin,p.xmax,p.ymin,p.ymax],p.Nintervals,p.basisorder)
 
   # define variable name and operator type
-  varname      = "temperature"
+  varname      = ""
   OperatorType = :Poisson2D
 
   # Define auxiliary information
@@ -18,7 +17,7 @@ function laplace_example()
   nNodes = Neumann(:top,:bottom)
 
   # Define dirichlet, neumann, and forcing functions
-  dBCf = Dirichlet((x,y) -> (x==-2.0 ? 1.0 : 0.0))
+  dBCf = Dirichlet((x,y) -> (x==p.xmin ? p.lBCval : p.rBCval))
   nBCf = Neumann((x,y) -> 0.0)
   ff   = Forcing((x,y) -> 0.0)
 
@@ -32,8 +31,15 @@ function laplace_example()
   sol = solve(prob,mesh)
 
   # save solution
-  vtkname = Path("solutions","laplace_example")
+  vtkname = Path(p.solFolder,p.solFile)
   sd = ScalarData(sol.u)
-  sn = ScalarNames("temperature")
+  sn = ScalarNames(p.solName)
   vtksave(mesh,sd,sn,vtkname)
 end
+
+function main()
+  p = Lap_Para()
+  laplace_example(p)
+end
+
+main()
