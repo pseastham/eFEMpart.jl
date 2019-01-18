@@ -87,7 +87,7 @@ end
 
 function addStartupFile()
     print("Adding eFEMpart to your Julia PATH...")
-    eFEMpartPATH = string(pwd(),"/src")
+    eFEMpartPATH = string(pwd(),"/src/")
     newLoadPath = string("push!(LOAD_PATH,\"",eFEMpartPATH,"\")")
 
     # create startup.jl file
