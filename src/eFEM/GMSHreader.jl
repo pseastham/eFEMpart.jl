@@ -11,7 +11,7 @@ function Mesh(file_obj::GMSHfile)
   xy,cm,bndNodes,bndNames,order = GMSH_QUAD_READER(file_obj.file_name)
 
   bndNodes2 = GMSH_EXTRACTBOUNDARY_ALL(bndNodes,length(bndNames))
-  bndNames2 = convert(Vector{Symbol},bndNames)
+  bndNames2 = Symbol.(bndNames)
   bndNames3 = Index(bndNames2)
   bdry = DictList{Int}(bndNodes2,bndNames3)
 

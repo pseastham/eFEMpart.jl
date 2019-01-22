@@ -10,7 +10,7 @@ using Parameters
     ymax::Float64 = 1.0         # minimum x-value for mesh 
     
     # boundary conditions
-    lBCval::Float64 = 5.0       # (dirichlet) value at left boundary
+    lBCval::Float64 = 1.0       # (dirichlet) value at left boundary
     rBCval::Float64 = 0.0       # (dirichlet) value at right boundary
 
     # visualization

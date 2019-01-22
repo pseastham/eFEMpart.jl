@@ -2,9 +2,6 @@ using eFEMpart
 include("Laplace_example_param.jl")
 
 function laplace_example(p::Lap_Para)
-  # load parameters
-  p = Lap_Para()
-
   # define mesh through eFEMpart code
   mesh = squareMesh([p.xmin,p.xmax,p.ymin,p.ymax],p.Nintervals,p.basisorder)
 

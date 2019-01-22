@@ -52,6 +52,7 @@ function checkOK()
     println("      + PyPlot")
     println("      + PyCall")
     println("      + LaTeXStrings")
+    println("      + Parameters")
 
     keepasking = true
     while keepasking
@@ -135,6 +136,10 @@ function addModules()
     # LaTeXStrings
     println("Adding LaTeXStrings package...")
     Pkg.add("LaTeXStrings");
+
+    # Parameters
+    println("Adding Parameters package...")
+    Pkg.add("Parameters");
 end
 
 function finished()
