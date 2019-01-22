@@ -34,7 +34,7 @@ function FluidMesh(file_obj::GMSHfile)
   xyp,cmp = pMesh(xy,cm)
 
   bndNodes2 = GMSH_EXTRACTBOUNDARY_ALL(bndNodes,length(bndNames))
-  bndNames2 = convert(Vector{Symbol},bndNames)
+  bndNames2 = Symbol.(bndNames)
   bndNames3 = Index(bndNames2)
   bdry = DictList{Int}(bndNodes2,bndNames3)
 
