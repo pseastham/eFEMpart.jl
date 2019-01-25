@@ -92,7 +92,8 @@ function addStartupFile()
     newLoadPath = string("push!(LOAD_PATH,\"",eFEMpartPATH,"\")")
 
     # create startup.jl file
-    run(`touch $(homedir())/.julia/config/startup.jl`)
+    mkpath("$(homedir())/.julia/config")
+    touch("$(homedir())/.julia/config/startup.jl")
 
     fr = open("$(homedir())/.julia/config/startup.jl","r")
 
