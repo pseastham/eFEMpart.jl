@@ -47,11 +47,11 @@ function checkOK()
     println("This install script does the following:")
     println("   - adds eFEMpart packageto your Julia LOAD_PATH")
     println("   - adds the following dependencies:")
-    println("      + JLD")
-    println("      + Plots")
-    println("      + PyPlot")
-    println("      + PyCall")
-    println("      + LaTeXStrings")
+    #println("      + JLD")
+    #println("      + Plots")
+    #println("      + PyPlot")
+    #println("      + PyCall")
+    #println("      + LaTeXStrings")
     println("      + Parameters")
 
     keepasking = true
@@ -119,24 +119,24 @@ end
 
 function addModules()
     # JLD
-    println("Adding JLD package...")
-    Pkg.add("JLD");
+    #println("Adding JLD package...")
+    #Pkg.add("JLD");
    
     # Plots
-    println("Adding Plots package...")
-    Pkg.add("Plots");
+    #println("Adding Plots package...")
+    #Pkg.add("Plots");
    
     # PyPlot
-    println("Adding PyPlot package...")
-    Pkg.add("PyPlot");
+    #println("Adding PyPlot package...")
+    #Pkg.add("PyPlot");
    
     # PyCall
-    println("Adding PyCall package...")
-    Pkg.add("PyCall");
+    #println("Adding PyCall package...")
+    #Pkg.add("PyCall");
    
     # LaTeXStrings
-    println("Adding LaTeXStrings package...")
-    Pkg.add("LaTeXStrings");
+    #println("Adding LaTeXStrings package...")
+    #Pkg.add("LaTeXStrings");
 
     # Parameters
     println("Adding Parameters package...")
