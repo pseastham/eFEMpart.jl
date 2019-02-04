@@ -12,8 +12,8 @@
 11. write install file that a) adds eFEMpath file-name-path to correct location
                             b) installs all dependent Julia packages
                             c) does the above for Linux, Mac OS, and Windows computers
-12.
-13.
-14.
-15.
+12. add reload of julia startup file to install file
+13. 
+14. 
+15. 
 
