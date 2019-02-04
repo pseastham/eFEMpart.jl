@@ -1,4 +1,4 @@
-# install script for Linux machines.
+# install script for Linux & MacOS machines.
 
 using Pkg
 
@@ -113,6 +113,9 @@ function addStartupFile()
         write(fa,"\n",newLoadPath)
         close(fa)
     end
+
+    # load startup file -- so that you don't have to restart julia
+    include("$(homedir())/.julia/config/startup.jl")
 
     println("OK")
 end
