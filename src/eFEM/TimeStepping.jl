@@ -66,11 +66,14 @@ end
 
 Calculates and displays progress bar information
 """
-function progressBar(t,timer,counter,printTotal,printCounter,printSkip)
-  timer[1] += toq(); tic()
+function progressBar(initial,printTotal,printCounter,printSkip)
+  now = time()
+  timer = now - initial
   percentage = Int(floor(printCounter/printTotal*100))
 
   progressBarDisplay(percentage,printCounter,printTotal,timer)
+
+  return timer
 end
 
 
@@ -86,7 +89,7 @@ function progressBarDisplay(percentage,printCounter,printTotal,timer)
   skip1  = 14-length(percent)
   exportFigure = string("exported figure ",printCounter,"/",printTotal)
   skip2  = 42-(length(percent)+skip1+length(exportFigure))
-  timeTaken = string("stopwatch: ",sToHMS(timer[1]),"\r")
+  timeTaken = string("stopwatch: ",sToHMS(timer),"\r")
 
   iterChar(TERMINALLENGTH," ")
 
@@ -158,7 +161,7 @@ function sToHMS(s)
   # compute times
   hours   = Int(floor(s/3600))
   minutes = Int(floor(s/60 - 60*hours))
-  seconds = Int(round(s - 3600*hours - 60*minutes,0))
+  seconds = Int(round(s - 3600*hours - 60*minutes,digits=0))
 
   hours < 10   ? hstr = "0" : hstr = ""
   minutes < 10 ? mstr = "0" : mstr = ""

@@ -61,7 +61,9 @@ export derivShape2D,
 export Mass2DMatrix
 
 # TimeStepping.jl
-export FEMForwardEuler
+export FEMForwardEuler,
+       progressBar,
+       sToHMS
 
 # Solver.jl
 export solve, 
