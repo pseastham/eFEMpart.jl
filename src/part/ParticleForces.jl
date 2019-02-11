@@ -60,10 +60,14 @@ end
 
 # Returns -d/dr V(r) where V(r) is the lennard-jones potential
 function LennardJonesPotentialMagnitude(ϵ::T,rm::T,r::T) where T<:Real
-    if r < 0.96*rm 
+    if r < 0.96*rm
         r = 0.96*rm
+        return 12*ϵ*rm^6*(rm-r)*(rm+r)*(rm^2 + r^2 + rm*r)*(rm^2 + r^2 - rm*r)/r^13
+    elseif r > 1.9*rm 
+        return 0.0
+    else
+        return 12*ϵ*rm^6*(rm-r)*(rm+r)*(rm^2 + r^2 + rm*r)*(rm^2 + r^2 - rm*r)/r^13
     end
-    return 12*ϵ*rm^6*(rm-r)*(rm+r)*(rm^2 + r^2 + rm*r)*(rm^2 + r^2 - rm*r)/r^13
 end
 
 function LennardJonesForce(ϵ::T,rm::T,Δx::T,Δy::T) where T<:Real
@@ -141,7 +145,6 @@ function LJWallForce(particle::Particle,wall::T,k::Float64,rm::Float64,ϵ::Float
 
         # compute force
         Fx,Fy = WallTrapQuad(particle,wall,xquad,yquad,ϵ,rm)
-        #println("Fy = ",round(Fy,2)," py = ",round(particle.ypos,2)," sy = ",s[2])
     end
 
     return Fx,Fy

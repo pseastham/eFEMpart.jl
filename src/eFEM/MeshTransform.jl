@@ -478,8 +478,9 @@ function pointTransform(xyA,cmA,UA,point)
   end
 
   if !(foundInside || foundVal)
-    errorstr = string("point (",point[1],",",point[2],") not inside mesh")
-    error(errorstr)
+    #errorstr = string("point (",point[1],",",point[2],") not inside mesh")
+    #error(errorstr)
+    return 0.0
   end
 
   return Uinterp

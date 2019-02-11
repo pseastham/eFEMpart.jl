@@ -104,12 +104,12 @@ export GenerateTracers,
 
 # SinkholeTypes.jl
 export AbstractWall,            # Abstract type that encapsulates all concrete wall types
-LineWall,                # mutable type for describing line walls
-CircleWall,              # mutable type for describing circle walls
-ArcWall,                 # mutable type for describing circle arc walls
-Particle,
-Point,                   # mutable type for points
-ParticleList             # Initializes list of particles
+       LineWall,                # mutable type for describing line walls
+       CircleWall,              # mutable type for describing circle walls
+       ArcWall,                 # mutable type for describing circle arc walls
+       Particle,
+       Point,                   # mutable type for points
+       ParticleList             # Initializes list of particles
 
 # CellLists.jl
 export Cell,
@@ -121,22 +121,19 @@ export SandToPorosityGaussian
 
 # ParticleForces.jl
 export LennardJonesForce,
-LennardJonesPotential,
-LennardJonesPotentialMagnitude
+       LennardJonesPotential,
+       LennardJonesPotentialMagnitude
 
 # WallRepulsion.jl 
 export NearestPoint,
-isCloseEnough,
-GenerateQuadNodes,
-isInLine,
-WallTrapQuad
+       isCloseEnough,
+       GenerateQuadNodes,
+       isInLine,
+       WallTrapQuad
 
 # UpdateParticles.jl
-export UpdateParticle!,
-UpdateParticle_Gravity!,
-UpdateParticle_LJWalls!,
-UpdateParticle_Cohesion!,
-UpdateParticle_Seepage!
+export UpdateParticle_all!,
+       UpdateParticle_novelocity!
 
 # ======================================================
 # FILES TO LOAD
