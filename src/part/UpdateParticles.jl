@@ -8,12 +8,12 @@
 #   3. Cohesion Force (Lennard Jones Potential)
 #   4. Wall Force (Lennard Jones Potential)
 function UpdateParticle_all!(particle,j::Int,pList,wList,cl,rm::Float64,
-                             Δt,k,ϵp,ϵw,Nint,square,FEMmesh,solution)
+                             Δt,k,ϵp,ϵw,Nint,square,FEMmesh,solution,
+                             G,κ,n,gammas)
     # ==============================
     # 1. Compute Graviational Force
     # ==============================
-    g = 1.0
-    FxG,FyG = GravitationForce(g)
+    FxG,FyG = GravitationForce(G)
 
     # ============================
     # 2. compute Seepage velocity
@@ -24,11 +24,14 @@ function UpdateParticle_all!(particle,j::Int,pList,wList,cl,rm::Float64,
     else
         fluidVel = [0.0,0.0]
     end
+    # FOR TESTING!!!
+    #fluidVel = [0.0,0.0]
 
     # ===========================================
     # 3. Compute Cohesion Force using Cell Lists
     # ===========================================
-    FxC,FyC = CohesionForceCL(particle,j,pList,ϵp,rm,cl)
+    #FxC,FyC = CohesionForceCL(particle,j,pList,ϵp,rm,cl)
+    FxC,FyC = 0.0,0.0
 
     # ===========================================
     # 4. Compute Wall Force
@@ -46,12 +49,9 @@ function UpdateParticle_all!(particle,j::Int,pList,wList,cl,rm::Float64,
     # Sum all forces together
     # ========================
     # need to interpolate the porosity/permeability
-    #κ = permeability
-    κ = 1.0
-    #n = porosity
-    n = 1.0
-    #gammas = specific weight
-    gammas = 1.0
+    # κ = permeability
+    # n = porosity
+    # gammas = specific weight
     partVelx = κ*(FxG + FxC + FxW + n*gammas*fluidVel[1]/κ)/(n*gammas)
     partVely = κ*(FyG + FyC + FyW + n*gammas*fluidVel[2]/κ)/(n*gammas)
 
@@ -177,10 +177,4 @@ function UpdateParticle_Seepage!(particle::Particle,FEMmesh,DarcySolution,square
     # Update particle position
     particle.xpos += particleVelocityX*Δt
     particle.ypos += particleVelocityY*Δt
-end
-
-function UpdateParticle_All!(particle::Particle,j::Int,FEMmesh,pList,wList::Vector{T},Δt,G,κ,n::Float64,γs,
-                            k,rm,ϵp,ϵw,Nint::Int,cl::Vector{Cell},
-                            DarcySolution,square) where T<:AbstractWall
-
 end
