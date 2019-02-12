@@ -64,12 +64,11 @@ end
 
 # This one is to be used without velocity
 function UpdateParticle_novelocity!(particle,j::Int,pList,wList,cl,rm::Float64,
-                                    Δt,k,ϵp,ϵw,Nint)
+                                    Δt,k,ϵp,ϵw,Nint,G)
     # ==============================
     # 1. Compute Graviational Force
     # ==============================
-    g = 1.0
-    FxG,FyG = GravitationForce(g)
+    FxG,FyG = GravitationForce(G)
 
     # =========================
     # 2. compute Seepage velocity -- no velocity!
