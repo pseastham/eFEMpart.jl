@@ -24,8 +24,6 @@ function UpdateParticle_all!(particle,j::Int,pList,wList,cl,rm::Float64,
     else
         fluidVel = [0.0,0.0]
     end
-    # FOR TESTING!!!
-    #fluidVel = [0.0,0.0]
 
     # ===========================================
     # 3. Compute Cohesion Force using Cell Lists

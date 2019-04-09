@@ -42,15 +42,15 @@ export squareMesh,
        axisymFluid,
        FluidMesh,
        Mesh,
-       meshgrid
+       meshgrid,
+       ElementsToArray,
+       NodesToArray
 
 # MeshTransform.jl
 export pointTransform,
        onSegment,
        doIntersect,
        isInsideDomain,
-       NodesToArray,
-       ElementsToArray,
        meshTransform
 
 # Basis.jl
