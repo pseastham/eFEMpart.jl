@@ -9,6 +9,9 @@ using LinearAlgebra
 # EXPORTED FUNCTIONS
 # ======================================================
 
+# delete -- only necessary for testing
+export Node, shape2D!, Element
+
 # MeshTypes.jl
 export AbstractMesh
 
