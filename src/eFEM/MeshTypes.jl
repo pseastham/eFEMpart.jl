@@ -19,10 +19,14 @@ mutable struct Node
   y::Float64
 end
 
-struct Element
+mutable struct Element
   order::Int
   QuadRule::Symbol
   NodeList::Vector{Int}
+  SiblingList::Vector{Int}      # list of sibling indices -- possibly changes size
+  Lc::Int                       # current refinement
+  Lt::Int                       # target refinement
+  Ls::Int                       # max target refinment of siblings
 end
 
 struct ScalarMesh <: AbstractMesh
@@ -52,7 +56,8 @@ function Element(nl::Vector{Int})
   length(nl)==4 ? order=1 : order=2
   order == 1 ? QuadRule = :GaussOrder2 : QuadRule = :GaussOrder3
 
-  return Element(order,QuadRule,nl)
+  # ONLY FOR TESTING
+  return Element(order,QuadRule,nl,[0],0,0,0)
 end
 
 # df[SingleColumnIndex] => AbstractDataVector
