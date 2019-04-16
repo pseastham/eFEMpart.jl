@@ -507,6 +507,14 @@ function FEMstats(mesh,prob,LinOp)
   println("Size of linear system:   ",sysSize," x ",sysSize)
 end
 
+function FEMstats(mesh)
+  numTnodes = length(mesh.xy)
+  Nel       = length(mesh.cm)
+
+  println("# of total nodes:        ",numTnodes)
+  println("# of elements:           ",Nel)
+end
+
 """
 	GaussQuadPoints1D(order)
 

@@ -27,6 +27,7 @@ mutable struct Element
   Lc::Int                       # current refinement
   Lt::Int                       # target refinement
   Ls::Int                       # max target refinment of siblings
+  La::Int                       # max target refinement of edge-connected neighbors
 end
 
 struct ScalarMesh <: AbstractMesh

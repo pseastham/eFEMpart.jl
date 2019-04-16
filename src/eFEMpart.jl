@@ -10,7 +10,7 @@ using LinearAlgebra
 # ======================================================
 
 # delete -- only necessary for testing
-export Node, shape2D!, Element
+export Node, shape2D!, Element, FEMstats
 
 # MeshTypes.jl
 export AbstractMesh
