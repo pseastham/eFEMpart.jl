@@ -28,6 +28,8 @@ mutable struct Element
   Lt::Int                       # target refinement
   Ls::Int                       # max target refinment of siblings
   La::Int                       # max target refinement of edge-connected neighbors
+  regtype::Symbol               # :regular or :irregular, to help with refinement
+  refineEdge::Vector{Bool}      # 4-array of booleans for whether or not to refine face
 end
 
 struct ScalarMesh <: AbstractMesh
@@ -58,7 +60,8 @@ function Element(nl::Vector{Int})
   order == 1 ? QuadRule = :GaussOrder2 : QuadRule = :GaussOrder3
 
   # ONLY FOR TESTING
-  return Element(order,QuadRule,nl,[0],0,0,0)
+  falseArr = [false,false,false,false]
+  return Element(order,QuadRule,nl,[0],0,0,0,0,:parent,falseArr)
 end
 
 # df[SingleColumnIndex] => AbstractDataVector

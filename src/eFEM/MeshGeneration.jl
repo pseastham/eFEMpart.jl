@@ -236,6 +236,18 @@ function Order1ToOrder2(xy,cm)
   return xyNew, cmNew
 end
 
+function deleteDuplicates!(mesh)
+  # transition data to arrays
+  xyold = NodesToArray(mesh.xy)
+  cmold = ElementsToArray(mesh.cm)
+
+  # delete duplicates and reassign cm
+  xynew,cmnew = deleteDuplicates(xyold,cmold)
+
+  # create new mesh out of this
+
+end
+
 # need to make function that replaces/deletes duplicate nodes
 # for the love of all that is holy, do not change anything in here. the indices
 # are a nightmare
