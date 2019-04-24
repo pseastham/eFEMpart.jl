@@ -63,54 +63,58 @@ function SandToPorosityGaussian(mesh,femCL,pList,rm,σ,wList)
 
   porosity = zeros(Float64,Nnodes)
 
+  tempArr1 = zeros(Float64,2)
+  tempArr2 = zeros(Float64,2)
   for j=1:Nparticles
-    SandToPorosityGaussianSingleParticle!(pList[j],mesh,rm,femCL,σ,porosity,wList)
+    SandToPorosityGaussianSingleParticle!(pList[j],mesh,rm,femCL,σ,porosity,wList,tempArr1,tempArr2)
   end
 
   return porosity
 end
 
-function SandToPorosityGaussianSingleParticle!(particle,mesh,rm,femCL,σ,porosity,wList)
-    H = 100.0
+# temp1 and temp2 are two temporary arrays
+function SandToPorosityGaussianSingleParticle!(particle,mesh,rm,femCL,σ,porosity,wList,tempArr1,tempArr2)
+    H = 100.0           # THIS H SHOULD REALLY DEPEND ON RM
     Ncells = length(femCL)
-    pcc = 0             # cell index containing particle
+    pcc = 0             # cell index containing particle -- 0 means nothing found
     ϵ  = 1.0
     AreaOfParticle = pi*(0.5*rm)^2
 
     # find cell containing particle
     for i=1:Ncells
-        rect = femCL[i].square
-        point = [particle.xpos,particle.ypos]
-        if isInsideRect(rect,point)
+        tempArr1[1] = particle.xpos
+        tempArr1[2] = particle.ypos
+        if isInsideRect(femCL[i].square,tempArr1)
             pcc = i
             break
         end
     end
 
+    # computes gaussian at all 'close' FEM meshes
     # makes sure particle is within some cell
     if pcc != 0
         # array of neighbors & itself particle cell
         nbs = vcat(pcc,femCL[pcc].NeighborList)
+        println(length(nbs))
 
         # find particles in all relevant cells
-        pclose = Array{Int,1}(undef,0)
+        pclose = Array{Int,1}(undef,0)                              # new array assignment is expensive -- could you just create 8-length array?
         for i=1:length(nbs)
             ncl = length(femCL[nbs[i]].ParticleList)
             if ncl > 0
                 for j=1:ncl
-                    push!(pclose,femCL[nbs[i]].ParticleList[j])
+                    push!(pclose,femCL[nbs[i]].ParticleList[j])     # this is expensive
                 end
             end
         end
 
         # compute gaussian distance and circle area approx for particle
         for j in pclose
-            p1 = [particle.xpos,particle.ypos]
-            q1 = [mesh.xy[j].x,mesh.xy[j].y]
-            # check that path doens't intersect wall
-            if noIntersectingWall(p1,q1,wList)
-                Δx = p1[1] - q1[1]
-                Δy = p1[2] - q1[2] #particle.ypos - mesh.xy[j].y
+            tempArr2[1] = mesh.xy[j].x; tempArr2[2] = mesh.xy[j].y
+            # check that path doesn't intersect wall
+            if noIntersectingWall(tempArr1,tempArr2,wList)
+                Δx = tempArr1[1] - tempArr2[1]
+                Δy = tempArr1[2] - tempArr2[2]
                 r = sqrt(Δx^2 + Δy^2)
                 porosity[j] += GaussEval(r,σ,H)*AreaOfParticle
             end
