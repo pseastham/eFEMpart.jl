@@ -138,6 +138,9 @@ export NearestPoint,
 export UpdateParticle_all!,
        UpdateParticle_novelocity!
 
+# fgt.jl
+export interpFGT!
+
 # ======================================================
 # FILES TO LOAD
 # ======================================================
@@ -179,5 +182,6 @@ include("part/Porosity.jl")
 include("part/ParticleForces.jl")
 include("part/WallRepulsion.jl")
 include("part/UpdateParticles.jl")
+include("part/fgt.jl")
 
 end # module eFEMpart
