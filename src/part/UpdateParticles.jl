@@ -28,8 +28,7 @@ function UpdateParticle_all!(particle,j::Int,pList,wList,cl,rm::Float64,
     # ===========================================
     # 3. Compute Cohesion Force using Cell Lists
     # ===========================================
-    #FxC,FyC = CohesionForceCL(particle,j,pList,ϵp,rm,cl)
-    FxC,FyC = 0.0,0.0
+    FxC,FyC = CohesionForceCL(particle,j,pList,ϵp,rm,cl)
 
     # ===========================================
     # 4. Compute Wall Force
@@ -47,9 +46,12 @@ function UpdateParticle_all!(particle,j::Int,pList,wList,cl,rm::Float64,
     # Sum all forces together
     # ========================
     # need to interpolate the porosity/permeability
-    # κ = permeability
-    # n = porosity
-    # gammas = specific weight
+    #κ = permeability
+    κ = 1.0
+    #n = porosity
+    n = 1.0
+    #gammas = specific weight
+    gammas = 1.0
     partVelx = κ*(FxG + FxC + FxW + n*gammas*fluidVel[1]/κ)/(n*gammas)
     partVely = κ*(FyG + FyC + FyW + n*gammas*fluidVel[2]/κ)/(n*gammas)
 
