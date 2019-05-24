@@ -11,13 +11,10 @@ mutable struct FluidSolution <: AbstractSolution
   u::Vector{Float64}
   v::Vector{Float64}
   p::Vector{Float64}
-  vName::String
-  pName::String
 end
 
 mutable struct ScalarSolution <: AbstractSolution
   u::Vector{Float64}
-  name::String
 end
 
 #####################################
@@ -46,8 +43,3 @@ function LinearOperator(mesh::FluidMesh,prob::AbstractProblem)
 
   return LinearOperator(Op,rhs)
 end
-
-###### Constructor for Solutions #####
-
-ScalarSolution(u::Vector{Float64}) = ScalarSolution(u,"no_name_given")
-FluidSolution(u,v,p) = FluidSolution(u,v,p,"velocity","pressure")

@@ -197,7 +197,7 @@ function LinearSolve(mesh::AbstractMesh,
     u = GaussElimSolve(LinOp)
     #u = cg(LinOp.Op,LinOp.rhs)
 
-  return ScalarSolution(u,prob.name)
+  return ScalarSolution(u)
 
   # DARCY 2D 
   elseif OpType == :Darcy2D
@@ -208,7 +208,7 @@ function LinearSolve(mesh::AbstractMesh,
   # ADVECTION-DIFFUSION 2D   
   elseif OpType == :AdvDiff2D || OpType == :AdvDiffAS
     u = GaussElimSolve(LinOp)
-  return ScalarSolution(u,prob.name)
+  return ScalarSolution(u)
 
   # STOKES 2D or BRINKMAN 2D or BRINKMAN MULTIPHASE 2D
   elseif ( OpType == :Stokes2D     || OpType == :Brinkman2D || 

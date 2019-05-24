@@ -1,9 +1,34 @@
-# Code to be loaded into eFEMpart
+# to be loaded into eFEMpart
+# Assembles global linear system from local element matrices
+# which are represented in functional form by 'localmat' argument
 
 ########################
 ###### Assembler #######
 ########################
 
+"""
+  assembleScalar(mesh,localmat,parameter)
+
+Assembles sparse matrix for scalar PDEs
+
+ASSUMPTIONS:
+- mesh is either Mesh or FluidMesh type
+- localmat is functional form of PDE for local element
+- parameter can be either number or array (variable coefficient problem)
+
+INPUT: 
+  mesh:       [AbstractMesh]
+                  mesh type that PDE is being solved on
+  localmat:   [Function]
+                  function dictating what PDE is being solved 
+  parameter:  [Real or Vector{Real}]
+                  parameter for PDE, can be either of type Real (constant coefficient 
+                    PDE) or Vector{Real} (variable coefficient PDE)
+
+OUTPUT:
+  -           [SparseArray]
+                  sparse array for linear system to be solved
+"""
 function assembleScalar(mesh,localmat,parameter)
   # derive parameters
   nNodes = length(mesh.xy)
@@ -45,6 +70,30 @@ function assembleScalar(mesh,localmat,parameter)
   return sparse(vec(I),vec(J),vec(S),nNodes,nNodes)
 end
 
+"""
+  assembleHalfFluid(mesh,localmat,parameter...)
+
+Assembles sparse matrix for Fluids with no cross-terms
+
+ASSUMPTIONS:
+- mesh is either Mesh or FluidMesh type
+- localmat is functional form of PDE for local element
+- parameter can be either number or array (variable coefficient problem),
+  also can be a tuple of parameters depending on expectation of localmat
+
+INPUT: 
+  mesh:       [AbstractMesh]
+                  mesh type that PDE is being solved on
+  localmat:   [Function]
+                  function dictating what PDE is being solved 
+  parameter:  [Real or Vector{Real}]
+                  parameter for PDE, can be either of type Real (constant coefficient 
+                    PDE) or Vector{Real} (variable coefficient PDE)
+
+OUTPUT:
+  -           [SparseArray]
+                  sparse array for linear system to be solved
+"""
 function assembleHalfFluid(mesh,localmat,parameter...)
   nElm = length(mesh.cm)
   nUNodes = length(mesh.xy); nPNodes = length(mesh.xyp)
@@ -134,7 +183,11 @@ function assembleHalfFluid(mesh,localmat,parameter...)
 
   return sparse(I,J,S,2*nUNodes+nPNodes,2*nUNodes+nPNodes)
 end
-# actually not wrong....
+"""
+  assembleFullFluid_WRONG(mesh,localmat,parameter...)
+
+actually not wrong... ?????
+"""
 function assembleFullFluid_WRONG(mesh,localmat,parameter...)
   nElm = length(mesh.cm)
   nUNodes = length(mesh.xy); nPNodes = length(mesh.xyp)
@@ -228,6 +281,11 @@ function assembleFullFluid_WRONG(mesh,localmat,parameter...)
 
   return sparse(I,J,S,2*nUNodes+nPNodes,2*nUNodes+nPNodes)
 end
+"""
+  assembleFullFluid(mesh,localmat,parameter...)
+
+Assembles full 3x3 block matrix for fluid problems
+"""
 # Assembles full 3x3 block matrix for fluid problems
 function assembleFullFluid(mesh,localmat,parameter...)
   nElm = length(mesh.cm)
@@ -370,7 +428,12 @@ function assembleFullFluid(mesh,localmat,parameter...)
   #return sparse(I,J,S,2*nUNodes+nPNodes,2*nUNodes+nPNodes)
   return BigMat
 end
-# Assembles full 3x3 block matrix for fluid problems
+"""
+  assembleMPB(mesh,localmat,parameter...)
+
+Assembles full 3x3 block matrix for fluid problems. Not sure how it differs 
+  from the above.....
+"""
 function assembleMPB(mesh,localmat,parameter...)
   nElm = length(mesh.cm)
   nUNodes = length(mesh.xy); nPNodes = length(mesh.xyp)
@@ -459,7 +522,22 @@ function assembleMPB(mesh,localmat,parameter...)
 end
 
 """
-  Computes & assembles the weak form of some function farr
+WeakScalar2D(mesh,farr)
+
+Computes the weak form of some function farr using cartesian integral
+
+ASSUMPTIONS:
+- mesh is either Mesh or FluidMesh type
+
+INPUT: 
+  mesh:       [AbstractMesh]
+                  mesh type that PDE is being solved on
+  farr:       [Vector{Real}]
+                  forcing values at mesh nodes
+
+OUTPUT:
+  F           [Vector{Real}]
+                  RHS vector in form of RHS of linear Finite Element system
 """
 function WeakScalar2D(mesh,farr)
   Nnodes     = length(mesh.xy)
@@ -505,7 +583,25 @@ function WeakScalar2D(mesh,farr)
 end
 
 """
-  Computes the weak form of some function farr using axisymmetric integral
+  WeakScalarAS(mesh,farr)
+
+Computes the weak form of some function farr using axisymmetric integral
+
+ASSUMPTIONS:
+- mesh is either Mesh or FluidMesh type
+- axisymmetric coordinates are accounted for. 
+  Expects farr without modification by e.g. radial coordinate
+
+INPUT: 
+  mesh:       [AbstractMesh]
+                  mesh type that PDE is being solved on
+  farr:       [Vector{Real}]
+                  forcing values at mesh nodes
+
+OUTPUT:
+  F           [Vector{Real}]
+                  RHS vector in form of RHS of linear Finite Element system
+                    in axisymmetric coordinates
 """
 function WeakScalarAS(mesh,farr)
   Nnodes     = length(mesh.xy)

@@ -4,19 +4,18 @@
 ###### Boundary Types ######
 ############################
 
-abstract type AbstractProblem end
-abstract type AbstractTimeInfo end
+abstract type AbstractProblem  end
 abstract type BoundaryID       end
 abstract type BoundaryFunction end
 
 struct DirichletID <: BoundaryID id::Vector{Symbol} end
-struct NeumannID <: BoundaryID id::Vector{Symbol} end
-struct RobinID <: BoundaryID id::Vector{Symbol} end
+struct NeumannID   <: BoundaryID id::Vector{Symbol} end
+struct RobinID     <: BoundaryID id::Vector{Symbol} end
 
 struct DirichletFunction <: BoundaryFunction f::Function end
-struct NeumannFunction <: BoundaryFunction f::Function end
-struct RobinFunction <: BoundaryFunction f::Function end
-struct ForcingFunction <: BoundaryFunction f::Function end
+struct NeumannFunction   <: BoundaryFunction f::Function end
+struct RobinFunction     <: BoundaryFunction f::Function end
+struct ForcingFunction   <: BoundaryFunction f::Function end
 
 #### constructors ####
 
@@ -50,9 +49,9 @@ end
 
 #### Methods #####
 
-isDirichletID(x) = (typeof(x)==DirichletID ? true : false)
-isNeumannID(x)   = (typeof(x)==NeumannID   ? true : false)
-isRobinID(x)     = (typeof(x)==RobinID     ? true : false)
+isDirichletID(x)       = (typeof(x)==DirichletID       ? true : false)
+isNeumannID(x)         = (typeof(x)==NeumannID         ? true : false)
+isRobinID(x)           = (typeof(x)==RobinID           ? true : false)
 isDirichletFunction(x) = (typeof(x)==DirichletFunction ? true : false)
 isNeumannFunction(x)   = (typeof(x)==NeumannFunction   ? true : false)
 isRobinFunction(x)     = (typeof(x)==RobinFunction     ? true : false)
@@ -62,22 +61,7 @@ isForcingFunction(x)   = (typeof(x)==ForcingFunction   ? true : false)
 ###### Problem Types #######
 ############################
 
-###############################
-######## TimeInfo Types #######
-###############################
-
-struct TimeInfo <: AbstractTimeInfo
-  TimeDependent::Bool
-  tspan::Vector{Float64}
-end
-
-##### TimeInfo Constructors #####
-# if only given bool, assume it is false, and so tspan is automatically set
-TimeInfo(td::Bool) = TimeInfo(td,[0.0,0.0])
-
 mutable struct Problem <: AbstractProblem
-  name::String
-  tInfo::TimeInfo
   OperatorType::Symbol
   bcid::DictList{Int}
   bcval::DictList{Float64}
@@ -86,7 +70,7 @@ end
 ######  Constructors for Problem  ##########
 
 # Assumes that only 1 dNodes and nNodes and rNodes (maximally ...)
-function Problem(mesh::ScalarMesh,Nodes,bcfun,OpType,name,tinfo)
+function Problem(mesh::ScalarMesh,Nodes,bcfun,OpType)
   bcIDNodes::Vector{Vector{Int}} = []
   bcIDNamesSym::Vector{Symbol} = []
   bcValNodes::Vector{Vector{Float64}} = []
@@ -166,12 +150,7 @@ function Problem(mesh::ScalarMesh,Nodes,bcfun,OpType,name,tinfo)
   bcval  = DictList{Float64}(bcValNodes,bcValNames)
 
   # return FluidProblem object
-  return Problem(name,tinfo,OpType,bcid,bcval)
-end
-
-function Problem(mesh::ScalarMesh,Nodes,bcfun,name,OpType)
-  tinfo = TimeInfo(false)
-  return Problem(mesh,Nodes,bcfun,OpType,name,tinfo)
+  return Problem(OpType,bcid,bcval)
 end
 
 # assumes that dUNodes = dVNodes and anything that isn't dirichlet is neumann
@@ -262,11 +241,8 @@ function Problem(mesh::FluidMesh,Nodes,bcfun,OperatorType)
   bcValNames = Index(bcValNamesSym)
   bcval  = DictList{Float64}(bcValNodes,bcValNames)
 
-  name = "fluid"
-  tinfo = TimeInfo(false)
-
   # return Problem object
-  return Problem(name,tinfo,OperatorType,bcid,bcval)
+  return Problem(OperatorType,bcid,bcval)
 end
 
 ####### Problem Methods #######

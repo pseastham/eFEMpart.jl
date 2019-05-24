@@ -6,7 +6,6 @@ function laplace_example(p::Lap_Para)
   mesh = squareMesh([p.xmin,p.xmax,p.ymin,p.ymax],p.Nintervals,p.basisorder)
 
   # define variable name and operator type
-  varname      = ""
   OperatorType = :Poisson2D
 
   # Define auxiliary information
@@ -22,7 +21,7 @@ function laplace_example(p::Lap_Para)
   Nodes = [dNodes,nNodes]; bcfun = [dBCf,nBCf,ff]
 
   # define problem variable
-  prob = Problem(mesh,Nodes,bcfun,varname,OperatorType)
+  prob = Problem(mesh,Nodes,bcfun,OperatorType)
 
   # solve problem
   sol = solve(prob,mesh)

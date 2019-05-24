@@ -4,7 +4,11 @@
 ###### Bilinear Forms #######
 #############################
 
-# Mass Matrix
+"""
+  localMass2D!()
+
+Computes local mass matrix for 2D geometries, e.g. for use in discretized time derivative
+"""
 function localMass2D!(mesh,el,xN,yN,w,s,t,nGaussNodes,nNodesPerElm,
                        At,phi,dphidx,dphidy,dphids,dphidt,order,parameter...)
   # generate local stiffness matrices
@@ -25,7 +29,16 @@ function localMass2D!(mesh,el,xN,yN,w,s,t,nGaussNodes,nNodesPerElm,
   nothing
 end
 
-# Laplace2D (no parameter used)
+"""
+  localLaplace2D!()
+
+Computes local laplace matrix for 2D geometries. 
+
+ASSUMPTIONS:
+- doesn't use parameter! Assumes any parameter information is put into forcing function
+
+Should really be called poisson2D, but whatever
+"""
 function localLaplace2D!(mesh,el,xN,yN,w,s,t,nGaussNodes,nNodesPerElm,
                        At,phi,dphidx,dphidy,dphids,dphidt,order,param)
   # generate local stiffness matrices
@@ -46,7 +59,11 @@ function localLaplace2D!(mesh,el,xN,yN,w,s,t,nGaussNodes,nNodesPerElm,
   nothing
 end
 
-# Darcy Variable Parameter
+"""
+localDarcy2D!()
+
+Computes local Darcy matrix for 2D geometries. 
+"""
 function localDarcy2D!(mesh,el,xN,yN,w,s,t,nGaussNodes,nNodesPerElm,
   At,phi,dphidx,dphidy,dphids,dphidt,order,param::Vector{T}) where T<:Real
   αNodes = zeros(T,nGaussNodes)

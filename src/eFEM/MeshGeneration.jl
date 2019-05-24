@@ -1,6 +1,11 @@
 # File to be loaded into eFEMpart
 
-function meshgrid(vx::AbstractVector{T}, vy::AbstractVector{T}) where T
+"""
+  meshgrid(vx::AbstractVector{T}, vy::AbstractVector{T}) where T<:Real
+
+Replicates matlab function for generating structured meshes
+"""
+function meshgrid(vx::AbstractVector{T}, vy::AbstractVector{T}) where T<:Real
 	m, n = length(vy), length(vx)
   vx = reshape(vx, 1, n)
   vy = reshape(vy, m, 1)
@@ -9,7 +14,7 @@ function meshgrid(vx::AbstractVector{T}, vy::AbstractVector{T}) where T
 end
 
 # square [x0, x1, y0, y1]
-function squareMesh(square,N,order)
+function squareMesh(square::Vector{T},N::Int,order::Int) where T<:Real
   x = range(square[1],stop=square[2],length=N)
   y = range(square[3],stop=square[4],length=N)
 
