@@ -95,7 +95,6 @@ function SandToPorosityGaussianSingleParticle!(particle,mesh,rm,femCL,σ,porosit
     if pcc != 0
         # array of neighbors & itself particle cell
         nbs = vcat(pcc,femCL[pcc].NeighborList)
-        println(length(nbs))
 
         # find particles in all relevant cells
         pclose = Array{Int,1}(undef,0)                              # new array assignment is expensive -- could you just create 8-length array?
