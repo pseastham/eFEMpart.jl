@@ -1,5 +1,7 @@
 # solver file to be loaded into eFEMpart
 
+using IterativeSolvers, Preconditioners, LinearMaps
+
 ################################
 ###### General Framework #######
 ################################
@@ -235,9 +237,9 @@ Computes and decomposes the array-solution U into vector velocity [u,v] and scal
 """
 function fluidSolve(mesh::FluidMesh,prob::Problem,
                     LinOp::AbstractLinearOperator;PRINT=false)
-  soln = lu(LinOp.Op)\LinOp.rhs
-  #soln = zeros(Float64,length(LinOp.rhs))
-  #gmres!(soln,LinOp.Op,LinOp.rhs)
+  precond = AMGPreconditioner{RugeStuben}(LinOp.Op)
+  soln = gmres(LinOp.Op, LinOp.rhs, restart=50, Pl=precond)
+  #soln = lu(LinOp.Op)\LinOp.rhs
 
   # decompose solution
   NumUnodes = length(mesh.xy)
