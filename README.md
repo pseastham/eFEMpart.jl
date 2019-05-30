@@ -1,8 +1,6 @@
 # eFEMpart
-Finite Element code in the [Julia language](https://julialang.org/) focused on fluid-dynamics applications, with possibility of including a particle simulator. This is in contrast to a previous "eFEM" package, which did not include the particle simulator code. 
-
-This repository allows the use of Finite Elements discretizations to solve
-common problems in fluid dynamics. 
+Finite Element code in the [Julia language](https://julialang.org/) focused on fluid-dynamics applications, with possibility of including a particle simulator. The 'eFEM' componenty allows the use of Finite Elements discretizations to solve
+common problems in fluid dynamics, and the 'part' refers to mesh-free particle methods primarily aimed at granular-media simulations where continuum constitutive laws are unavailable.
 
 # Installation
 
@@ -35,8 +33,8 @@ To add any of the above, follow the [instructions for installing packages](https
 # Meshes
 
 For simple geometries (rectangles...), you can use the built-in 
-geometry code but for more complicated geometries we suggest building your mesh with 
-an external library (such as [GMSH](http://gmsh.info/)).
+geometry code. For more complicated geometries we suggest building your mesh with 
+an external library (such as [GMSH](http://gmsh.info/)). See the [meshes wiki](https://github.com/pseastham/eFEMpart/wiki/Docs:-Meshes) for how this is used in practice.
 
 # Equations
 
