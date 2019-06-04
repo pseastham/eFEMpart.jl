@@ -10,14 +10,17 @@ using IterativeSolvers, Preconditioners, LinearMaps
 function solve(prob::Problem,mesh::S,param::T) where 
                 {S<:AbstractMesh,T<:AbstractParameter}
   # generate linear operator matrix
-  LinOp = GenerateSystem(mesh,prob,param)
+  println("linear system generation:")
+  @time(LinOp = GenerateSystem(mesh,prob,param))
 
   # Apply boundary conditions
-  ApplyBC!(LinOp,mesh,prob,param,prob.OperatorType)
+  println("apply boundary conditions: ")
+  @time(ApplyBC!(LinOp,mesh,prob,param,prob.OperatorType))
 
   # apply solver
-  sol = LinearSolve(mesh,LinOp,prob,param,prob.OperatorType)
-
+  stemp = @elapsed(sol = LinearSolve(mesh,LinOp,prob,param,prob.OperatorType))
+  println("total solve time (in solver)")
+  println("  ",stemp," seconds")
   return sol
 end
 
@@ -203,7 +206,12 @@ function LinearSolve(mesh::AbstractMesh,
 
   # DARCY 2D 
   elseif OpType == :Darcy2D
-    p = GaussElimSolve(LinOp)
+    # preconditioner=
+    pc = AMGPreconditioner{SmoothedAggregation}(LinOp.Op)
+
+    p = IterativeSolvers.cg(LinOp.Op, LinOp.rhs;verbose=false,Pl=pc)
+
+    #p = GaussElimSolve(LinOp)
     u,v = DarcyVelocity(mesh,param.α,p)
   return FluidSolution(u,v,p)
 
@@ -225,9 +233,9 @@ function LinearSolve(mesh::AbstractMesh,
 end
 
 function GaussElimSolve(LinOp::LinearOperator)
-U = LinOp.Op\LinOp.rhs
+  U = LinOp.Op\LinOp.rhs
 
-return U
+  return U
 end
 
 """
@@ -237,9 +245,9 @@ Computes and decomposes the array-solution U into vector velocity [u,v] and scal
 """
 function fluidSolve(mesh::FluidMesh,prob::Problem,
                     LinOp::AbstractLinearOperator;PRINT=false)
-  precond = AMGPreconditioner{RugeStuben}(LinOp.Op)
-  soln = gmres(LinOp.Op, LinOp.rhs, restart=50, Pl=precond)
-  #soln = lu(LinOp.Op)\LinOp.rhs
+  #precond = AMGPreconditioner{RugeStuben}(LinOp.Op)
+  #soln = gmres(LinOp.Op, LinOp.rhs, restart=50, Pl=precond)
+  soln = lu(LinOp.Op)\LinOp.rhs
 
   # decompose solution
   NumUnodes = length(mesh.xy)
