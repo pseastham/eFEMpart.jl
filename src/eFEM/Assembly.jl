@@ -69,6 +69,93 @@ function assembleScalar(mesh,localmat,parameter)
   # assemble global matrix
   return sparse(vec(I),vec(J),vec(S),nNodes,nNodes)
 end
+# implements dirichlet boundary condition information before neumann
+# and affects F simultaneously
+# as per https://www.math.colostate.edu/~bangerth/videos.676.21.6.html
+function assembleScalarandRHS_2b(mesh,localmat,parameter,prob)
+  # derive parameters
+  nNodes = length(mesh.xy)
+  nElm   = length(mesh.cm)
+  (mesh.order==:Linear ? order=1 : order=2)
+  (order==1 ? nNodesPerElm=4 : nNodesPerElm=9)
+  nGaussNodes = nNodesPerElm  # possibly not true for axisymmetric quadrature
+
+  #tempArr = Array{Float64}(nNodesPerElm)
+  xN      = Array{Float64}(undef,nNodesPerElm)
+  yN      = Array{Float64}(undef,nNodesPerElm)
+  phi     = Array{Float64}(undef,nNodesPerElm)
+  dphidx  = Array{Float64}(undef,nNodesPerElm)
+  dphidy  = Array{Float64}(undef,nNodesPerElm)
+  dphids  = Array{Float64}(undef,nNodesPerElm)
+  dphidt  = Array{Float64}(undef,nNodesPerElm)
+
+  At  = Array{Float64}(undef,nNodesPerElm,nNodesPerElm)
+
+  # indice arrays preallocation
+  I = Array{Int64}(undef,nElm,nNodesPerElm,nNodesPerElm)
+  J = Array{Int64}(undef,nElm,nNodesPerElm,nNodesPerElm)
+  S = Array{Float64}(undef,nElm,nNodesPerElm,nNodesPerElm)
+
+  # forcing array preallocation
+  F = zeros(Float64,nNodes)
+
+  # for indexing how many times boundary is accessed
+  bcCOUNT = zeros(Float64,length(prob.bcid[:dNodes]))
+
+  # compute phi,dphids,dphidt
+  w,s,t = GaussQuadPoints2D(order+1)
+
+  # construct local matrices
+  # HERE IS WHERE YOU IMPLEMENT BOUNDARY DATA
+  for el = 1:nElm
+    localmat(mesh,el,xN,yN,w,s,t,nGaussNodes,nNodesPerElm,
+             At,phi,dphidx,dphidy,dphids,dphidt,order,parameter)
+    # local assembly -- nothing changes
+    for ti = 1:nNodesPerElm, tj = 1:nNodesPerElm
+      I[el,ti,tj] = mesh.cm[el].NodeList[ti]
+      J[el,ti,tj] = mesh.cm[el].NodeList[tj]
+      S[el,ti,tj] = At[ti,tj]
+    end
+
+    # local F assembly
+    c = mesh.cm[el].NodeList
+    for gpt=1:nNodesPerElm
+      phi,_,_,jac = derivShape2D(s[gpt],t[gpt],xN,yN,order)
+	    for i=1:nNodesPerElm
+	      fcoefs      = prob.bcval[:forcing][mesh.cm[el].NodeList]
+	      fgpt        = shapeEval(fcoefs,phi)
+	      F[mesh.cm[el].NodeList[i]] += fgpt*phi[i]*w[gpt]*jac
+	    end
+	  end
+
+    # check for boundary data & modify local stiffness and forcing arrays accordingly
+    for ti=1:nNodesPerElm
+      if mesh.cm[el].NodeList[ti] in prob.bcid[:dNodes]
+        #find index of bcid
+        bcIND = findfirst(x->x==mesh.cm[el].NodeList[ti], prob.bcid[:dNodes])
+        bcCOUNT[bcIND] += 1
+
+        # subtract matvec from F
+        for tj=1:nNodesPerElm
+          F[mesh.cm[el].NodeList[tj]] -= S[el,tj,ti]*prob.bcval[:dBC][bcIND]
+          S[el,tj,ti] = 0.0
+          S[el,ti,tj] = 0.0
+        end
+
+        # place 1 in diagonal of local stiffness
+        S[el,ti,ti] = 1.0
+
+        # replace Frocing with dirichlet value
+        F[mesh.cm[el].NodeList[ti]] = prob.bcval[:dBC][bcIND]
+      end
+    end
+  end
+
+  F[prob.bcid[:dNodes]] .*= bcCOUNT
+
+  # assemble global matrix
+  return sparse(vec(I),vec(J),vec(S),nNodes,nNodes), F
+end
 
 """
   assembleHalfFluid(mesh,localmat,parameter...)

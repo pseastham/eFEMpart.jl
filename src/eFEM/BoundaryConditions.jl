@@ -8,23 +8,19 @@ Applies Dirichlet boundary conditions for Scalar equation
 function scalarDirichlet!(dirichletNodes,dBCarr,Stiff,F)
   Nnodes  = length(F)
   dLength = length(dirichletNodes)
-  rvals = Stiff.rowval
 
   for i=1:dLength
     d = dirichletNodes[i]
 
     for j=1:Nnodes
-    #for j in rvals
+      #for j in rvals
       # adjust RHS with dirichlet BC
-	    F[j] -= Stiff[j,d]*dBCarr[i]
+      F[j] -= Stiff[j,d]*dBCarr[i]
 
-	    # zero out (dirichlet) BC locations
-	    Stiff[j,d] = 0.0
-	    Stiff[d,j] = 0.0
+      # zero out (dirichlet) BC locations
+      Stiff[j,d] = 0.0
+      Stiff[d,j] = 0.0
     end
-
-    #fill!(view(Stiff,:,d),0.0)
-    #fill!(view(Stiff,d,:),0.0)
 
     # identity in correct location
     Stiff[d,d] = 1.0

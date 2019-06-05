@@ -19,9 +19,34 @@ function solve(prob::Problem,mesh::S,param::T) where
 
   # apply solver
   stemp = @elapsed(sol = LinearSolve(mesh,LinOp,prob,param,prob.OperatorType))
-  println("total solve time (in solver)")
+  println("solver time:")
   println("  ",stemp," seconds")
   return sol
+end
+# using new boundary condition application during matrix assembly
+function solve_darcyvar_2b(prob,mesh,param)
+    LinOp = LinearOperator(mesh,prob)
+
+    # generate linear operator matrix & apply BC!
+    start = time()
+    LinOp.Op,LinOp.rhs = Darcy2DMatrix_2b(mesh,prob.bcval[:forcing],param,prob)
+    #println("linear system generation & bc apply (together):")
+    println("linear system generation & bc apply:")
+    println("  ",time() - start," seconds")
+
+    #start = time()
+    #ApplyBC!(LinOp,mesh,prob,param,prob.OperatorType)
+    #println("linear system generation & bc apply (together):")
+    #println("  ",time() - start," seconds")
+
+    # apply solver
+    start = time()
+    #stemp = @elapsed(sol = LinearSolve(mesh,LinOp,prob,param,prob.OperatorType))
+    sol = LinearSolve(mesh,LinOp,prob,param,prob.OperatorType)
+    println("solver time:")
+    println("  ",time() - start," seconds")
+
+    return sol
 end
 
 # solve function without parameter included (for :Poisson2D)

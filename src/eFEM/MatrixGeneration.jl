@@ -28,6 +28,12 @@ function Darcy2DMatrix(mesh,farr,param::T) where T<:AbstractVariableParameter
     F = WeakScalar2D(mesh,farr)
     return D,F 
 end
+function Darcy2DMatrix_2b(mesh,farr,param::T,prob) where T<:AbstractVariableParameter
+    D, F = assembleScalarandRHS_2b(mesh,localDarcy2D!,param.α,prob)
+
+    return D, F 
+end
+
 
 # ADVECTION-DIFFUSION 2D
 function AdvDiff2DMatrix(mesh,farr,param::T) where T<:AbstractConstantParameter
