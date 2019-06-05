@@ -239,6 +239,9 @@ function LinearSolve(mesh::AbstractMesh,
 
   # ADVECTION-DIFFUSION 2D   
   elseif OpType == :AdvDiff2D || OpType == :AdvDiffAS
+    #pc = DiagonalPreconditioner(LinOp.Op)
+
+    #u = gmres(LinOp.Op, LinOp.rhs;verbose=true,Pl=pc)
     u = GaussElimSolve(LinOp)
   return ScalarSolution(u)
 
