@@ -10,17 +10,14 @@ using IterativeSolvers, Preconditioners, LinearMaps
 function solve(prob::Problem,mesh::S,param::T) where 
                 {S<:AbstractMesh,T<:AbstractParameter}
   # generate linear operator matrix
-  println("linear system generation:")
-  @time(LinOp = GenerateSystem(mesh,prob,param))
+  LinOp = GenerateSystem(mesh,prob,param)
 
   # Apply boundary conditions
-  println("apply boundary conditions: ")
-  @time(ApplyBC!(LinOp,mesh,prob,param,prob.OperatorType))
+  ApplyBC!(LinOp,mesh,prob,param,prob.OperatorType)
 
   # apply solver
-  stemp = @elapsed(sol = LinearSolve(mesh,LinOp,prob,param,prob.OperatorType))
-  println("solver time:")
-  println("  ",stemp," seconds")
+  sol = LinearSolve(mesh,LinOp,prob,param,prob.OperatorType)
+
   return sol
 end
 # using new boundary condition application during matrix assembly
@@ -270,9 +267,14 @@ Computes and decomposes the array-solution U into vector velocity [u,v] and scal
 """
 function fluidSolve(mesh::FluidMesh,prob::Problem,
                     LinOp::AbstractLinearOperator;PRINT=false)
-  #precond = AMGPreconditioner{RugeStuben}(LinOp.Op)
-  #soln = gmres(LinOp.Op, LinOp.rhs, restart=50, Pl=precond)
-  soln = lu(LinOp.Op)\LinOp.rhs
+  # preconditioner
+  #pc = IterativeSolvers.Identity()
+  #pc   = Preconditioners.DiagonalPreconditioner(LinOp.Op)
+  #soln = IterativeSolvers.minres(LinOp.Op, LinOp.rhs;
+  #                              verbose=true)
+
+  soln = qr(LinOp.Op)\(LinOp.rhs)
+  #soln = lu(LinOp.Op)\(LinOp.rhs)
 
   # decompose solution
   NumUnodes = length(mesh.xy)
