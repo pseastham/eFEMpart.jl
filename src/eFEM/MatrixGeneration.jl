@@ -126,17 +126,30 @@ end
 
 # ADVECTION-DIFFUSION AXISYMMETRIC
 function AdvDiffASMatrix(mesh,farr,param::T) where T<:AbstractConstantParameter
-    D = assembleScalar(mesh,localLaplaceConstAS!,0.0)
-    A = assembleScalar(mesh,localAdvDiffAS!,param)
-    Stiff = A + param.κ*D
-    F = WeakScalarAS(mesh,farr)
+    # compute stiffness
+    D         = assembleScalar(mesh,localLaplaceConstAS!,0.0)
+    A         = assembleScalar(mesh,localAdvDiffAS!,param)
+    stiffSUPG = assembleScalar(mesh,localSUPGAS!,param)       # SUPG adjustment -- STILL NEEDS TO BE CODED
+
+    # compute RHS forcing
+    f     = WeakScalarAS(mesh,farr)
+    fSUPG = WeakSUPGAS(mesh,farr,param)                     # SUPG adjustment -- coded at end of file: Assembly.jl 
+
+    # combine all components
+    Stiff = A + param.κ*D + stiffSUPG
+    F = F + fSUPG                       
+
     return Stiff, F
 end
+# no SUPG implemented here
 function AdvDiffASMatrix(mesh,farr,param::T) where T<:AbstractVariableParameter
-    D = assembleScalar(mesh,localLaplaceVarAS!,param.κ)
-    A = assembleScalar(mesh,localAdvDiffAS!,param)
+    D         = assembleScalar(mesh,localLaplaceVarAS!,param.κ)
+    A         = assembleScalar(mesh,localAdvDiffAS!,param)
+
+    F     = WeakScalarAS(mesh,farr)
+
     Stiff = A + D
-    F = WeakScalarAS(mesh,farr)
+
     return Stiff, F
 end
 

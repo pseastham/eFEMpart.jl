@@ -733,3 +733,102 @@ function WeakScalarAS(mesh,farr)
 
   return F
 end
+
+# generates SUPG adjustment for axisymmetric cases
+# parameter is of type for advection-diffusion, includes velocity field
+# expects parameter to be a constant
+function WeakSUPGAS(mesh,farr,parameter::T) where T<:AbstractConstantParameter
+  Nnodes     = length(mesh.xy)
+  Nel        = length(mesh.cm)
+  NumElNodes = length(mesh.cm[1].NodeList)
+  F          = zeros(Nnodes)
+
+  # define 'wind'
+  U = parameter.u
+  V = parameter.v
+
+  gaussorder = 0
+  NumGaussNodes = 0
+  if mesh.order == :Linear
+    gaussorder = 2
+    NumGaussNodes = Int(gaussorder^2)
+  elseif mesh.order == :Quadratic
+    gaussorder = 3
+    NumGaussNodes = Int(gaussorder^2)
+  end
+
+  xNodes  = zeros(Float64,NumGaussNodes)
+  yNodes  = zeros(Float64,NumGaussNodes)
+  UNodes  = zeros(Float64,NumGaussNodes)
+  VNodes  = zeros(Float64,NumGaussNodes)
+  phi     = Array{Float64}(undef,NumElNodes)
+  dphidx  = Array{Float64}(undef,NumElNodes)
+  dphidy  = Array{Float64}(undef,NumElNodes)
+  dphids  = Array{Float64}(undef,NumElNodes)
+  dphidt  = Array{Float64}(undef,NumElNodes)
+
+
+  # Generate local F by elements
+  # generate basis values at gauss points
+  w,s,t = GaussQuadPoints2D(gaussorder)
+  for el=1:Nel
+    c = mesh.cm[el].NodeList
+    for i=1:NumGaussNodes
+      xNodes[i] = mesh.xy[mesh.cm[el].NodeList[i]].x
+      yNodes[i] = mesh.xy[mesh.cm[el].NodeList[i]].y
+      UNodes[i] = U[c[i]]
+      VNodes[i] = V[c[i]]
+    end
+
+    # compute h (max element length)
+    hk = sqrt(areaCalc(xNodes,yNodes))
+
+    # compute element Peclet number
+    wmag = 0.0
+    elPe = 0.0
+    if mesh.order == :Linear
+      uavg = sum(U[c])/4
+      vavg = sum(V[c])/4
+      wmag = sqrt(uavg^2 + vavg^2)
+  
+      elPe = 0.5*wmag*hk/parameter.κ
+    elseif mesh.order == :Quadratic
+      wmag = sqrt(U[c[9]]^2 + V[c[9]]^2)
+  
+      elPe = 0.5*wmag*hk/parameter.κ
+    else 
+      error("mesh.order not specified correctly")
+    end
+
+    # compute delta for SUPG
+    δ = 0.5*hk/wmag*(1.0 - 1.0/elPe)
+
+    for gpt=1:NumElNodes
+      shape2D!(phi,dphids,dphidt,s[gpt],t[gpt],gaussorder-1)
+      derivShape2D!(phi,dphidx,dphidy,dphids,dphidt,s[gpt],t[gpt],xNodes,yNodes,gaussorder-1)
+      ug  = shapeEval(UNodes,phi)
+      vg  = shapeEval(VNodes,phi)
+
+	    for i=1:NumElNodes
+	      fcoefs = farr[c]
+        fgpt   = shapeEval(fcoefs,phi)
+        yg     = shapeEval(yNodes,phi)
+	      F[mesh.cm[el].NodeList[i]] -= δ*fgpt*(ug*dphidx[i] + vg*dphidy[i])*w[gpt]*yg
+	    end
+	  end
+  end
+
+  return F
+end
+
+# given 4 nodes, computes area
+function areaCalc(xNodes,yNodes)
+  area1 = xNodes[1]*(yNodes[2] - yNodes[3]) + 
+          xNodes[2]*(yNodes[3] - yNodes[1]) + 
+          xNodes[3]*(yNodes[1] - yNodes[2])
+  area2 = xNodes[1]*(yNodes[4] - yNodes[3]) + 
+          xNodes[4]*(yNodes[3] - yNodes[1]) + 
+          xNodes[3]*(yNodes[1] - yNodes[4])
+
+  return 0.5*(abs(area1) + abs(area2))
+end
