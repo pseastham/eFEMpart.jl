@@ -813,7 +813,7 @@ function WeakSUPGAS(mesh,farr,parameter::T) where T<:AbstractConstantParameter
 	      fcoefs = farr[c]
         fgpt   = shapeEval(fcoefs,phi)
         yg     = shapeEval(yNodes,phi)
-	      F[mesh.cm[el].NodeList[i]] -= δ*fgpt*(ug*dphidx[i] + vg*dphidy[i])*w[gpt]*yg
+	      F[mesh.cm[el].NodeList[i]] += δ*fgpt*(ug*dphidx[i] + vg*dphidy[i])*w[gpt]*yg
 	    end
 	  end
   end

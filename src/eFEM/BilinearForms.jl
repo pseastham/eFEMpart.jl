@@ -772,6 +772,63 @@ function localAdvDiffAS!(mesh,el,xN,yN,w,s,t,nGaussNodes,nNodesPerElm,
   nothing
 end
 
+function localAdvDiffAS_SUPGmod!(mesh,el,xN,yN,w,s,t,nGaussNodes,nNodesPerElm,
+                                 At,phi,dphidx,dphidy,dphids,dphidt,order,parameter)
+  U = parameter.u
+  V = parameter.v
+
+  UNodes = zeros(Float64,nGaussNodes)
+  VNodes = zeros(Float64,nGaussNodes)
+
+  # generate local stiffness matrices
+  getNodes!(xN,yN,mesh,el,nGaussNodes)
+  fill!(At,zero(Float64))
+
+  for i=1:nGaussNodes
+    UNodes[i] = U[mesh.cm[el].NodeList[i]]
+    VNodes[i] = V[mesh.cm[el].NodeList[i]]
+  end
+
+  # compute h (max element length)
+  hk = sqrt(areaCalc(xN,yN))
+
+  # compute element Peclet number
+  wmag = 0.0
+  elPe = 0.0
+  if mesh.order == :Linear
+    uavg = sum(UNodes)/4
+    vavg = sum(VNodes)/4
+    wmag = sqrt(uavg^2 + vavg^2)
+
+    elPe = 0.5*wmag*hk/parameter.κ
+  elseif mesh.order == :Quadratic
+    wmag = sqrt(UNodes[9]^2 + VNodes[9]^2)
+
+    elPe = 0.5*wmag*hk/parameter.κ
+  else 
+    error("mesh.order not specified correctly")
+  end
+
+  # compute delta for SUPG
+  δ = 0.5*hk/wmag*(1.0 - 1.0/elPe)
+
+  for gpt=1:nGaussNodes
+    shape2D!(phi,dphids,dphidt,s[gpt],t[gpt],order)
+    derivShape2D!(phi,dphidx,dphidy,dphids,dphidt,s[gpt],t[gpt],xN,yN,order)
+    jac = jacCalc(xN,yN,dphids,dphidt)
+    ug  = shapeEval(UNodes,phi)
+    vg  = shapeEval(VNodes,phi)
+    yg  = shapeEval(yN,phi)
+
+    for ti = 1:nNodesPerElm, tj = 1:nNodesPerElm
+      integrand = δ*(ug*dphidx[tj] + vg*dphidy[tj])*(ug*dphidx[ti] + vg*dphidy[ti])
+      At[ti,tj] += integrand*w[gpt]*yg
+    end
+  end
+
+  nothing
+end
+
 function localStokesConstAS!(mesh,el,xN,yN,w,s,t,Axt,Ayt,Bxt,Byt,
                              phi,dphidx,dphidy,dphids,dphidt,
                              psi,dpsidx,dpsidy,dpsids,dpsidt,
@@ -954,4 +1011,16 @@ function getNodes!(xNodes,yNodes,mesh,el,nGaussNodes)
     xNodes[i] = mesh.xy[mesh.cm[el].NodeList[i]].x
     yNodes[i] = mesh.xy[mesh.cm[el].NodeList[i]].y
   end
+end
+
+# given 4 nodes, computes area
+function areaCalc(xNodes,yNodes)
+  area1 = xNodes[1]*(yNodes[2] - yNodes[3]) + 
+          xNodes[2]*(yNodes[3] - yNodes[1]) + 
+          xNodes[3]*(yNodes[1] - yNodes[2])
+  area2 = xNodes[1]*(yNodes[4] - yNodes[3]) + 
+          xNodes[4]*(yNodes[3] - yNodes[1]) + 
+          xNodes[3]*(yNodes[1] - yNodes[4])
+
+  return 0.5*(abs(area1) + abs(area2))
 end

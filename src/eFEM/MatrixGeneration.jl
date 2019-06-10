@@ -124,20 +124,22 @@ function BrinkmanMP2DMatrix(mesh::FluidMesh,prob,param::T) where T<:AbstractVari
 	return Stiff, F
 end
 
-# ADVECTION-DIFFUSION AXISYMMETRIC
+# ADVECTION-DIFFUSION AXISYMMETRIC -- this one is used
 function AdvDiffASMatrix(mesh,farr,param::T) where T<:AbstractConstantParameter
     # compute stiffness
     D         = assembleScalar(mesh,localLaplaceConstAS!,0.0)
     A         = assembleScalar(mesh,localAdvDiffAS!,param)
-    stiffSUPG = assembleScalar(mesh,localSUPGAS!,param)       # SUPG adjustment -- STILL NEEDS TO BE CODED
+    #SUPGmod   = assembleScalar(mesh,localAdvDiffAS_SUPGmod!,param)       # SUPG adjustment -- coded in file: Bilinear.jl
 
     # compute RHS forcing
     f     = WeakScalarAS(mesh,farr)
-    fSUPG = WeakSUPGAS(mesh,farr,param)                     # SUPG adjustment -- coded at end of file: Assembly.jl 
+    #fSUPG = WeakSUPGAS(mesh,farr,param)                     # SUPG adjustment -- coded at end of file: Assembly.jl 
 
     # combine all components
-    Stiff = A + param.κ*D + stiffSUPG
-    F = F + fSUPG                       
+    Stiff = A + param.κ*D
+    F = f
+    #Stiff = A + param.κ*D + stiffSUPG
+    #F = F + fSUPG                       
 
     return Stiff, F
 end
