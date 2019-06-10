@@ -35,12 +35,18 @@ function Darcy2DMatrix_2b(mesh,farr,param::T,prob) where T<:AbstractVariablePara
 end
 
 
-# ADVECTION-DIFFUSION 2D
+# ADVECTION-DIFFUSION 2D -- uses this one
 function AdvDiff2DMatrix(mesh,farr,param::T) where T<:AbstractConstantParameter
-    D = assembleScalar(mesh,localLaplace2D!,0.0)
-    A = assembleScalar(mesh,localAdvDiff2D!,param)
+    D       = assembleScalar(mesh,localLaplace2D!,0.0)
+    A       = assembleScalar(mesh,localAdvDiff2D!,param)
+    SUPGmod = assembleScalar(mesh,localAdvDiff2D_SUPGmod!,param)
+    
+    #Stiff = A + param.κ*D
+    f = WeakScalar2D(mesh,farr)
+    fmod = WeakSUPG2D(mesh,farr,param)
+
     Stiff = A + param.κ*D
-    F = WeakScalar2D(mesh,farr)
+    F = f + fmod
     return Stiff, F
 end
 function AdvDiff2DMatrix(mesh,farr,param::T) where T<:AbstractVariableParameter
@@ -127,19 +133,17 @@ end
 # ADVECTION-DIFFUSION AXISYMMETRIC -- this one is used
 function AdvDiffASMatrix(mesh,farr,param::T) where T<:AbstractConstantParameter
     # compute stiffness
-    D         = assembleScalar(mesh,localLaplaceConstAS!,0.0)
-    A         = assembleScalar(mesh,localAdvDiffAS!,param)
-    #SUPGmod   = assembleScalar(mesh,localAdvDiffAS_SUPGmod!,param)       # SUPG adjustment -- coded in file: Bilinear.jl
+    D       = assembleScalar(mesh,localLaplaceConstAS!,0.0)
+    A       = assembleScalar(mesh,localAdvDiffAS!,param)
+    SUPGmod = assembleScalar(mesh,localAdvDiffAS_SUPGmod!,param)       # SUPG adjustment -- coded in file: Bilinear.jl
 
     # compute RHS forcing
     f     = WeakScalarAS(mesh,farr)
-    #fSUPG = WeakSUPGAS(mesh,farr,param)                     # SUPG adjustment -- coded at end of file: Assembly.jl 
+    fSUPG = WeakSUPGAS(mesh,farr,param)                     # SUPG adjustment -- coded at end of file: Assembly.jl 
 
     # combine all components
-    Stiff = A + param.κ*D
-    F = f
-    #Stiff = A + param.κ*D + stiffSUPG
-    #F = F + fSUPG                       
+    Stiff = A + param.κ*D + SUPGmod
+    F     = f + fSUPG                       
 
     return Stiff, F
 end

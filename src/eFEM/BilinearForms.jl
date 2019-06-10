@@ -120,6 +120,62 @@ function localAdvDiff2D!(mesh,el,xN,yN,w,s,t,nGaussNodes,nNodesPerElm,
   nothing
 end
 
+# 2D SUPG stablization term for 2D Advection-diffusion equation
+function localAdvDiff2D_SUPGmod!(mesh,el,xN,yN,w,s,t,nGaussNodes,nNodesPerElm,
+                                 At,phi,dphidx,dphidy,dphids,dphidt,order,parameter)
+  uNodes = zeros(Float64,nGaussNodes)
+  vNodes = zeros(Float64,nGaussNodes)
+
+  # generate local stiffness matrices
+  getNodes!(xN,yN,mesh,el,nGaussNodes)
+  fill!(At,zero(Float64))
+  for i=1:nNodesPerElm
+    uNodes[i] = parameter.u[mesh.cm[el].NodeList[i]]
+    vNodes[i] = parameter.v[mesh.cm[el].NodeList[i]]
+  end
+
+  # compute h (max element length)
+  hk = sqrt(areaCalc(xN,yN))
+
+  # compute element Peclet number
+  wmag = 0.0
+  elPe = 0.0
+  if mesh.order == :Linear
+    uavg = sum(uNodes)/4
+    vavg = sum(vNodes)/4
+    wmag = sqrt(uavg^2 + vavg^2)
+
+    elPe = 0.5*wmag*hk/parameter.κ
+  elseif mesh.order == :Quadratic
+    wmag = sqrt(uNodes[9]^2 + vNodes[9]^2)
+
+    elPe = 0.5*wmag*hk/parameter.κ
+  else 
+    error("mesh.order not specified correctly")
+  end
+
+  # compute delta for SUPG
+  δ = 0.5*hk/wmag*(1.0 - 1.0/elPe)
+
+  if mesh.order == :Linear
+    for gpt=1:nGaussNodes
+      shape2D!(phi,dphids,dphidt,s[gpt],t[gpt],order)
+      derivShape2D!(phi,dphidx,dphidy,dphids,dphidt,s[gpt],t[gpt],xN,yN,order)
+      jac = jacCalc(xN,yN,dphids,dphidt)
+      ug  = shapeEval(uNodes,phi)
+      vg  = shapeEval(vNodes,phi)
+
+      for tj = 1:nNodesPerElm, ti = 1:nNodesPerElm
+        integrand =  δ*(ug*dphidx[tj] + vg*dphidy[tj])*(ug*dphidx[ti] + vg*dphidy[ti]) 
+        At[ti,tj] += integrand*w[gpt]
+      end
+    end
+  elseif mesh.order == :Quadratic
+
+  end
+  nothing
+end
+
 # Stokes Constant viscosity
 function localStokesConst2D!(mesh,el,xN,yN,w,s,t,Axt,Ayt,Bxt,Byt,
                         phi,dphidx,dphidy,dphids,dphidt,
@@ -812,19 +868,27 @@ function localAdvDiffAS_SUPGmod!(mesh,el,xN,yN,w,s,t,nGaussNodes,nNodesPerElm,
   # compute delta for SUPG
   δ = 0.5*hk/wmag*(1.0 - 1.0/elPe)
 
-  for gpt=1:nGaussNodes
-    shape2D!(phi,dphids,dphidt,s[gpt],t[gpt],order)
-    derivShape2D!(phi,dphidx,dphidy,dphids,dphidt,s[gpt],t[gpt],xN,yN,order)
-    jac = jacCalc(xN,yN,dphids,dphidt)
-    ug  = shapeEval(UNodes,phi)
-    vg  = shapeEval(VNodes,phi)
-    yg  = shapeEval(yN,phi)
+  if mesh.order == :Linear
+    for gpt=1:nGaussNodes
+      shape2D!(phi,dphids,dphidt,s[gpt],t[gpt],order)
+      derivShape2D!(phi,dphidx,dphidy,dphids,dphidt,s[gpt],t[gpt],xN,yN,order)
+      jac = jacCalc(xN,yN,dphids,dphidt)
+      ug  = shapeEval(UNodes,phi)
+      vg  = shapeEval(VNodes,phi)
+      yg  = shapeEval(yN,phi)
 
-    for ti = 1:nNodesPerElm, tj = 1:nNodesPerElm
-      integrand = δ*(ug*dphidx[tj] + vg*dphidy[tj])*(ug*dphidx[ti] + vg*dphidy[ti])
-      At[ti,tj] += integrand*w[gpt]*yg
+      for ti = 1:nNodesPerElm, tj = 1:nNodesPerElm
+        integrand = δ*(ug*dphidx[tj] + vg*dphidy[tj])*(ug*dphidx[ti] + vg*dphidy[ti]) -
+                    parameter.κ*δ*(dphidy[tj]/yg)*(ug*dphidx[ti] + vg*dphidy[ti])         # might need to switch ti & tj
+        At[ti,tj] += integrand*w[gpt]*yg
+      end
     end
-  end
+
+  elseif mesh.order == :Quadratic
+    
+  else
+    error("mesh.order not specified correctly")
+end
 
   nothing
 end
