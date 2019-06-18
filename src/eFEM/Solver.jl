@@ -276,8 +276,9 @@ function fluidSolve(mesh::FluidMesh,prob::Problem,
   #soln = IterativeSolvers.minres(LinOp.Op, LinOp.rhs;
   #                              verbose=true)
 
-  soln = qr(LinOp.Op)\(LinOp.rhs)
-  #soln = lu(LinOp.Op)\(LinOp.rhs)
+  #soln = qr(LinOp.Op)\(LinOp.rhs)  # qr factorization does better on MMS
+  soln = lu(LinOp.Op)\(LinOp.rhs)   # lu factorization does better on external domains
+                                    # I HAVE NO IDEA WHY
 
   # decompose solution
   NumUnodes = length(mesh.xy)

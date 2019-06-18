@@ -44,6 +44,7 @@ export squareMesh,
        axisymMesh,
        axisymFluid,
        FluidMesh,
+       ScalarMesh,
        Mesh,
        meshgrid,
        ElementsToArray,
@@ -58,7 +59,8 @@ export pointTransform,
 
 # Basis.jl
 export derivShape2D,
-       shapeEval
+       shapeEval,
+       GaussEdge
 
 # MatrixGeneration.jl
 export Mass2DMatrix
