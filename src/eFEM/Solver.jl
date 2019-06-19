@@ -1,6 +1,8 @@
 # solver file to be loaded into eFEMpart
 
-using IterativeSolvers, Preconditioners, LinearMaps
+using IterativeSolvers, Preconditioners#, LinearMaps
+#using KrylovMethods   # designed for sprarse matrices?
+#using AlgebraicMultigrid
 
 ################################
 ###### General Framework #######
@@ -263,6 +265,27 @@ function GaussElimSolve(LinOp::LinearOperator)
   return U
 end
 
+# annoying work-around b/c Julia's GMRES solver expects to be 
+# passed P, not P^{-1}, so I have to overload \ to actually mean
+# matvec multiplication with my new type
+# define structs
+struct MyLinOp{T}
+  invMat::LinearMaps.FunctionMap{T}
+end
+
+import LinearAlgebra.ldiv!
+import Base.\
+
+function ldiv!(y::AbstractArray{Float64}, A::MyLinOp, x::AbstractArray{Float64})
+  temp = A.invMat*collect(x)
+  for i=1:length(x)
+      y[i] = temp[i]
+  end
+  nothing
+end
+ldiv!(A::MyLinOp,x::AbstractArray{Float64}) = ldiv!(x,A,x)
+\(A::MyLinOp,x::AbstractArray{Float64}) = A.invMat*collect(x)
+
 """
   fluidSolve(xy,cm,nNodes,Stiff,F;PRINT=false) -> u,v,p
 
@@ -272,11 +295,15 @@ function fluidSolve(mesh::FluidMesh,prob::Problem,
                     LinOp::AbstractLinearOperator;PRINT=false)
   # preconditioner
   #pc = IterativeSolvers.Identity()
-  #pc   = Preconditioners.DiagonalPreconditioner(LinOp.Op)
-  #soln = IterativeSolvers.minres(LinOp.Op, LinOp.rhs;
-  #                              verbose=true)
+  #N,_  = size(LinOp.Op) #fit_candidates
+  #ml = AlgebraicMultigrid.ruge_stuben(LinOp.Op)
+  #P  = AlgebraicMultigrid.aspreconditioner(ml)
+  #pc   = MyLinOp(Pmap)
+  #pc   = Preconditioners.AMGPreconditioner{SmoothedAggregation}(LinOp.Op)
+  #soln = IterativeSolvers.gmres(LinOp.Op, LinOp.rhs;maxiter=100,verbose=false,Pl=P)
 
   #soln = qr(LinOp.Op)\(LinOp.rhs)  # qr factorization does better on MMS
+  #rowNormalizePreconditioner!(LinOp)
   soln = lu(LinOp.Op)\(LinOp.rhs)   # lu factorization does better on external domains
                                     # I HAVE NO IDEA WHY
 
@@ -387,7 +414,7 @@ function rowNormalizePreconditioner!(LinOp)
       if rows[ti] in alreadyDone
 
       else
-        normval = norm(LinOp.Op[rows[ti],:])
+        normval = maximum(LinOp.Op[rows[ti],:])
         
         # normalize Matrix
         LinOp.Op[rows[ti],:] ./= normval
