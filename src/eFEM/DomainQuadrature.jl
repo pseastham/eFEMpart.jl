@@ -7,15 +7,15 @@ mutable struct Point
     y::Float64
 end
 
-mutable struct Surface
+mutable struct mySurface
     P::Point
     Q::Point
 end
 
-function Surface(Parr::Vector{Float64},Qarr::Vector{Float64})
+function mySurface(Parr::Vector{Float64},Qarr::Vector{Float64})
   P = Point(Parr[1],Parr[2])
   Q = Point(Qarr[1],Qarr[2])
-  return Surface(P,Q)
+  return mySurface(P,Q)
 end
 
 """
@@ -66,7 +66,7 @@ end
   Computes N-discretized line integral of u on 'surface' (aka line) surf. 
   Quadrature uses trapezoid rule 
 """
-function SurfaceQuad(mesh::M,u::Vector{Float64},surf::Surface,N::Int) where 
+function SurfaceQuad(mesh::M,u::Vector{Float64},surf::mySurface,N::Int) where 
                     {M<:AbstractMesh}
   (mesh.order==:Linear ? order=1 : order=2)
   (order==1 ? nGpt=2 : nGpt=3)
@@ -104,7 +104,7 @@ function SurfaceQuad(mesh::M,u::Vector{Float64},surf::Surface,N::Int) where
   # return quad
   return quad
 end
-function SurfaceQuad(mesh::M,u::S,surf::Surface,N::Int) where 
+function SurfaceQuad(mesh::M,u::S,surf::mySurface,N::Int) where 
   {M<:AbstractMesh,S<:AbstractSolution}
   uarr = u.u
   return SurfaceQuad(mesh,uarr,surf,N) 
@@ -113,7 +113,7 @@ end
 """
   for some scalar field c, computes grad(c)*n across a surface
 """
-function SurfaceFlux(mesh::M,u::Vector{Float64},surf::Surface,Nquad::Int) where 
+function SurfaceFlux(mesh::M,u::Vector{Float64},surf::mySurface,Nquad::Int) where 
                     {M<:AbstractMesh}
   Npts = length(mesh.xy)
   Nel  = length(mesh.cm)
@@ -180,14 +180,14 @@ function SurfaceFlux(mesh::M,u::Vector{Float64},surf::Surface,Nquad::Int) where
   # return quad
   return quad
 end
-function SurfaceFlux(mesh::M,u::S,surf::Surface,N::Int) where 
+function SurfaceFlux(mesh::M,u::S,surf::mySurface,N::Int) where 
   {M<:AbstractMesh,S<:AbstractSolution}
   uarr = u.u
   return SurfaceFlux(mesh,uarr,surf,N) 
 end
 
 function VelocityFlux(mesh::M,u::Vector{Float64},v::Vector{Float64},
-                surf::Surface,N::Int) where {M<:AbstractMesh}
+                surf::mySurface,N::Int) where {M<:AbstractMesh}
   # compute normal
   nx,ny = ComputeNormal(surf.P,surf.Q)
 
@@ -215,7 +215,7 @@ end
 
   Interpolates the points defining a surface in 2D (aka a line) into N segments.
 """
-function Interp2Dline(surf::Surface,N::Int)
+function Interp2Dline(surf::mySurface,N::Int)
   vt = ComputeTangent(surf.P,surf.Q)
   vn = ComputeNormal(surf.P,surf.Q)
   

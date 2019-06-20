@@ -908,14 +908,15 @@ function WeakSUPGAS(mesh,farr,parameter::T) where T<:AbstractConstantParameter
   return F
 end
 
+# written in BilinearForms.jl
 # given 4 nodes, computes area
-function areaCalc(xNodes,yNodes)
-  area1 = xNodes[1]*(yNodes[2] - yNodes[3]) + 
-          xNodes[2]*(yNodes[3] - yNodes[1]) + 
-          xNodes[3]*(yNodes[1] - yNodes[2])
-  area2 = xNodes[1]*(yNodes[4] - yNodes[3]) + 
-          xNodes[4]*(yNodes[3] - yNodes[1]) + 
-          xNodes[3]*(yNodes[1] - yNodes[4])
-
-  return 0.5*(abs(area1) + abs(area2))
-end
+#function areaCalc(xNodes,yNodes)
+#  area1 = xNodes[1]*(yNodes[2] - yNodes[3]) + 
+#          xNodes[2]*(yNodes[3] - yNodes[1]) + 
+#          xNodes[3]*(yNodes[1] - yNodes[2])
+#  area2 = xNodes[1]*(yNodes[4] - yNodes[3]) + 
+#          xNodes[4]*(yNodes[3] - yNodes[1]) + 
+#          xNodes[3]*(yNodes[1] - yNodes[4])
+#
+#  return 0.5*(abs(area1) + abs(area2))
+#end

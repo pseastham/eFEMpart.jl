@@ -265,27 +265,6 @@ function GaussElimSolve(LinOp::LinearOperator)
   return U
 end
 
-# annoying work-around b/c Julia's GMRES solver expects to be 
-# passed P, not P^{-1}, so I have to overload \ to actually mean
-# matvec multiplication with my new type
-# define structs
-struct MyLinOp{T}
-  invMat::LinearMaps.FunctionMap{T}
-end
-
-import LinearAlgebra.ldiv!
-import Base.\
-
-function ldiv!(y::AbstractArray{Float64}, A::MyLinOp, x::AbstractArray{Float64})
-  temp = A.invMat*collect(x)
-  for i=1:length(x)
-      y[i] = temp[i]
-  end
-  nothing
-end
-ldiv!(A::MyLinOp,x::AbstractArray{Float64}) = ldiv!(x,A,x)
-\(A::MyLinOp,x::AbstractArray{Float64}) = A.invMat*collect(x)
-
 """
   fluidSolve(xy,cm,nNodes,Stiff,F;PRINT=false) -> u,v,p
 
