@@ -230,14 +230,18 @@ function LinearSolve(mesh::AbstractMesh,
 
   # DARCY 2D 
   elseif OpType == :Darcy2D
+    p = GaussElimSolve(LinOp)
+    
     # preconditioner=
-    pc = AMGPreconditioner{SmoothedAggregation}(LinOp.Op)
+    #pc = AMGPreconditioner{SmoothedAggregation}(LinOp.Op)
 
-    p = IterativeSolvers.cg(LinOp.Op, LinOp.rhs;verbose=false,Pl=pc)
+    #p = IterativeSolvers.cg(LinOp.Op, LinOp.rhs;verbose=false,Pl=pc)
 
     #p = GaussElimSolve(LinOp)
-    u,v = DarcyVelocity(mesh,param.α,p)
-  return FluidSolution(u,v,p)
+    #u,v = DarcyVelocity(mesh,param.α,p)
+  #return FluidSolution(u,v,p)
+  return ScalarSolution(p)
+  
 
   # ADVECTION-DIFFUSION 2D   
   elseif OpType == :AdvDiff2D || OpType == :AdvDiffAS
