@@ -1,6 +1,4 @@
-# Code to be loaded into eFEMpart
-
-# This file defines new types to be used in Sinkhole project
+# Defines new types to be used in particle simulations
 
 # ==============================================================================
 # TYPE DEFINITIONS

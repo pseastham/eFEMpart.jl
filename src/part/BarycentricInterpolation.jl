@@ -1,5 +1,5 @@
-using LinearAlgebra
-using BenchmarkTools
+# Computes barycentric weights, can be used for value interpolation
+# from finite element mesh
 
 #   defining quadratic function
 quadratic(a, sqr_term, b) = (-b + sqr_term) / 2a
@@ -208,18 +208,3 @@ function computeBaryWeights(x::Vector{T}, y::Vector{T}, p::Vector{T}) where T<:R
 
     return w
 end
-
-function main()
-    x = [0.0, 1.0, 0.8, 0.0]
-    y = [0.0, 0.0, 0.8, 0.4]
-    p = [0.8, 0.2]
-
-    w = computeBaryWeights(x, y, p)
-
-    @btime computeBaryWeights($x,$y,$p)
-
-    z = [0.0, 0.5, 1.0, 1.5]
-    zi = dot(z, w)
-end
-
-#main()

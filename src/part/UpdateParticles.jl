@@ -1,10 +1,8 @@
-# Code to be loaded into eFEMpart
-
 # File containing functions to update particle positions based on different forces
 
 # computes seepage velocities at particle positions
 include("SeepageForce.jl")   # itself calls CellLists.jl, isInside.jl, BarycentricInterpolation.jl
-include("CohesionForce.jl")
+include("CohesionForce.jl")  # itself calls CellLists.jl
 include("AdhesionForce.jl")  # itself calls CellLists.jl, SinkholeTypes.jl, CohesionForce.jl, isInside.jl
 
 # Uses:
