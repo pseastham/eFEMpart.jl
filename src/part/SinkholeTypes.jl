@@ -7,6 +7,11 @@
 # ==============================================================================
 abstract type AbstractWall end
 
+mutable struct Point2D
+    x::Float64
+    y::Float64
+end
+
 mutable struct LineWall <: AbstractWall
     nodes::Vector{Point}          # 2 points, defining start and end
     n::Vector{Float64}            # normal vector of wall
