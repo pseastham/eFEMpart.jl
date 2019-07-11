@@ -107,41 +107,26 @@ export GenerateTracers,
        TracerInfo,
        TracerLineSource
 
-# SinkholeTypes.jl
-#export AbstractWall,            # Abstract type that encapsulates all concrete wall types
-#       LineWall,                # mutable type for describing line walls
-#       CircleWall,              # mutable type for describing circle walls
-#       ArcWall,                 # mutable type for describing circle arc walls
-#       Particle,
-#       Point,                   # mutable type for points
-export ParticleList             # Initializes list of particles
+# -----
+# part
+# -----
 
 # CellLists.jl
-#export Cell,
-#       CellGenerate      # Generates cell lists from either a list
-                         #   of particles or a mesh
-
-# Porosity.jl
-#export SandToPorosityGaussian
-
-# ParticleForces.jl
-#export LennardJonesForce,
-#       LennardJonesPotential,
-#       LennardJonesPotentialMagnitude
-
-# WallRepulsion.jl 
-#export NearestPoint,
-#       isCloseEnough,
-#       GenerateQuadNodes,
-#       isInLine,
-#       WallTrapQuad
-
-# UpdateParticles.jl
-#export UpdateParticle_all!,
-#       UpdateParticle_novelocity!
+export femGenerateMap, 
+       generateCellList,
+       updateCellList!
 
 # fgt.jl
 export interpFGT!
+
+# ParticleTypes.jl
+export Point2D,
+       LineWall,
+       CircleWall,
+       ArcWall
+
+# UpdateParticles.jl
+export updateParticles_all!
 
 # ======================================================
 # FILES TO LOAD
@@ -177,12 +162,9 @@ include("eFEM/PostProcessing.jl")
 include("eFEM/TracerGenerate.jl")
 
 # Particles
-include("part/SinkholeTypes.jl")
-#include("part/CellLists.jl")
-#include("part/Porosity.jl")
-#include("part/ParticleForces.jl")
-#include("part/WallRepulsion.jl")
-#include("part/UpdateParticles.jl")
+include("part/CellLists.jl")
 include("part/fgt.jl")
+include("part/ParticleTypes.jl")
+include("part/UpdateParticles.jl")
 
 end # module eFEMpart

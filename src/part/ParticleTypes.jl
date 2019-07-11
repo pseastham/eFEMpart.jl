@@ -13,9 +13,9 @@ mutable struct Point2D
 end
 
 mutable struct LineWall <: AbstractWall
-    nodes::Vector{Point}          # 2 points, defining start and end
-    n::Vector{Float64}            # normal vector of wall
-    t::Vector{Float64}            # tangent vector of wall
+    nodes::Vector{Point2D}        # 2 points, defining start and end
+    n::Vector{Float64}            # normal unit vector of wall
+    t::Vector{Float64}            # tangent unit vector of wall
     orientation::Symbol           # can be :right, :left, or :both to determine 
 end                               #     on which side of the circle the domain
                                   #     of the problem is. Helpful when computing
@@ -24,7 +24,7 @@ end                               #     on which side of the circle the domain
                                   #     :left is opposite, and :both is both.
 
 mutable struct CircleWall <: AbstractWall
-    center::Point                 # point that defines center
+    center::Point2D               # point that defines center
     radius::Float64               # radius of circle
     orientation::Symbol           # can be :inward, :outward, or :both to determine 
 end                               #     on which side of the circle the domain
@@ -33,40 +33,23 @@ end                               #     on which side of the circle the domain
                                   #     of circle
 
 mutable struct ArcWall <: AbstractWall
-    nodes::Vector{Point}          # 3 nodes, 1) start, 2) center, and 3) end going CCW (counterclockwise)
+    nodes::Vector{Point2D}        # 3 nodes, 1) start, 2) center, and 3) end going CCW (counterclockwise)
     orientation::Symbol           # can be :inward, :outward, or :both to determine 
 end                               #     on which side of the circle the domain
                                   #     of the problem is. Helpful when computing
                                   #     interacting forces. :inward is towards center
                                   #     of circle
 
-# Abstract Type for particle
-mutable struct Particle
-    xpos::Float64
-    ypos::Float64
-end
-
-mutable struct Cell
-  ParticleList::Vector{Int}
-  square::Vector{Float64}
-  NeighborList::Vector{Int}
-end
-
 # ==============================================================================
 # INITIALIZATION DEFINITIONS
 # ==============================================================================
 
-# function used to define new particle lists,
-# especially useful when taking in tuples of random initial positions
-function ParticleList(IC::Vector{Tuple{Float64,Float64}})
-    N = length(IC)
-    plist = [Point2D(IC[i][1],IC[i][2]) for i=1:N]
-
-    return plist
-end
-
 # initializes new wall defined by 2 points (Start,End)
-function LineWall(nodes::Vector{Point},orientation::Symbol)
+function LineWall(nodes::Vector{Point2D},orientation::Symbol)
+    if length(nodes) != 2
+        throw(DimensionMismatch("line is defined by 2 points"))
+    end
+
     x0 = [nodes[1].x,nodes[2].x]
     x1 = [nodes[1].y,nodes[2].y]
 
@@ -85,19 +68,15 @@ function LineWall(nodes::Vector{Point},orientation::Symbol)
 
     return LineWall(nodes,n,t,orientation)
 end
-# allows for entering points by entering lines
-function LineWall(V::Vector{Vector{Float64}},orientation)
-    p1 = Point(V[1][1],V[1][2])
-    p2 = Point(V[2][1],V[2][2])
-    return LineWall([p1,p2],orientation)
-end
+## allows for entering points by entering lines
+#function LineWall(V::Vector{Vector{Float64}},orientation)
+#    p1 = Point(V[1][1],V[1][2])
+#    p2 = Point(V[2][1],V[2][2])
+#    return LineWall([p1,p2],orientation)
+#end
 # default orientation is :both
 LineWall(vORpoint) = LineWall(vORpoint,:both)
 
-function CircleWall(V::Vector{Float64},r::Float64,orientation::Symbol)
-    p = Point(V[1],V[2])
-    return CircleWall(p,r,orientation)
-end
 # Default orientation is :both
 CircleWall(V,r) = CircleWall(V,r,:both)
 
@@ -118,3 +97,4 @@ function ArcWall(V::Vector{Vector{Float64}},orientation::Symbol)
 end
 # Default Orientation is :both
 ArcWall(V) = ArcWall(V,:both)
+ArcWall(v1,v2,v3) = ArcWall([v1,v2,v3])
