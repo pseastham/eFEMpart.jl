@@ -55,7 +55,7 @@ end
 # especially useful when taking in tuples of random initial positions
 function ParticleList(IC::Vector{Tuple{Float64,Float64}})
     N = length(IC)
-    plist = [Particle(IC[i][1],IC[i][2]) for i=1:N]
+    plist = [Point2D(IC[i][1],IC[i][2]) for i=1:N]
 
     return plist
 end

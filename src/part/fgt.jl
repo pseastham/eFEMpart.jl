@@ -171,8 +171,8 @@ function interpFGT!(v::Array{Float64},pList,mesh,h::Float64,ε::Float64,
 
     # update source array
     for ti=1:N
-        x[2*ti-1] = pList[ti].xpos
-        x[2*ti]   = pList[ti].ypos
+        x[2*ti-1] = pList[ti].x
+        x[2*ti]   = pList[ti].y
     end
 
     # update target array -- really should only have to do this once! room for improvement

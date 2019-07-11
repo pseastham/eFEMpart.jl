@@ -152,8 +152,8 @@ function vtksave(pList::Vector,radius::Float64,fn::String,timeval::Float64)
   Nparticles = length(pList)
   xy = zeros(Float64,Nparticles,2)
   for i=1:Nparticles
-    xy[i,1] = pList[i].xpos
-    xy[i,2] = pList[i].ypos
+    xy[i,1] = pList[i].x
+    xy[i,2] = pList[i].y
   end
 
   PARTICLES_TO_VTK(xy,radius,fn;time=timeval)
