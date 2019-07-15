@@ -83,18 +83,20 @@ function updateCellList_SMART!_TEST()
   nothing
 end
 
-function FEMgenerateMap_TEST()
+function femGenerateMap_TEST()
   # generate mesh
   Dom = [-1.0,1.0,-1.0,1.0]
-  N    = 160
-  mesh = squareMesh(Dom,N,1)
+  N    = 64
+  mesh = squareMesh(Dom,N,2)
 
   L = 0.1
   totalBounds = [Dom[1]-L,Dom[2]+L,Dom[3]-L,Dom[4]+L]
 
   #@code_warntype FEMgenerateMap(mesh,totalBounds,L)
-  @btime FEMgenerateMap($mesh,$totalBounds,$L)
-  femCLmap = FEMgenerateMap(mesh,totalBounds,L)
+  @btime femGenerateMap($mesh,$totalBounds,$L)
+  femCLmap = femGenerateMap(mesh,totalBounds,L)
+
+  println(typeof(femCLmap))
 
   return femCLmap
 end

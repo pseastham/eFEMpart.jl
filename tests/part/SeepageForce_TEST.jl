@@ -1,12 +1,14 @@
 # define and test barycentric velocity interpolation
 
+using BenchmarkTools: @btime
+
 include("../../src/part/SeepageForce.jl")  # loads functions to be tested
 
 function interp_timing(N=5)
     # generate mesh
     Dom = [-1.0,1.0,-1.0,1.0]
     #N    = 5
-    mesh = squareMesh(Dom,N,1)
+    mesh = squareMesh(Dom,N,2)
 
     # generate u,v data
     u = zeros(length(mesh.xy))
@@ -35,10 +37,10 @@ function interp_timing(N=5)
 
     # call 
     #@code_warntype BarycentricVelocityInterp(mesh,u,v,p,polygon,extremeArr)
-    @btime BarycentricVelocityInterp($mesh,$u,$v,$p,$polygon,$extremeArr,$w,$uEl,$vEl,$a,$b,$c,$d)
+    #@btime BarycentricVelocityInterp($mesh,$u,$v,$p,$polygon,$extremeArr,$w,$uEl,$vEl,$a,$b,$c,$d)
     sVx,sVy = BarycentricVelocityInterp(mesh,u,v,p,polygon,extremeArr,w,uEl,vEl,a,b,c,d)
 
-    if false
+    if true
         println()
         println("expected u:    ",1-ypos^2)
         println("inteprolate u: ",sVx)
@@ -56,7 +58,7 @@ function interp_timing_withCL(N=5,L=0.1)
     # generate mesh
     Dom = [-1.0,1.0,-1.0,1.0]
     #N    = 5
-    mesh = squareMesh(Dom,N,1)
+    mesh = squareMesh(Dom,N,2)
 
     # generate u,v data
     u = zeros(length(mesh.xy))
@@ -66,19 +68,16 @@ function interp_timing_withCL(N=5,L=0.1)
     end
 
     # generate particle position
-    xpos=0.999; ypos=0.999
+    xpos=1.0; ypos=1.0
     p = Point2D(xpos,ypos)
 
     # generate node cell list with p
     nodeList = [p]
-    totalBounds = [-1.0-L,1.0+L,-1.0-L,1.0+L]
+    totalBounds = [-1.0,1.0,-1.0,1.0]
     particleCL = generateCellList(nodeList,totalBounds,L)
     
     # generate mesh cell list map
-    meshCLmap = FEMgenerateMap(mesh,totalBounds,L)
-
-    # print out FEM stats
-    #FEMstats(mesh)
+    meshCLmap = femGenerateMap(mesh,totalBounds,L)
 
     # initialize memory so that allocation isn't an issue
     polygon    = [Point2D(0.0,0.0),Point2D(0.0,0.0),Point2D(0.0,0.0),Point2D(0.0,0.0)]
@@ -95,8 +94,8 @@ function interp_timing_withCL(N=5,L=0.1)
 
     # call 
     #@code_warntype BarycentricVelocityInterp_CL!(mesh,u,v,nodeList,polygon,particleCL,meshCLmap,extremeArr,w,uEl,vEl,a,b,c,d,uInterp,vInterp)
-    @btime BarycentricVelocityInterp_CL!($mesh,$u,$v,$nodeList,$polygon,$particleCL,$meshCLmap,$extremeArr,$w,$uEl,$vEl,$a,$b,$c,$d,$uInterp,$vInterp)
-    BarycentricVelocityInterp_CL!(mesh,u,v,nodeList,polygon,particleCL,meshCLmap,extremeArr,w,uEl,vEl,a,b,c,d,uInterp,vInterp)
+    @btime BarycentricVelocityInterp_CL!($uInterp,$vInterp,$mesh,$u,$v,$nodeList,$polygon,$particleCL,$meshCLmap,$extremeArr,$w,$uEl,$vEl,$a,$b,$c,$d)
+    BarycentricVelocityInterp_CL!(uInterp,vInterp,mesh,u,v,nodeList,polygon,particleCL,meshCLmap,extremeArr,w,uEl,vEl,a,b,c,d)
 
     if false
         println()

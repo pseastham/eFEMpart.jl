@@ -30,20 +30,20 @@ end
 
 INPUT
 nodeList
-TotalBounds
+totalBounds
 L
 
 OUTPUT
 cl
 """
-function generateCellList(nodeList::Vector{Point2D},TotalBounds::Vector{Float64},L::Float64)
-  X0=TotalBounds[1]; X1=TotalBounds[2]; Y0=TotalBounds[3]; Y1=TotalBounds[4]
+function generateCellList(nodeList::Vector{Point2D},totalBounds::Vector{Float64},L::Float64)
+  X0=totalBounds[1]; X1=totalBounds[2]; Y0=totalBounds[3]; Y1=totalBounds[4]
   Nx = Int(ceil((X1 - X0)/L))
   Ny = Int(ceil((Y1 - Y0)/L))
   nNodes = length(nodeList)
 
   neighborMat = zeros(Int,8)
-  cl = CellList(Array{Cell}(undef,Nx*Ny),TotalBounds,L)
+  cl = CellList(Array{Cell}(undef,Nx*Ny),totalBounds,L)
 
   tempZeroArr = Array{Int}(undef,0)
 
@@ -185,6 +185,8 @@ end
 function femGenerateMap(mesh::M,totalBounds::Vector{Float64},L::Float64) where M#<:AbstractMesh
   Nnodes = length(mesh.xy)
 
+  numNodesPerElm = (mesh.order == :Linear ? 4 : 9)
+
   # generate particle List for FEM nodes
   nodeList = [Point2D(mesh.xy[i].x,mesh.xy[i].y) for i=1:Nnodes]
 
@@ -192,7 +194,7 @@ function femGenerateMap(mesh::M,totalBounds::Vector{Float64},L::Float64) where M
   femCLmap = Array{Array{Int}}(undef,length(tempCL.cells))
 
   # initialize element array
-  elementArray = Array{Int}(undef,4)
+  elementArray = Array{Int}(undef,numNodesPerElm)
 
   # convert all point indices to corresponding element indices
   for cellInd = 1:length(tempCL.cells)
@@ -205,7 +207,7 @@ function femGenerateMap(mesh::M,totalBounds::Vector{Float64},L::Float64) where M
       # map node index to element
       getElementFromNode!(elementArray,mesh,nodeInd)
 
-      for ti=1:4
+      for ti=1:numNodesPerElm
         if elementArray[ti] != 0
           push!(tempArr,elementArray[ti])
         end
@@ -224,7 +226,7 @@ end
 function isInsideRect(rect::Vector{Float64},point::Point2D)
   x0=rect[1]; x1=rect[2]; y0=rect[3]; y1=rect[4]
 
-  if point.x<x1 && point.x>=x0 && point.y<y1 && point.y>=y0
+  if point.x<=x1 && point.x>=x0 && point.y<=y1 && point.y>=y0
     return true
   else
     return false

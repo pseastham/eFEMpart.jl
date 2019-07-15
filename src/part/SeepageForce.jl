@@ -1,6 +1,8 @@
 # define and test barycentric velocity interpolation, to be used
 # for computing seepage force in particle simulations
 
+using LinearAlgebra: dot
+
 include("isInside.jl")
 include("CellLists.jl")
 include("BarycentricInterpolation.jl")
@@ -107,7 +109,7 @@ function BarycentricVelocityInterp_CL!(uInterp::Vector{Float64},vInterp::Vector{
             if !(foundNode)
                 uInterp[nodeInd],vInterp[nodeInd] = BarycentricVelocityInterp(mesh,u,v,nodeList[nodeInd],polygon,extremePoint,
                                                                                 w,uEl,vEl,a,b,c,d)
-                @warn "particle found in cell list -- must use brute-force velocity interpolation" maxlog=1
+                @warn "particle not found in cell list -- must use brute-force velocity interpolation" #maxlog=1
             end
         end
     end

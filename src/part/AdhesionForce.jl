@@ -56,7 +56,7 @@ end
 # checks whether node is close-enough to point (used to see if calculations necessary)
 # radius is radius of particle 'node'
 # k: number of times away from which quadrature should be considered
-function isCloseEnough(point::Point2D,node::Point2D,k::T,rc::T,radius::T) where T<:Real
+function isCloseEnough(point::Point2D,node::Point2D,k::Int,rc::T,radius::T) where T<:Real
     ℓ = sqrt((point.x-node.x)^2 + (point.y-node.y)^2)
 
     return  (ℓ < k*rc*2*radius ? true : false)
@@ -67,7 +67,7 @@ end
 # k: number of times away from which quadrature should be considered
 # N: number of quadrature nodes
 # xquad,yquad: quadrature nodes to be passed in to be computed
-function generateQuadNodes!(xquad::Vector{T},yquad::Vector{T},point::Point2D,wall::LineWall,k::T,particleRadius::T) where T<:Real
+function generateQuadNodes!(xquad::Vector{T},yquad::Vector{T},point::Point2D,wall::LineWall,k::Int,particleRadius::T) where T<:Real
     if length(xquad) != length(yquad)
         throw(DimensionMismatch("xquad and yquad must be same length"))
     end
@@ -88,7 +88,7 @@ function generateQuadNodes!(xquad::Vector{T},yquad::Vector{T},point::Point2D,wal
 
     nothing
 end
-function generateQuadNodes!(xquad::Vector{T},yquad::Vector{T},point::Point2D,wall::CircleWall,k::T,particleRadius::T) where T<:Real
+function generateQuadNodes!(xquad::Vector{T},yquad::Vector{T},point::Point2D,wall::CircleWall,k::Int,particleRadius::T) where T<:Real
     if length(xquad) != length(yquad)
         throw(DimensionMismatch("xquad and yquad must be same length"))
     end
@@ -109,7 +109,7 @@ function generateQuadNodes!(xquad::Vector{T},yquad::Vector{T},point::Point2D,wal
 
     nothing
 end
-function generateQuadNodes!(xquad::Vector{T},yquad::Vector{T},point::Point2D,wall::ArcWall,k::T,particleRadius::T) where T<:Real
+function generateQuadNodes!(xquad::Vector{T},yquad::Vector{T},point::Point2D,wall::ArcWall,k::Int,particleRadius::T) where T<:Real
     if length(xquad) != length(yquad)
         throw(DimensionMismatch("xquad and yquad must be same length"))
     end
@@ -305,7 +305,7 @@ end
 
 # Computes adhesion force for all particles against all possible walls
 function AdhesionForce!(afX::Vector{T},afY::Vector{T},pList::Vector{Point2D},rList::Vector{T},wList::Vector{W},
-                        k::T,rc::T,ϵ::T,pointOnWall::Point2D,xquad::Vector{T},yquad::Vector{T}) where {W<:AbstractWall, T<:Real}
+                        k::Int,rc::T,ϵ::T,pointOnWall::Point2D,xquad::Vector{T},yquad::Vector{T}) where {W<:AbstractWall, T<:Real}
     if length(afX) != length(afY)
         throw(DimensionMismatch("length of afX and afY must match!"))
     end

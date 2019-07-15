@@ -126,7 +126,7 @@ export Point2D,
        ArcWall
 
 # UpdateParticles.jl
-export updateParticles_all!
+export updateParticle_all!
 
 # ======================================================
 # FILES TO LOAD
