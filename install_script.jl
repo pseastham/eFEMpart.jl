@@ -5,16 +5,13 @@ using Pkg
 function install()
     checkIneFEMpart()
     intro()
-
     skipline()
-    
     checkOK()
-    
     skipline()
-    
     checkJuliaVersion()
     addStartupFile()
     addModules()
+    install_fgt()
     finished()
 end
 
@@ -45,14 +42,15 @@ end
 
 function checkOK()
     println("This install script does the following:")
-    println("   - adds eFEMpart packageto your Julia LOAD_PATH")
-    println("   - adds the following dependencies:")
+    println("   - Adds eFEMpart packageto your Julia LOAD_PATH")
+    println("   - Adds the following dependencies:")
     println("      + JLD")
     println("      + Plots")
     println("      + PyPlot")
     println("      + PyCall")
     println("      + LaTeXStrings")
     println("      + Parameters")
+    println("   - Downloads and installs figtree package")
 
     keepasking = true
     while keepasking
@@ -146,11 +144,44 @@ function addModules()
     Pkg.add("Parameters");
 end
 
+function install_fgt()
+    println("installing figtree...")
+    cd("src/figtree")
+    # download zip
+    downloadurl = "https://sourceforge.net/projects/figtree/files/latest/download"
+    run(`curl -OL $(downloadurl)`);
+ 
+    # unzip
+    run(`unzip download`);
+    #run(`unzip download && mv figtree download`)
+ 
+    # compile
+    run(`make -C figtree-0.9.3`);
+ 
+    # move relevant *.so file
+    run(`mv figtree-0.9.3/lib/libfigtree.so libfigree.so`)
+ 
+    # remove unnecessary package
+    run(`rm -r figtree-0.9.3/ download`)
+ 
+    # add *.so folder to library path
+    pwdir = pwd()
+    bsh = "$(homedir())/.bash_profile"
+    f=open(bsh,"a")
+    println(f,"export LD_LIBRARY_PATH=$(pwdir)") 
+    close(f)
+ 
+    # source .bash_profile
+    touch(bsh)
+
+    cd("../..")
+end
 function finished()
     skipline()
     println("All components installed correctly!")
     println("You can now use eFEMpart!")
 end
+
 
 install()
 
