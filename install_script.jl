@@ -9,9 +9,13 @@ function install()
     checkOK()
     skipline()
     checkJuliaVersion()
+    skipline()
     addStartupFile()
-    addModules()
+    skipline()
     install_fgt()
+    skipline()
+    addModules()
+    skipline()
     finished()
 end
 
@@ -43,6 +47,7 @@ end
 function checkOK()
     println("This install script does the following:")
     println("   - Adds eFEMpart packageto your Julia LOAD_PATH")
+    println("   - Downloads and installs figtree package")
     println("   - Adds the following dependencies:")
     println("      + JLD")
     println("      + Plots")
@@ -50,7 +55,6 @@ function checkOK()
     println("      + PyCall")
     println("      + LaTeXStrings")
     println("      + Parameters")
-    println("   - Downloads and installs figtree package")
 
     keepasking = true
     while keepasking
@@ -145,8 +149,9 @@ function addModules()
 end
 
 function install_fgt()
-    println("installing figtree...")
-    cd("src/figtree")
+    println("installing figtree...requires system owner permission")
+    run(`sudo mkdir -p src/part`)
+    cd("src/part")
     # download zip
     downloadurl = "https://sourceforge.net/projects/figtree/files/latest/download"
     run(`curl -OL $(downloadurl)`);
@@ -159,22 +164,35 @@ function install_fgt()
     run(`make -C figtree-0.9.3`);
  
     # move relevant *.so file
-    run(`mv figtree-0.9.3/lib/libfigtree.so libfigree.so`)
- 
+    run(`mv figtree-0.9.3/lib/libfigtree.so libfigtree.so`)
+    run(`mv figtree-0.9.3/lib/libann_figtree_version.so libann_figtree_version.so`)
+
     # remove unnecessary package
     run(`rm -r figtree-0.9.3/ download`)
  
     # add *.so folder to library path
-    pwdir = pwd()
-    bsh = "$(homedir())/.bash_profile"
-    f=open(bsh,"a")
-    println(f,"export LD_LIBRARY_PATH=$(pwdir)") 
-    close(f)
+    #pwdir = pwd()
+    #bsh = "$(homedir())/.bash_profile"
+    #f=open(bsh,"a")
+    #println(f,"export LD_LIBRARY_PATH=$(pwdir)") 
+    #close(f)
  
-    # source .bash_profile
-    touch(bsh)
+    # create file so systme recognizes *.so 
+    run(`sudo touch /etc/ld.so.conf.d/myLibs.conf`)
+    # give permission to edit
+    run(`sudo chmod 777 /etc/ld.so.conf.d/myLibs.conf`)
+    f=open("/etc/ld.so.conf.d/myLibs.conf","a")
+    println(f,pwd())
+    close(f)
+    # close permission to edit
+    run(`sudo chmod 400 /etc/ld.so.conf.d/myLibs.conf`)
+
+    # reload shared object paths (or something like that ?)
+    run(`sudo ldconfig`)
 
     cd("../..")
+
+    println("succesfully installed figtree!")
 end
 function finished()
     skipline()

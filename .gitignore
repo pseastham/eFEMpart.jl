@@ -3,6 +3,9 @@
 *.png
 *.jld
 
+// shared objects
+*.so 
+
 // specific files
 examples/solutions/*
 tests/pde-validation/*/data/*
