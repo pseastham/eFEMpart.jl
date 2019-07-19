@@ -161,11 +161,14 @@ function install_fgt()
     #run(`unzip download && mv figtree download`)
  
     # compile
+    cd("figtree-0.9.3")
     run(`make -C figtree-0.9.3`);
  
     # move relevant *.so file
-    run(`mv figtree-0.9.3/lib/libfigtree.so libfigtree.so`)
-    run(`mv figtree-0.9.3/lib/libann_figtree_version.so libann_figtree_version.so`)
+    run(`mv lib/libfigtree.so ../libfigtree.so`)
+    run(`mv lib/libann_figtree_version.so ../libann_figtree_version.so`)
+
+    cd("..")
 
     # remove unnecessary package
     run(`rm -r figtree-0.9.3/ download`)
