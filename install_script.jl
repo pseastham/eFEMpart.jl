@@ -162,7 +162,7 @@ function install_fgt()
  
     # compile
     cd("figtree-0.9.3")
-    run(`make -C figtree-0.9.3`);
+    run(`make`);
  
     # move relevant *.so file
     run(`mv lib/libfigtree.so ../libfigtree.so`)
