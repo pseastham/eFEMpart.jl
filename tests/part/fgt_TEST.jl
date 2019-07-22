@@ -7,7 +7,7 @@
 #   http://www.umiacs.umd.edu/~morariu/figtree/ 
 
 using LinearAlgebra, Plots
-pyplot(size=(900,300))
+gr(size=(900,300))
 
 include("../../src/part/fgt.jl")  # loads in functions to be tests
 
