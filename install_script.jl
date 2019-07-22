@@ -150,7 +150,8 @@ end
 
 function install_fgt()
     println("installing figtree...requires system owner permission")
-    run(`sudo mkdir -p src/part`)
+    #run(`sudo mkdir -p src/part`)
+    mkpath("src/part")
     cd("src/part")
     # download zip
     downloadurl = "https://sourceforge.net/projects/figtree/files/latest/download"
@@ -174,24 +175,16 @@ function install_fgt()
     run(`rm -r figtree-0.9.3/ download`)
  
     # add *.so folder to library path
-    #pwdir = pwd()
-    #bsh = "$(homedir())/.bash_profile"
-    #f=open(bsh,"a")
-    #println(f,"export LD_LIBRARY_PATH=$(pwdir)") 
-    #close(f)
- 
-    # create file so systme recognizes *.so 
-    run(`sudo touch /etc/ld.so.conf.d/myLibs.conf`)
-    # give permission to edit
-    run(`sudo chmod 777 /etc/ld.so.conf.d/myLibs.conf`)
-    f=open("/etc/ld.so.conf.d/myLibs.conf","a")
-    println(f,pwd())
+    pwdir = pwd()
+    bsh = "$(homedir())/.bashrc"
+    f=open(bsh,"a")
+    println(f,"export LD_LIBRARY_PATH=$(pwdir)") 
     close(f)
-    # close permission to edit
-    run(`sudo chmod 400 /etc/ld.so.conf.d/myLibs.conf`)
 
-    # reload shared object paths (or something like that ?)
-    run(`sudo ldconfig`)
+
+    # re-run bash file to load LD_LIBRARY_PATH
+    cmd = `bash -c "source $(bsh)"`
+    run(cmd)
 
     cd("../..")
 
