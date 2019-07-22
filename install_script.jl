@@ -176,16 +176,28 @@ function install_fgt()
  
     # add *.so folder to library path
     pwdir = pwd()
-    bsh = "$(homedir())/.bashrc"
-    f=open(bsh,"a")
+    bashstart  = "$(homedir())/.bashrc"
+    tcshstart = "$(homedir())/.tcshrc"
+
+    # add LD_LIBRARY_PATH to bash startup
+    f=open(bashstart,"a")
     println(f)
     println(f,"export LD_LIBRARY_PATH=$(pwdir)")
     close(f)
 
-
     # re-run bash file to load LD_LIBRARY_PATH
-    cmd = `bash -c "source $(bsh)"`
+    cmd = `bash -c "source $(bashstart)"`
     run(cmd)
+
+    # add LD_LIBRARY_PATH to tcsh startup
+    f = open(tcshstart,"a")
+    println(f)
+    println(f,"export LD_LIBRARY_PATH=$(pwdir)")
+    close(f)
+
+    # re-run tcsh file to load LD_LIBRARY_PATH
+    cmd = `tcsh -c "source $(tcshstart)"`
+    run(cmd)   
 
     cd("../..")
 
