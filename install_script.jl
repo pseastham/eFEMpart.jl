@@ -178,7 +178,8 @@ function install_fgt()
     pwdir = pwd()
     bsh = "$(homedir())/.bashrc"
     f=open(bsh,"a")
-    println(f,"export LD_LIBRARY_PATH=$(pwdir)") 
+    println(f)
+    println(f,"export LD_LIBRARY_PATH=$(pwdir)")
     close(f)
 
 
