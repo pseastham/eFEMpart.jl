@@ -97,9 +97,9 @@ function computeParticleVelocity_all(mesh,pList::Vector{Point2D},rList::Vector{T
     # in future might want to create 2 particle cell lists,
     # one for seepage calculation and one for cohesion calculation
     # where clL changes between the two for increased efficiency
-    clL = 0.2
-    clTotalBounds = [-1.1,1.1,-1.1,1.1]         # WILL LIKELY NEED TO CHANGE!
-    #particleCL = generateCellList(pList,clTotalBounds,clL)
+    clL = 0.1
+    clTotalBounds = [-1-clL/2,1+clL/2,-1-clL/2,1+clL/2]         # WILL LIKELY NEED TO CHANGE!
+    particleCL = generateCellList(pList,clTotalBounds,clL)
 
     # 1. compute gravitational force
     gfX = zeros(Nparticles) 
@@ -108,8 +108,8 @@ function computeParticleVelocity_all(mesh,pList::Vector{Point2D},rList::Vector{T
     # 2. interpolate seepage velocity of fluid at position of particles
     # REQUIRES CELL LIST for particles and meshCLmap for FEM <-> cell list indexing of elements
     # compute cohesion force on all particles using cell list
-    #BarycentricVelocityInterp_CL!(uSeepage,vSeepage,mesh,u,v,pList,polygon,particleCL,
-    #                                femCLmap,extremePoint,w,uEl,vEl,a,b,c,d)
+    BarycentricVelocityInterp_CL!(uSeepage,vSeepage,mesh,u,v,pList,polygon,particleCL,
+                                    femCLmap,extremePoint,w,uEl,vEl,a,b,c,d)
     #for ti=1:Nparticles
     #    uSeepage[ti],vSeepage[ti] = BarycentricVelocityInterp(mesh,u,v,pList[ti],polygon,
     #                                    extremePoint,w,uEl,vEl,a,b,c,d)

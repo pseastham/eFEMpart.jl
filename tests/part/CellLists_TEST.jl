@@ -3,6 +3,7 @@
 
 using BenchmarkTools
 
+include("../../src/part/CellLists.jl")
 include("../../src/part/ParticleTypes.jl")  # to load in Point2D type
 
 function isInsideRect_TEST()
@@ -13,7 +14,7 @@ function isInsideRect_TEST()
 end
 
 function generateCellList_TEST()
-  N = 1_000
+  N = 3
   nodeList = [Point2D(rand(),rand()) for i=1:N]
   TotalBounds = [0.0,1.0,0.0,1.0]
   L = 0.1
