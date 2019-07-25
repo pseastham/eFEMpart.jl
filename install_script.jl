@@ -190,14 +190,14 @@ function install_fgt()
     run(cmd)
 
     # add LD_LIBRARY_PATH to tcsh startup
-    f = open(tcshstart,"a")
-    println(f)
-    println(f,"export LD_LIBRARY_PATH=$(pwdir)")
-    close(f)
+    #f = open(tcshstart,"a")
+    #println(f)
+    #println(f,"export LD_LIBRARY_PATH=$(pwdir)")
+    #close(f)
 
     # re-run tcsh file to load LD_LIBRARY_PATH
-    cmd = `tcsh -c "source $(tcshstart)"`
-    run(cmd)   
+    #cmd = `tcsh -c "source $(tcshstart)"`
+    #run(cmd)   
 
     cd("../..")
 
