@@ -5,15 +5,15 @@
 # ==============================================================================
 abstract type AbstractWall end
 
-mutable struct Point2D
-    x::Float64
-    y::Float64
+mutable struct Point2D{T}
+    x::T
+    y::T
 end
 
-mutable struct LineWall <: AbstractWall
-    nodes::Vector{Point2D}        # 2 points, defining start and end
-    n::Vector{Float64}            # normal unit vector of wall
-    t::Vector{Float64}            # tangent unit vector of wall
+mutable struct LineWall{T} <: AbstractWall
+    nodes::Vector{Point2D{T}}        # 2 points, defining start and end
+    n::Vector{T}            # normal unit vector of wall
+    t::Vector{T}            # tangent unit vector of wall
     orientation::Symbol           # can be :right, :left, or :both to determine 
 end                               #     on which side of the circle the domain
                                   #     of the problem is. Helpful when computing
@@ -21,17 +21,17 @@ end                               #     on which side of the circle the domain
                                   #     right if standing on start and looking at end. 
                                   #     :left is opposite, and :both is both.
 
-mutable struct CircleWall <: AbstractWall
-    center::Point2D               # point that defines center
-    radius::Float64               # radius of circle
+mutable struct CircleWall{T} <: AbstractWall
+    center::Point2D{T}               # point that defines center
+    radius::T               # radius of circle
     orientation::Symbol           # can be :inward, :outward, or :both to determine 
 end                               #     on which side of the circle the domain
                                   #     of the problem is. Helpful when computing
                                   #     interacting forces. :inward is towards center
                                   #     of circle
 
-mutable struct ArcWall <: AbstractWall
-    nodes::Vector{Point2D}        # 3 nodes, 1) start, 2) center, and 3) end going CCW (counterclockwise)
+mutable struct ArcWall{T} <: AbstractWall
+    nodes::Vector{Point2D{T}}        # 3 nodes, 1) start, 2) center, and 3) end going CCW (counterclockwise)
     orientation::Symbol           # can be :inward, :outward, or :both to determine 
 end                               #     on which side of the circle the domain
                                   #     of the problem is. Helpful when computing
@@ -43,7 +43,7 @@ end                               #     on which side of the circle the domain
 # ==============================================================================
 
 # initializes new wall defined by 2 points (Start,End)
-function LineWall(nodes::Vector{Point2D},orientation::Symbol)
+function LineWall(nodes::Vector{Point2D{T}},orientation::Symbol) where T<:Real
     if length(nodes) != 2
         throw(DimensionMismatch("line is defined by 2 points"))
     end

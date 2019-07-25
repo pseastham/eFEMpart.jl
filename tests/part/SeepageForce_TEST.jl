@@ -1,5 +1,6 @@
 # define and test barycentric velocity interpolation
 
+using eFEMpart: squareMesh
 using BenchmarkTools: @btime
 
 include("../../src/part/SeepageForce.jl")  # loads functions to be tested

@@ -96,7 +96,7 @@ function computeBaryWeights!(w::Vector{T},x::Vector{T}, y::Vector{T}, p::Vector{
     return w #returning vector of weights
 end
 # w, a, b, c input just to avoid re-allocation
-function computeBaryWeights!(w::Vector{T},polygon::Vector{Point2D}, p::Point2D,
+function computeBaryWeights!(w::Vector{T},polygon::Vector{Point2D{T}}, p::Point2D{T},
                                 a::Vector{T},b::Vector{T},c::Vector{T},d::Vector{T}) where T<:Real
     #   Computing the Barycentric weights
     #

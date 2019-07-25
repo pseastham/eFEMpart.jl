@@ -31,7 +31,7 @@ function ForceCalculation(ϵ::T,d::T,rc::T,Δx::T,Δy::T) where T<:Real
     return Fx,Fy
 end 
 
-function computeCohesion!(cfX::Vector{T},cfY::Vector{T},nodeList::Vector{Point2D},radiusList::Vector{T},rc::T,ϵ::T) where T<:Real
+function computeCohesion!(cfX::Vector{T},cfY::Vector{T},nodeList::Vector{Point2D{T}},radiusList::Vector{T},rc::T,ϵ::T) where T<:Real
     Nparticles = length(nodeList)
 
     # zero-out cohesion
@@ -58,7 +58,7 @@ end
 # radiuslist: list of particle radii            (currently unused)
 # cfX: cohesion force in x-direction
 # cfY: cohesion force in y-direction
-function computeCohesion_CL!(cfX::Vector{T},cfY::Vector{T},nodeList::Vector{Point2D},radiusList::Vector{T},
+function computeCohesion_CL!(cfX::Vector{T},cfY::Vector{T},nodeList::Vector{Point2D{T}},radiusList::Vector{T},
                                 rc::T,ϵ::T,cl::CellList) where T<:Real
     # zero-out cohesion
     fill!(cfX,zero(T))

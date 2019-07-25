@@ -36,7 +36,7 @@ L
 OUTPUT
 cl
 """
-function generateCellList(nodeList::Vector{Point2D},totalBounds::Vector{Float64},L::Float64)
+function generateCellList(nodeList::Vector{Point2D{T}},totalBounds::Vector{Float64},L::Float64) where T<:Real
   X0=totalBounds[1]; X1=totalBounds[2]; Y0=totalBounds[3]; Y1=totalBounds[4]
   Nx = Int(ceil((X1 - X0)/L))
   Ny = Int(ceil((Y1 - Y0)/L))
@@ -97,7 +97,7 @@ end
 """
 
 """
-function updateCellList!(cl::CellList,nodeList::Vector{Point2D})
+function updateCellList!(cl::CellList,nodeList::Vector{Point2D{T}}) where T<:Real
   X0=cl.bounds[1]; X1=cl.bounds[2]; Y0=cl.bounds[3]; Y1=cl.bounds[4]
   Nx = Int(ceil((X1 - X0)/cl.sideLength))
   Ny = Int(ceil((Y1 - Y0)/cl.sideLength))
@@ -129,7 +129,7 @@ should be much faster, but isn't......
 
 DO NOT USE
 """
-function updateCellList_SMART!(cl::CellList,nodeList::Vector{Point2D})
+function updateCellList_SMART!(cl::CellList,nodeList::Vector{Point2D{T}}) where T<:Real
   X0=cl.bounds[1]; X1=cl.bounds[2]; Y0=cl.bounds[3]; Y1=cl.bounds[4]
   Nx = Int(ceil((X1 - X0)/cl.sideLength))
   Ny = Int(ceil((Y1 - Y0)/cl.sideLength))
@@ -223,7 +223,7 @@ end
 
 # determines whether or not point is inside a rectangle
 # also includes being on bottom or left boundary
-function isInsideRect(rect::Vector{Float64},point::Point2D)
+function isInsideRect(rect::Vector{T},point::Point2D{T})  where T<:Real
   x0=rect[1]; x1=rect[2]; y0=rect[3]; y1=rect[4]
 
   if point.x<=x1 && point.x>=x0 && point.y<=y1 && point.y>=y0

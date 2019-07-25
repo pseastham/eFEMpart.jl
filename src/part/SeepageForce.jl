@@ -13,8 +13,8 @@ computes velocity of single particle without using cell list
 efficient in that it allocates no new memory, but inefficient in that
 it loops over all elements (no cell list given)
 """
-function BarycentricVelocityInterp(mesh,u::Vector{T},v::Vector{T},particle::Point2D,
-                                    polygon::Vector{Point2D},extremeArr::Point2D,
+function BarycentricVelocityInterp(mesh,u::Vector{T},v::Vector{T},particle::Point2D{T},
+                                    polygon::Vector{Point2D{T}},extremeArr::Point2D{T},
                                     w::Vector{T},uEl::Vector{T},vEl::Vector{T},
                                     a::Vector{T},b::Vector{T},c::Vector{T},
                                     d::Vector{T}) where T<:Real
@@ -64,8 +64,8 @@ index ordering
 passes in a vector for velocity interpolations (expected u and v are same size!!)
 """
 function BarycentricVelocityInterp_CL!(uInterp::Vector{Float64},vInterp::Vector{Float64},mesh,u::Vector{T},v::Vector{T},
-                                        nodeList::Vector{Point2D},polygon::Vector{Point2D},particleCL::CellList,
-                                        meshCLmap::Array{Array{Int64,N} where N,1},extremePoint::Point2D,w::Vector{T},
+                                        nodeList::Vector{Point2D{T}},polygon::Vector{Point2D{T}},particleCL::CellList,
+                                        meshCLmap::Array{Array{Int64,N} where N,1},extremePoint::Point2D{T},w::Vector{T},
                                         uEl::Vector{T},vEl::Vector{T},a::Vector{T},
                                         b::Vector{T},c::Vector{T},d::Vector{T}) where T<:Real
     if !(length(uInterp) == length(vInterp) == length(nodeList))
@@ -110,6 +110,7 @@ function BarycentricVelocityInterp_CL!(uInterp::Vector{Float64},vInterp::Vector{
                 uInterp[nodeInd],vInterp[nodeInd] = BarycentricVelocityInterp(mesh,u,v,nodeList[nodeInd],polygon,extremePoint,
                                                                                 w,uEl,vEl,a,b,c,d)
                 @warn "particle not found in cell list -- must use brute-force velocity interpolation" #maxlog=1
+                @warn "node: $nodeInd, ($(nodeList[nodeInd].x),$(nodeList[nodeInd].y))"
             end
         end
     end

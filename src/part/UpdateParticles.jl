@@ -12,10 +12,11 @@ include("AdhesionForce.jl")  # itself calls CellLists.jl, SinkholeTypes.jl, Cohe
 #   2. Seepage Force (fluid velocity)
 #   3. particle-particle Cohesion Force (Lennard Jones Potential)
 #   4. particle-particle Adhesion Force (Lennard Jones Potential)
-function updateParticle_all!(mesh,pList::Vector{Point2D},rList::Vector{T},wList::Vector{W},
+function updateParticle_all!(mesh,pList::Vector{Point2D{T}},rList::Vector{T},wList::Vector{W},
                                 u::Vector{T},v::Vector{T},paramArr,Δt::T,
-                                femCLmap::Array{Array{Int64,N} where N,1}) where {T<:Real, W<:AbstractWall}
-    pUarr,pVarr = computeParticleVelocity_all(mesh,pList,rList,wList,u,v,paramArr,femCLmap)
+                                femCLmap::Array{Array{Int64,N} where N,1},
+                                clL,clTotalBounds,particleCL) where {T<:Real, W<:AbstractWall}
+    pUarr,pVarr = computeParticleVelocity_all(mesh,pList,rList,wList,u,v,paramArr,femCLmap,clL,clTotalBounds,particleCL)
 
     # =========================
     # Update particle position
@@ -45,9 +46,10 @@ OUTPUT:
     // nothing (updates BLANK in-place)
     pUarr, pVarr: 2D velocity arrays for particles
 """
-function computeParticleVelocity_all(mesh,pList::Vector{Point2D},rList::Vector{T},wList::Vector{W},
+function computeParticleVelocity_all(mesh,pList::Vector{Point2D{T}},rList::Vector{T},wList::Vector{W},
                                         u::Vector{T},v::Vector{T},paramArr,
-                                        femCLmap::Array{Array{Int64,N} where N,1}) where {T<:Real, W<:AbstractWall}
+                                        femCLmap::Array{Array{Int64,N} where N,1},
+                                        clL,clTotalBounds,particleCL) where {T<:Real, W<:AbstractWall}
     # G:      gravitation parameter
     # rc:     cutoff ratio
     # ϵ:      strength of LJ force   
@@ -97,9 +99,10 @@ function computeParticleVelocity_all(mesh,pList::Vector{Point2D},rList::Vector{T
     # in future might want to create 2 particle cell lists,
     # one for seepage calculation and one for cohesion calculation
     # where clL changes between the two for increased efficiency
-    clL = 0.1
-    clTotalBounds = [-1-clL/2,1+clL/2,-1-clL/2,1+clL/2]         # WILL LIKELY NEED TO CHANGE!
-    particleCL = generateCellList(pList,clTotalBounds,clL)
+    #clL = 1.0
+    #clTotalBounds = [-1.0,1.0,-1.0,1.0]         # WILL LIKELY NEED TO CHANGE!
+    #particleCL = generateCellList(pList,clTotalBounds,clL)
+    updateCellList!(particleCL,pList)
 
     # 1. compute gravitational force
     gfX = zeros(Nparticles) 

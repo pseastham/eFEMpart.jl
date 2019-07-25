@@ -7,7 +7,7 @@ include("ParticleTypes.jl")  # loads Point2D type
 
 Returns true if the point p lies inside the polygon with n vertices
 """
-function isInside(polygon::Vector{Point2D}, n::Int, p::Point2D; extreme = Point2D(100000.0, p[2]))
+function isInside(polygon::Vector{Point2D{T}}, n::Int, p::Point2D{T}; extreme = Point2D(100000.0, p[2])) where T<:Real
   # There must be at least 3 vertices in polygon
   if (n < 3) return false end
 
@@ -48,7 +48,7 @@ Algorithm explained in https://www.geeksforgeeks.org/check-if-two-given-line-seg
 
 Note we have NOT implemented the special case for overlapping line segments, as that will never be the case in finite element applications
 """
-function doIntersect(p1::Point2D,q1::Point2D,p2::Point2D,q2::Point2D)
+function doIntersect(p1::Point2D{T},q1::Point2D{T},p2::Point2D{T},q2::Point2D{T}) where T<:Real
   # Find the four orientations needed for general case
   o1 = orientation(p1, q1, p2)
   o2 = orientation(p1, q1, q2)
@@ -87,7 +87,7 @@ Computes orientation of 3 (ordered) points p,q,r. where each is a 2-array
 
 Algorithm is explained in https://www.geeksforgeeks.org/orientation-3-ordered-points/
 """
-function orientation(p::Point2D,q::Point2D,r::Point2D)
+function orientation(p::Point2D{T},q::Point2D{T},r::Point2D{T}) where T<:Real
   val = (q.y-p.y)*(r.x-q.x) - (q.x-p.x)*(r.y-q.y);
 
   if (val == 0) return 0 end  # colinear
@@ -103,7 +103,7 @@ point q lies on line segment 'pr'
 
 Note that it ASSUMES that p,r,q are co-linear!
 """
-function onSegment(p::Point2D,q::Point2D,r::Point2D)
+function onSegment(p::Point2D{T},q::Point2D{T},r::Point2D{T}) where T<:Real
   maxX = (p.x >= r.x ? p.x : r.x)
   minX = (p.x >= r.x ? r.x : p.x)
   maxY = (p.y >= r.y ? p.y : r.y)
