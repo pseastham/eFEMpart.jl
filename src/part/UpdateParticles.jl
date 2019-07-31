@@ -15,11 +15,20 @@ include("AdhesionForce.jl")  # itself calls CellLists.jl, SinkholeTypes.jl, Cohe
 function updateParticle_all!(mesh,pList::Vector{Point2D{T}},rList::Vector{T},wList::Vector{W},
                                 u::Vector{T},v::Vector{T},paramArr,Δt::T,
                                 femCLmap::Array{Array{Int64,N} where N,1},
-                                clL,clTotalBounds,particleCL) where {T<:Real, W<:AbstractWall}
-    pUarr,pVarr = computeParticleVelocity_all(mesh,pList,rList,wList,u,v,paramArr,femCLmap,clL,clTotalBounds,particleCL)
+                                clL,clTotalBounds,particleCL,
+                                polygon::Vector{Point2D{T}},extremePoint::Point2D{T},
+                                w::Vector{T},uEl::Vector{T},vEl::Vector{T},
+                                a::Vector{T},b::Vector{T},c::Vector{T},d::Vector{T},
+                                pointOnWall::Point2D{T},xquad::Vector{T},yquad::Vector{T},
+                                uSeepage::Vector{T},vSeepage::Vector{T},
+                                cfX::Vector{T},cfY::Vector{T},afX::Vector{T},afY::Vector{T}) where {T<:Real, W<:AbstractWall}
+
+    pUarr,pVarr = computeParticleVelocity_all(mesh,pList,rList,wList,u,v,paramArr,femCLmap,clL,clTotalBounds,particleCL,
+                                                polygon,extremePoint,w,uEl,vEl,
+                                                a,b,c,d,pointOnWall,xquad,yquad,uSeepage,vSeepage,cfX,cfY,afX,afY)
 
     # =========================
-    # Update particle position
+    # Update particle position -- this is where verlet integration might come into play
     # =========================
     for ti=1:length(rList)
         pList[ti].x += pUarr[ti]*Δt
@@ -49,7 +58,13 @@ OUTPUT:
 function computeParticleVelocity_all(mesh,pList::Vector{Point2D{T}},rList::Vector{T},wList::Vector{W},
                                         u::Vector{T},v::Vector{T},paramArr,
                                         femCLmap::Array{Array{Int64,N} where N,1},
-                                        clL,clTotalBounds,particleCL) where {T<:Real, W<:AbstractWall}
+                                        clL,clTotalBounds,particleCL,
+                                        polygon::Vector{Point2D{T}},extremePoint::Point2D{T},
+                                        w::Vector{T},uEl::Vector{T},vEl::Vector{T},
+                                        a::Vector{T},b::Vector{T},c::Vector{T},d::Vector{T},
+                                        pointOnWall::Point2D{T},xquad::Vector{T},yquad::Vector{T},
+                                        uSeepage::Vector{T},vSeepage::Vector{T},
+                                        cfX::Vector{T},cfY::Vector{T},afX::Vector{T},afY::Vector{T}) where {T<:Real, W<:AbstractWall}
     # G:      gravitation parameter
     # rc:     cutoff ratio
     # ϵ:      strength of LJ force   
@@ -64,36 +79,6 @@ function computeParticleVelocity_all(mesh,pList::Vector{Point2D{T}},rList::Vecto
     # -----------------
     particleVolume  = 1.0
     particleDensity = 1.0
-
-    # ----------------------------------------------------------------
-    # INITIALIZATIONS -- EVENTUALLY WILL BE MOVED OUTSIDE OF FUNCTION
-    # initialize arrays to don't need to re-allocate memory unnecessarily during velocity interpolation
-    # ----------------------------------------------------------------
-    # arrays for barycentric interpolation
-    polygon      = [Point2D(0.0,0.0),Point2D(0.0,0.0),Point2D(0.0,0.0),Point2D(0.0,0.0)]
-    extremePoint = Point2D(100_000.0,0.0)
-    w   = zeros(4)           
-    uEl = zeros(4)
-    vEl = zeros(4)
-    a = zeros(3)
-    b = zeros(3)
-    c = zeros(3)
-    d = zeros(3)
-    pointOnWall = Point2D(0.0,0.0)
-    xquad = zeros(Float64,Nquad)
-    yquad = zeros(Float64,Nquad)
-
-    # seepage velocities -- will be updated in-place
-    uSeepage = zeros(Float64,Nparticles)
-    vSeepage = zeros(Float64,Nparticles)
-
-    # cohesion force -- will be updated in-place
-    cfX = zeros(Float64,Nparticles)
-    cfY = zeros(Float64,Nparticles)
-
-    # adhesion force -- will be updated in-place
-    afX = zeros(Float64,Nparticles)
-    afY = zeros(Float64,Nparticles)
 
     # GENERATE PARTICLE CELL LIST --
     # in future might want to create 2 particle cell lists,
