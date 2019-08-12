@@ -128,6 +128,12 @@ export Point2D,
 # UpdateParticles.jl
 export updateParticle_all!
 
+# for testing...
+export BarycentricVelocityInterp_CL!,
+       computeCohesion!,
+       AdhesionForce!,
+       computeCohesion_CL!
+
 # ======================================================
 # FILES TO LOAD
 # ======================================================

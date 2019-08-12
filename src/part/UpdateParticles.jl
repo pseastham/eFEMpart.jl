@@ -104,8 +104,8 @@ function computeParticleVelocity_all(mesh,pList::Vector{Point2D{T}},rList::Vecto
     #end
 
     # 3. compute cohesion forces
-    computeCohesion!(cfX,cfY,pList,rList,rc,ϵ)
-    #computeCohesion_CL!(cfX,cfY,pList,rList,rc,ϵ,particleCL)
+    #computeCohesion!(cfX,cfY,pList,rList,rc,ϵ)
+    computeCohesion_CL!(cfX,cfY,pList,rList,rc,ϵ,particleCL)
 
     # 4. compute adhesion forces
     AdhesionForce!(afX,afY,pList,rList,wList,k,rc,ϵ,pointOnWall,xquad,yquad)
