@@ -38,6 +38,26 @@ function updateParticle_all!(mesh,pList::Vector{Point2D{T}},rList::Vector{T},wLi
     nothing
 end
 
+function updateParticle_all_nofluid!(pList::Vector{Point2D{T}},rList::Vector{T},wList::Vector{W},
+                                    paramArr,Δt::T,clL,clTotalBounds,particleCL,
+                                    polygon::Vector{Point2D{T}},extremePoint::Point2D{T},
+                                    pointOnWall::Point2D{T},xquad::Vector{T},yquad::Vector{T},
+                                    cfX::Vector{T},cfY::Vector{T},afX::Vector{T},afY::Vector{T}) where {T<:Real, W<:AbstractWall}
+
+    pUarr,pVarr = computeParticleVelocity_all_nofluid(pList,rList,wList,paramArr,clL,clTotalBounds,particleCL,
+                                    polygon,extremePoint,pointOnWall,xquad,yquad,cfX,cfY,afX,afY)
+
+    # =========================
+    # Update particle position -- this is where verlet integration might come into play
+    # =========================
+    for ti=1:length(rList)
+        pList[ti].x += pUarr[ti]*Δt
+        pList[ti].y += pVarr[ti]*Δt
+    end
+
+    nothing
+end
+
 """
     ComputeParticleVelocity_all!
 
@@ -119,6 +139,62 @@ function computeParticleVelocity_all(mesh,pList::Vector{Point2D{T}},rList::Vecto
     gammas = 1.0
     pUarr = κ*(gfX + cfX - afX + n*gammas*uSeepage/κ)/(n*gammas)
     pVarr = κ*(gfY + cfY - afY + n*gammas*vSeepage/κ)/(n*gammas)
+
+    return pUarr,pVarr
+end
+
+function computeParticleVelocity_all_nofluid(pList::Vector{Point2D{T}},rList::Vector{T},wList::Vector{W},
+                                            paramArr,clL,clTotalBounds,particleCL,
+                                            polygon::Vector{Point2D{T}},extremePoint::Point2D{T},
+                                            pointOnWall::Point2D{T},xquad::Vector{T},yquad::Vector{T},
+                                            cfX::Vector{T},cfY::Vector{T},afX::Vector{T},afY::Vector{T}) where {T<:Real, W<:AbstractWall}
+    # G:      gravitation parameter
+    # rc:     cutoff ratio
+    # ϵ:      strength of LJ force   
+    # k:      multiple of equilibrium below which we should consider adhesion force calculations (i.e. k=2, k=5, etc)
+    # Nquad:  number of quadrature nodes for particle-wall interaction (adhesion)
+    G,rc,ϵ,k,Nquad = paramArr
+
+    Nparticles = length(pList)
+
+    # -----------------
+    # USED FOR TESTING
+    # -----------------
+    particleVolume  = 1.0
+    particleDensity = 1.0
+
+    # GENERATE PARTICLE CELL LIST --
+    # in future might want to create 2 particle cell lists,
+    # one for seepage calculation and one for cohesion calculation
+    # where clL changes between the two for increased efficiency
+    #clL = 1.0
+    #clTotalBounds = [-1.0,1.0,-1.0,1.0]         # WILL LIKELY NEED TO CHANGE!
+    #particleCL = generateCellList(pList,clTotalBounds,clL)
+    updateCellList!(particleCL,pList)
+
+    # 1. compute gravitational force
+    gfX = zeros(Nparticles) 
+    gfY = -G*ones(Nparticles)
+
+    # 2. interpolate seepage velocity of fluid at position of particles
+    # not done when there is no fluid
+
+    # 3. compute cohesion forces
+    #computeCohesion!(cfX,cfY,pList,rList,rc,ϵ)
+    computeCohesion_CL!(cfX,cfY,pList,rList,rc,ϵ,particleCL)
+
+    # 4. compute adhesion forces
+    AdhesionForce!(afX,afY,pList,rList,wList,k,rc,ϵ,pointOnWall,xquad,yquad)
+
+    # 5. use stokes force balance to compute particle velocities
+    #κ = permeability
+    κ = 1.0
+    #n = porosity
+    n = 1.0
+    #gammas = specific weight
+    gammas = 1.0
+    pUarr = κ*(gfX + cfX - afX .+ n*gammas*0.0/κ)/(n*gammas)
+    pVarr = κ*(gfY + cfY - afY .+ n*gammas*0.0/κ)/(n*gammas)
 
     return pUarr,pVarr
 end

@@ -126,7 +126,8 @@ export Point2D,
        ArcWall
 
 # UpdateParticles.jl
-export updateParticle_all!
+export updateParticle_all!,
+       updateParticle_all_nofluid!
 
 # for testing...
 export BarycentricVelocityInterp_CL!,
