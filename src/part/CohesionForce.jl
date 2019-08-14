@@ -66,7 +66,7 @@ function computeCohesion_CL!(cfX::Vector{T},cfY::Vector{T},nodeList::Vector{Poin
 
     # go over cell lists
     for cellInd = 1:length(cl.cells)
-        # compute cell-cell forces
+        # compute cell-cell (same cell) forces
         numNodes = length(cl.cells[cellInd].nodeList)
         for ti=1:numNodes, tj=(ti+1):numNodes
             nodeI = cl.cells[cellInd].nodeList[ti]

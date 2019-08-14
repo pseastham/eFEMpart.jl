@@ -4,21 +4,11 @@
 
 module partViz
 
-# import only necessary functions from eFEMpart
-using eFEMpart
-
-using Plots, LaTeXStrings
-
-#font = Plots.font("DejaVu Sans", 14)
-#pyplot(size=(800,800),border=true,
-#        guidefont=font, xtickfont=font, ytickfont=font, legendfont=font,
-#        markersize=8,linewidth=3,ratio=:equal,grid=false)
-
 # functions from partViz
-export plotPoints,
-       plotWall,
+export plotWall,
        plotWalls,
        plotParticles!
+       
 # functions from Plots
 export @animate,
        plot,
@@ -26,9 +16,17 @@ export @animate,
        Animation,
        frame,
        pyplot,
-       scatter!
+       scatter!,
+       plot!
 
-function plotWalls(wallList::Vector{T},rm::Float64) where T<:AbstractWall
+using eFEMpart, Plots
+
+#font = Plots.font("DejaVu Sans", 14)
+#pyplot(size=(800,800),border=true,
+#        guidefont=font, xtickfont=font, ytickfont=font, legendfont=font,
+#        markersize=8,linewidth=3,ratio=:equal,grid=false)
+
+function plotWalls(wallList::Vector,rm::Float64)
   N = length(wallList)
 
   p = plot(grid=false) #initialize plot
@@ -51,7 +49,7 @@ function plotParticles!(plotObj,pList,rm)
     return plotObj
 end
 
-function plotWall(wall::LineWall,plotObj::Plots.Plot,rm)
+function plotWall(wall::eFEMpart.LineWall,plotObj::Plots.Plot,rm)
     radius = 0.5*rm
 
     x1 = wall.nodes[1].x; x2 = wall.nodes[2].x
@@ -90,14 +88,14 @@ function plotWall(wall::LineWall,plotObj::Plots.Plot,rm)
     y = [y1 - radius*ny,y2 - radius*ny]
     plot!(plotObj,x,y,label="",color=:black)
 end
-function plotWall(wall::CircleWall,plotObj::Plots.Plot,rm)
+function plotWall(wall::eFEMpart.CircleWall,plotObj::Plots.Plot,rm)
     radius = 0.5*rm
     Nplot = 50; Δθ = 2*pi/(Nplot-1)
     curvex = [wall.center.x + (wall.radius + radius)*cos((i-1)*Δθ) for i=1:Nplot]
     curvey = [wall.center.y + (wall.radius + radius)*sin((i-1)*Δθ) for i=1:Nplot]
     plot!(plotObj,curvex,curvey,label="",color=:black)
 end
-function plotWall(wall::ArcWall,plotObj::Plots.Plot,rm)
+function plotWall(wall::eFEMpart.ArcWall,plotObj::Plots.Plot,rm)
     radius = 0.5*rm
 
     pa = [wall.nodes[1].x,wall.nodes[1].y]
@@ -140,10 +138,10 @@ end
 
 # plots particles
 # requires loading of Plots module
-function plotParticle!(particle::Particle,plotObj::Plots.Plot,colorSym::Symbol,rm::Float64)
+function plotParticle!(particle,plotObj::Plots.Plot,colorSym::Symbol,rm::Float64)
     θ = range(0,stop=2*pi,length=40)
-    xs = particle.xpos .+ 0.5*rm*cos.(θ)
-    ys = particle.ypos .+ 0.5*rm*sin.(θ)
+    xs = particle.x .+ 0.5*rm*cos.(θ)
+    ys = particle.y .+ 0.5*rm*sin.(θ)
 
     plot!(plotObj,xs,ys,label="",color=:black)
 end

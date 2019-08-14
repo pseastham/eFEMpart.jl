@@ -1,7 +1,5 @@
 # File containing functions to update particle positions based on different forces
 
-using BenchmarkTools
-
 # computes seepage velocities at particle positions
 include("SeepageForce.jl")   # itself calls CellLists.jl, isInside.jl, BarycentricInterpolation.jl
 include("CohesionForce.jl")  # itself calls CellLists.jl
@@ -98,7 +96,7 @@ function computeParticleVelocity_all(mesh,pList::Vector{Point2D{T}},rList::Vecto
     # USED FOR TESTING
     # -----------------
     particleVolume  = 1.0
-    particleDensity = 1.0
+    particleDensity = 1.0 
 
     # GENERATE PARTICLE CELL LIST --
     # in future might want to create 2 particle cell lists,
@@ -128,7 +126,7 @@ function computeParticleVelocity_all(mesh,pList::Vector{Point2D{T}},rList::Vecto
     computeCohesion_CL!(cfX,cfY,pList,rList,rc,ϵ,particleCL)
 
     # 4. compute adhesion forces
-    AdhesionForce!(afX,afY,pList,rList,wList,k,rc,ϵ,pointOnWall,xquad,yquad)
+    AdhesionForce!(afX,afY,pList,rList,wList,k,ϵ,pointOnWall,xquad,yquad)
 
     # 5. use stokes force balance to compute particle velocities
     #κ = permeability
@@ -137,8 +135,8 @@ function computeParticleVelocity_all(mesh,pList::Vector{Point2D{T}},rList::Vecto
     n = 1.0
     #gammas = specific weight
     gammas = 1.0
-    pUarr = κ*(gfX + cfX - afX + n*gammas*uSeepage/κ)/(n*gammas)
-    pVarr = κ*(gfY + cfY - afY + n*gammas*vSeepage/κ)/(n*gammas)
+    pUarr = gfX + cfX + afX + uSeepage
+    pVarr = gfY + cfY + afY + vSeepage
 
     return pUarr,pVarr
 end
@@ -184,7 +182,7 @@ function computeParticleVelocity_all_nofluid(pList::Vector{Point2D{T}},rList::Ve
     computeCohesion_CL!(cfX,cfY,pList,rList,rc,ϵ,particleCL)
 
     # 4. compute adhesion forces
-    AdhesionForce!(afX,afY,pList,rList,wList,k,rc,ϵ,pointOnWall,xquad,yquad)
+    AdhesionForce!(afX,afY,pList,rList,wList,k,ϵ,pointOnWall,xquad,yquad)
 
     # 5. use stokes force balance to compute particle velocities
     #κ = permeability
@@ -193,8 +191,9 @@ function computeParticleVelocity_all_nofluid(pList::Vector{Point2D{T}},rList::Ve
     n = 1.0
     #gammas = specific weight
     gammas = 1.0
-    pUarr = κ*(gfX + cfX - afX .+ n*gammas*0.0/κ)/(n*gammas)
-    pVarr = κ*(gfY + cfY - afY .+ n*gammas*0.0/κ)/(n*gammas)
+
+    pUarr = gfX + cfX + afX
+    pVarr = gfY + cfY + afY
 
     return pUarr,pVarr
 end

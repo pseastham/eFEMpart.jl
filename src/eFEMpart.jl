@@ -4,6 +4,10 @@ module eFEMpart
 using SparseArrays
 # for access to lufact
 using LinearAlgebra
+ # particularly used in Solver.jl
+using IterativeSolvers, Preconditioners
+# used for testing
+using BenchmarkTools
 
 # ======================================================
 # EXPORTED FUNCTIONS
@@ -111,6 +115,8 @@ export GenerateTracers,
 # part
 # -----
 
+export AbstractWall, NearestPoint, generateQuadNodes!,isInLine
+
 # CellLists.jl
 export femGenerateMap, 
        generateCellList,
@@ -133,7 +139,8 @@ export updateParticle_all!,
 export BarycentricVelocityInterp_CL!,
        computeCohesion!,
        AdhesionForce!,
-       computeCohesion_CL!
+       computeCohesion_CL!,
+       LennardJonesForceMagnitude
 
 # ======================================================
 # FILES TO LOAD
@@ -173,5 +180,7 @@ include("part/CellLists.jl")
 include("part/fgt.jl")
 include("part/ParticleTypes.jl")
 include("part/UpdateParticles.jl")
+
+include("part/AdhesionForce.jl")
 
 end # module eFEMpart

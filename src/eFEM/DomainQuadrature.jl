@@ -1,7 +1,8 @@
 # File to be loaded into eFEMpart
 
 # -- Types for surface quadratures
-
+# can probably be summarized somewhere else, esp Point2D
+# used in "part" component of code
 mutable struct Point 
     x::Float64
     y::Float64

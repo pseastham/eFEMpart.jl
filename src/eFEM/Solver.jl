@@ -1,9 +1,5 @@
 # solver file to be loaded into eFEMpart
 
-using IterativeSolvers, Preconditioners#, LinearMaps
-#using KrylovMethods   # designed for sprarse matrices?
-#using AlgebraicMultigrid
-
 ################################
 ###### General Framework #######
 ################################

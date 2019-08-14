@@ -56,10 +56,10 @@ end
 # checks whether node is close-enough to point (used to see if calculations necessary)
 # radius is radius of particle 'node'
 # k: number of times away from which quadrature should be considered
-function isCloseEnough(point::Point2D{T},node::Point2D{T},k::Int,rc::T,radius::T) where T<:Real
+function isCloseEnough(point::Point2D{T},node::Point2D{T},k,radius::T) where T<:Real
     ℓ = sqrt((point.x-node.x)^2 + (point.y-node.y)^2)
 
-    return  (ℓ < k*rc*2*radius ? true : false)
+    return  (ℓ < k*2*radius ? true : false)
 end
 
 # generates quadrature nodes for linewall, circlewall, and arcwall
@@ -67,7 +67,7 @@ end
 # k: number of times away from which quadrature should be considered
 # N: number of quadrature nodes
 # xquad,yquad: quadrature nodes to be passed in to be computed
-function generateQuadNodes!(xquad::Vector{T},yquad::Vector{T},point::Point2D{T},wall::LineWall,k::Int,particleRadius::T) where T<:Real
+function generateQuadNodes!(xquad::Vector{T},yquad::Vector{T},point::Point2D{T},node::Point2D{T},wall::LineWall{T},k,particleRadius::T) where T<:Real
     if length(xquad) != length(yquad)
         throw(DimensionMismatch("xquad and yquad must be same length"))
     end
@@ -75,7 +75,8 @@ function generateQuadNodes!(xquad::Vector{T},yquad::Vector{T},point::Point2D{T},
     N = length(xquad)
 
     tx=wall.t[1]; ty=wall.t[2]
-    L = 2*particleRadius
+    dist2wall = sqrt((node.x - point.x)^2+(node.y-point.y)^2)
+    L = 2*particleRadius/dist2wall
     Δs = 2*L/(N-1)
 
     temp1X = L*tx; temp2X = Δs*tx
@@ -88,7 +89,7 @@ function generateQuadNodes!(xquad::Vector{T},yquad::Vector{T},point::Point2D{T},
 
     nothing
 end
-function generateQuadNodes!(xquad::Vector{T},yquad::Vector{T},point::Point2D{T},wall::CircleWall,k::Int,particleRadius::T) where T<:Real
+function generateQuadNodes!(xquad::Vector{T},yquad::Vector{T},point::Point2D{T},node::Point2D{T},wall::CircleWall{T},k,particleRadius::T) where T<:Real
     if length(xquad) != length(yquad)
         throw(DimensionMismatch("xquad and yquad must be same length"))
     end
@@ -109,7 +110,7 @@ function generateQuadNodes!(xquad::Vector{T},yquad::Vector{T},point::Point2D{T},
 
     nothing
 end
-function generateQuadNodes!(xquad::Vector{T},yquad::Vector{T},point::Point2D{T},wall::ArcWall,k::Int,particleRadius::T) where T<:Real
+function generateQuadNodes!(xquad::Vector{T},yquad::Vector{T},point::Point2D{T},node::Point2D{T},wall::ArcWall{T},k,particleRadius::T) where T<:Real
     if length(xquad) != length(yquad)
         throw(DimensionMismatch("xquad and yquad must be same length"))
     end
@@ -132,19 +133,19 @@ function generateQuadNodes!(xquad::Vector{T},yquad::Vector{T},point::Point2D{T},
 end
 
 # function to determine whether quadrature node (sx,sy) is within line
-function isInLine(wall::LineWall,sx::T,sy::T,s::Point2D{T}) where T<:Real 
+function isInLine(wall::LineWall{T},sx::T,sy::T,s::Point2D{T}) where T<:Real 
     s.x=sx; s.y=sy
     return onSegment(wall.nodes[1],s,wall.nodes[2])                         # onSegment is located in isInside.jl
 end
 # note: s is input only to make all arguments for isInLine the same
-function isInLine(wall::CircleWall,sx::T,sy::T,s::Point2D{T}) where T<:Real
+function isInLine(wall::CircleWall{T},sx::T,sy::T,s::Point2D{T}) where T<:Real
     cx = wall.center.x; cy=wall.center.y
     val = abs(wall.radius - sqrt((cx-sx)^2 + (cy-sy)^2))
     TOL = 1e-12
     return (val < TOL ? true : false)
 end
 # note: s is input only to make all arguments for isInLine the same
-function isInLine(wall::ArcWall,sx::T,sy::T,s::Point2D{T}) where T<:Real
+function isInLine(wall::ArcWall{T},sx::T,sy::T,s::Point2D{T}) where T<:Real
     cx = wall.nodes[2].x; cy=wall.nodes[2].y
     radius = sqrt((cx-wall.nodes[1].x)^2 + (cy-wall.nodes[1].y)^2)
     val = abs(radius - sqrt((cx-sx)^2 + (cy-sy)^2))
@@ -175,10 +176,10 @@ end
 # ϵ = strength of lennard jones potential
 # radius = particle radius
 # xquad,yquad = quadrature points
-# rc = cutoff percentage 
-function wallTrapQuad(node::Point2D{T},wall::LineWall,
+# k = cutoff percentage 
+function wallTrapQuad(node::Point2D{T},wall::LineWall{T},
                       xquad::Vector{T},yquad::Vector{T},
-                      ϵ::T,radius::T,rc::T,s::Point2D{T}) where T<:Real
+                      ϵ::T,particleradius::T,k,s::Point2D{T}) where T<:Real
     if length(xquad) != length(yquad)
         throw(DimensionMismatch("xquad and yquad must be same length"))
     end    
@@ -188,7 +189,7 @@ function wallTrapQuad(node::Point2D{T},wall::LineWall,
     
     # this should change to radius + 0.5*wall.width once this feature
     # is added to walls datatype
-    d = 2*radius
+    d = 1.0536*2*particleradius
 
     quadSumX = 0.0
     quadSumY = 0.0
@@ -196,12 +197,12 @@ function wallTrapQuad(node::Point2D{T},wall::LineWall,
     for ti=2:N
         if isInLine(wall,xquad[ti],yquad[ti],s)
             # compute vector from wall to node 
-            qxKm1 = node.x-xquad[ti-1]; qyKm1 = node.y-yquad[ti-1]
-            qxK   = node.x-xquad[ti];   qyK   = node.y-yquad[ti]
+            qxKm1 = xquad[ti-1] - node.x; qyKm1 = yquad[ti-1] - node.y
+            qxK   = xquad[ti]   - node.x;   qyK = yquad[ti]   - node.y
 
             # compute strength of LJ force
-            FxKm1,FyKm1 = ForceCalculation(ϵ,d,rc,qxKm1,qyKm1)
-            FxK,FyK     = ForceCalculation(ϵ,d,rc,qxK,qyK)
+            FxKm1,FyKm1 = ForceCalculation(ϵ,d,k,qxKm1,qyKm1)
+            FxK,FyK     = ForceCalculation(ϵ,d,k,qxK,qyK)
 
             quadSumX += 0.5*(FxKm1 + FxK)*Δs
             quadSumY += 0.5*(FyKm1 + FyK)*Δs
@@ -210,9 +211,9 @@ function wallTrapQuad(node::Point2D{T},wall::LineWall,
 
     return quadSumX,quadSumY
 end
-function wallTrapQuad(node::Point2D{T},wall::CircleWall,
+function wallTrapQuad(node::Point2D{T},wall::CircleWall{T},
                         xquad::Vector{T},yquad::Vector{T},
-                        ϵ::T,particleradius::T,rc::T,s::Point2D{T}) where T<:Real
+                        ϵ::T,particleradius::T,k,s::Point2D{T}) where T<:Real
     if length(xquad) != length(yquad)
         throw(DimensionMismatch("xquad and yquad must be same length"))
     end    
@@ -224,7 +225,7 @@ function wallTrapQuad(node::Point2D{T},wall::CircleWall,
     Δs = abs(wall.radius*(θ2-θ1))
     # this should change to radius + 0.5*wall.width once this feature
     # is added to walls datatype
-    d = 2*particleradius
+    d = 1.05*2*particleradius
 
     quadSumX = 0.0
     quadSumY = 0.0
@@ -232,10 +233,10 @@ function wallTrapQuad(node::Point2D{T},wall::CircleWall,
     for ti=1:N
         if isInLine(wall,xquad[ti],yquad[ti],s)
             # compute vector from x,y to p 
-            qx=node.x - xquad[ti]; qy=node.y - yquad[ti]
+            qx=xquad[ti]-node.x; qy=yquad[ti]-node.y 
 
             # compute strength of LJ force
-            Fx,Fy = ForceCalculation(ϵ,d,rc,qx,qy)
+            Fx,Fy = ForceCalculation(ϵ,d,k,qx,qy)
 
             # add to running quadrature sum
             if (ti==1 || ti==N)
@@ -253,9 +254,9 @@ function wallTrapQuad(node::Point2D{T},wall::CircleWall,
 
     return quadSumX,quadSumY
 end
-function wallTrapQuad(node::Point2D{T},wall::ArcWall,
+function wallTrapQuad(node::Point2D{T},wall::ArcWall{T},
                         xquad::Vector{T},yquad::Vector{T},
-                        ϵ::T,particleradius::T,rc::T,s::Point2D{T}) where T<:Real
+                        ϵ::T,particleradius::T,k,s::Point2D{T}) where T<:Real
     if length(xquad) != length(yquad)
         throw(DimensionMismatch("xquad and yquad must be same length"))
     end    
@@ -267,7 +268,7 @@ function wallTrapQuad(node::Point2D{T},wall::ArcWall,
     radius = sqrt((cx - wall.nodes[1].x)^2 + (cy - wall.nodes[1].y)^2)
     # this should change to radius + 0.5*wall.width once this feature
     # is added to walls datatype
-    d = 2*particleradius
+    d = 1.05*2*particleradius
 
     if θ1 > θ2
         θ2 += 2pi
@@ -281,10 +282,11 @@ function wallTrapQuad(node::Point2D{T},wall::ArcWall,
     for ti=1:N
         if isInLine(wall,xquad[ti],yquad[ti],s)
             # compute vector from x,y to p 
-            qx=node.x - xquad[ti]; qy=node.y - yquad[ti]
+            qx=xquad[ti]-node.x
+            qy=yquad[ti]-node.y
 
             # compute strength of LJ force
-            Fx,Fy = ForceCalculation(ϵ,d,rc,qx,qy)
+            Fx,Fy = ForceCalculation(ϵ,d,k,qx,qy)
 
             # add to running quadrature sum
             if (ti==1 || ti==N)
@@ -305,17 +307,21 @@ end
 
 # Computes adhesion force for all particles against all possible walls
 function AdhesionForce!(afX::Vector{T},afY::Vector{T},pList::Vector{Point2D{T}},rList::Vector{T},wList::Vector{W},
-                        k::Int,rc::T,ϵ::T,pointOnWall::Point2D{T},xquad::Vector{T},yquad::Vector{T}) where {W<:AbstractWall, T<:Real}
+                        k,ϵ::T,pointOnWall::Point2D{T},xquad::Vector{T},yquad::Vector{T}) where {T<:Real,W<:AbstractWall}
     if length(afX) != length(afY)
         throw(DimensionMismatch("length of afX and afY must match!"))
     end
 
+    # zero-out cohesion array
+    fill!(afX,zero(T))
+    fill!(afY,zero(T))
+
     for tp=1:length(pList), tw=1:length(wList)
         NearestPoint!(pointOnWall,pList[tp],wList[tw])
 
-        if isCloseEnough(pointOnWall,pList[tp],k,rc,rList[tp])
-            generateQuadNodes!(xquad,yquad,pointOnWall,wList[tw],k,rList[tp])
-            Fx,Fy = wallTrapQuad(pList[tp],wList[tw],xquad,yquad,ϵ,rList[tp],rc,pointOnWall)
+        if isCloseEnough(pointOnWall,pList[tp],k,rList[tp])
+            generateQuadNodes!(xquad,yquad,pointOnWall,pList[tp],wList[tw],k,rList[tp])
+            Fx,Fy = wallTrapQuad(pList[tp],wList[tw],xquad,yquad,ϵ,rList[tp],k,pointOnWall)
             afX[tp] += Fx
             afY[tp] += Fy
         end 
