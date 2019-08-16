@@ -1,4 +1,7 @@
 # eFEMpart
+
+[![DOI](https://zenodo.org/badge/164060006.svg)](https://zenodo.org/badge/latestdoi/164060006)
+
 Finite Element code in the [Julia language](https://julialang.org/) focused on fluid-dynamics applications, with possibility of including a particle simulator. The 'eFEM' componenty allows the use of Finite Elements discretizations to solve
 common problems in fluid dynamics, and the 'part' refers to mesh-free particle methods primarily aimed at granular-media simulations where continuum constitutive laws are unavailable.
 
