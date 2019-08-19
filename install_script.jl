@@ -126,7 +126,19 @@ function addModules()
     # JLD
     println("Adding JLD package...")
     Pkg.add("JLD");
-   
+
+    # IterativeSolvers
+    println("Adding IterativeSolvers package...")
+    Pkg.add("IterativeSolvers");
+
+    # Preconditioners
+    println("Adding Preconditioners package...")
+    Pkg.add("Preconditioners");
+
+    # BenchmarkTools
+    println("Adding BenchmarkTools package...")
+    Pkg.add("BenchmarkTools");
+
     # Plots
     println("Adding Plots package...")
     Pkg.add("Plots");

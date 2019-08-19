@@ -2,30 +2,34 @@
 
 [![DOI](https://zenodo.org/badge/164060006.svg)](https://zenodo.org/badge/latestdoi/164060006)
 
-Finite Element code in the [Julia language](https://julialang.org/) focused on fluid-dynamics applications, with possibility of including a particle simulator. The 'eFEM' componenty allows the use of Finite Elements discretizations to solve
-common problems in fluid dynamics, and the 'part' refers to mesh-free particle methods primarily aimed at granular-media simulations where continuum constitutive laws are unavailable.
+Finite Element code in the [Julia language](https://julialang.org/) focused on fluid-dynamics and porous-media applications, with possibility of including a particle simulator. The 'eFEM' component allows the use of Finite Elements discretizations to solve common problems in fluid dynamics, and the 'part' refers to mesh-free particle methods primarily aimed at granular-media simulations where continuum constitutive laws are unavailable.
 
 # Installation
 
 ## Linux
 
-- download Julia 1.0.* from (link to download page)
-- copy eFEMpart folder into location where it won't move
-- add above folder path into '~/,julia/config/startup.jl' file. It's possible that you will need to create this file yourself. To add the path, include the line `push!(LOAD_PATH,"/home/peastham/Projects/eFEMpart/src/")` into the `startup.jl` file. In the future I'll probably write a script that does this for you.
+- download Julia 1.0.* from [the Julia downloads page](https://julialang.org/downloads/)
+- copy eFEMpart into a location where it won't move
+- use Julia to run "install_script.jl"
+
+Note: eFEMpart installation requires that you build from source a C++ object library. If you are running into errors during the installation process, make sure you have all required developer tools installed on your computer.
 
 ## Mac OS
 
-I'll get back to you on this one...
+The install file should work as long as the terminal uses Bash, but Mac OS was not explicitely considered when writing the install script. Feel free to email me if you have a specific issue.
 
 ## Windows
 
-eFEMpart is not supported as of yet on Windows. Sorry.
+eFEMpart is not supported on Windows. 
 
 # Dependencies
 
 The following packages can optionally be installed as dependencies:
 
 - [JLD](https://github.com/JuliaIO/JLD.jl)
+- [IterativeSolvers](https://github.com/JuliaMath/IterativeSolvers.jl)
+- [Preconditioners](https://github.com/mohamed82008/Preconditioners.jl)
+- [BenchmarkTools](https://github.com/JuliaCI/BenchmarkTools.jl)
 - [Plots](http://docs.juliaplots.org/latest/)
 - [PyPlot](https://github.com/JuliaPy/PyPlot.jl)
 - [PyCall](https://github.com/JuliaPy/PyCall.jl)
@@ -35,9 +39,7 @@ To add any of the above, follow the [instructions for installing packages](https
 
 # Meshes
 
-For simple geometries (rectangles...), you can use the built-in 
-geometry code. For more complicated geometries we suggest building your mesh with 
-an external library (such as [GMSH](http://gmsh.info/)). See the [meshes wiki](https://github.com/pseastham/eFEMpart/wiki/Docs:-Meshes) for how this is used in practice.
+For simple geometries (rectangles...), you can use the built-in geometry code. For more complicated geometries we suggest building your mesh with an external library (such as [GMSH](http://gmsh.info/)). See the [meshes wiki](https://github.com/pseastham/eFEMpart/wiki/Docs:-Meshes) for how this is used in practice.
 
 # Equations
 
