@@ -10,11 +10,49 @@ using IterativeSolvers, Preconditioners
 using BenchmarkTools
 
 # ======================================================
-# EXPORTED FUNCTIONS
+# FILES TO LOAD
 # ======================================================
 
-# delete -- only necessary for testing
-export Node, shape2D!, Element, FEMstats, solve_darcyvar_2b
+# Custom types
+include("eFEM/MeshTypes.jl")
+include("eFEM/ParameterTypes.jl")
+include("eFEM/ProblemTypes.jl")
+include("eFEM/SolutionTypes.jl")
+
+# Mesh input/generation
+include("eFEM/MeshGeneration.jl")
+include("eFEM/GMSHreader.jl")
+include("eFEM/MeshTransform.jl")
+
+# Generate Matrices
+include("eFEM/Basis.jl")
+include("eFEM/BilinearForms.jl")
+include("eFEM/MatrixGeneration.jl")
+include("eFEM/BoundaryConditions.jl")
+
+# Solve Problem
+include("eFEM/Assembly.jl")
+include("eFEM/TimeStepping.jl")
+include("eFEM/Solver.jl")
+
+# PostProcessing
+include("eFEM/vtkExport.jl")
+include("eFEM/ErrorAnalysis.jl")
+include("eFEM/DomainQuadrature.jl")
+include("eFEM/PostProcessing.jl")
+include("eFEM/TracerGenerate.jl")
+
+# Particles
+include("part/CellLists.jl")
+include("part/fgt.jl")
+include("part/ParticleTypes.jl")
+include("part/UpdateParticles.jl")
+
+include("part/AdhesionForce.jl")
+
+# ======================================================
+# EXPORTED FUNCTIONS
+# ======================================================
 
 # MeshTypes.jl
 export AbstractMesh
@@ -75,7 +113,7 @@ export FEMForwardEuler,
        sToHMS
 
 # Solver.jl
-export solve, 
+export solve,
        solve!,
        GenerateSystem,
        ApplyBC!
@@ -118,7 +156,7 @@ export GenerateTracers,
 export AbstractWall, NearestPoint, generateQuadNodes!,isInLine
 
 # CellLists.jl
-export femGenerateMap, 
+export femGenerateMap,
        generateCellList,
        updateCellList!
 
@@ -141,46 +179,5 @@ export BarycentricVelocityInterp_CL!,
        AdhesionForce!,
        computeCohesion_CL!,
        LennardJonesForceMagnitude
-
-# ======================================================
-# FILES TO LOAD
-# ======================================================
-
-# Custom types
-include("eFEM/MeshTypes.jl")
-include("eFEM/ParameterTypes.jl")
-include("eFEM/ProblemTypes.jl")
-include("eFEM/SolutionTypes.jl")
-
-# Mesh input/generation
-include("eFEM/MeshGeneration.jl")
-include("eFEM/GMSHreader.jl")
-include("eFEM/MeshTransform.jl")
-
-# Generate Matrices
-include("eFEM/Basis.jl")
-include("eFEM/BilinearForms.jl")
-include("eFEM/MatrixGeneration.jl")
-include("eFEM/BoundaryConditions.jl")
-
-# Solve Problem
-include("eFEM/Assembly.jl")
-include("eFEM/TimeStepping.jl")
-include("eFEM/Solver.jl")
-
-# PostProcessing
-include("eFEM/vtkExport.jl")
-include("eFEM/ErrorAnalysis.jl")
-include("eFEM/DomainQuadrature.jl")
-include("eFEM/PostProcessing.jl")
-include("eFEM/TracerGenerate.jl")
-
-# Particles
-include("part/CellLists.jl")
-include("part/fgt.jl")
-include("part/ParticleTypes.jl")
-include("part/UpdateParticles.jl")
-
-include("part/AdhesionForce.jl")
 
 end # module eFEMpart

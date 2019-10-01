@@ -8,7 +8,7 @@ module partViz
 export plotWall,
        plotWalls,
        plotParticles!
-       
+
 # functions from Plots
 export @animate,
        plot,
@@ -33,7 +33,7 @@ function plotWalls(wallList::Vector,rm::Float64)
   for i=1:N
     plotWall(wallList[i],p,rm)
   end
-  
+
   return p
 end
 
@@ -45,7 +45,7 @@ function plotParticles!(plotObj,pList,rm)
         tc = mod(i,length(colorInd))+1
         plotParticle!(pList[i],plotObj,colorInd[tc],rm)
     end
-    
+
     return plotObj
 end
 
@@ -61,7 +61,7 @@ function plotWall(wall::eFEMpart.LineWall,plotObj::Plots.Plot,rm)
     θ2 = range( pi/2 + θWALL,stop = 3*pi/2 + θWALL,length=Nθ)
 
     len = sqrt((x1-x2)^2 + (y1-y2)^2)
-    
+
     tx = (x2-x1)/len
     ty = (y2-y1)/len
 
@@ -78,11 +78,11 @@ function plotWall(wall::eFEMpart.LineWall,plotObj::Plots.Plot,rm)
     y = [y2 + radius*ny,y1 + radius*ny]
     plot!(plotObj,x,y,label="",color=:black)
 
-    # 3 arc 
+    # 3 arc
     x = [x1 + radius*cos(θ2[i]) for i=1:Nθ]
     y = [y1 + radius*sin(θ2[i]) for i=1:Nθ]
     plot!(plotObj,x,y,label="",color=:black)
-    
+
     # 4 line
     x = [x1 - radius*nx,x2 - radius*nx]
     y = [y1 - radius*ny,y2 - radius*ny]
@@ -123,11 +123,11 @@ function plotWall(wall::eFEMpart.ArcWall,plotObj::Plots.Plot,rm)
     y = [pb[2] + radius*sin(θ2cap[i]) for i=1:Nplot]
     plot!(plotObj,x,y,label="",color=:black)
 
-    # 3 small arc 
+    # 3 small arc
     curvex = [c[1] + (r-radius)*cos((i-1)*Δθ+θ1) for i=1:Nplot]
     curvey = [c[2] + (r-radius)*sin((i-1)*Δθ+θ1) for i=1:Nplot]
     plot!(plotObj,curvex,curvey,label="",color=:black)
-    
+
     # 4 close cap
     θWALL = θ1 + pi/2
     θ1cap = range( pi/2 + θWALL,stop = 3*pi/2 + θWALL,length=Nplot)
