@@ -10,53 +10,13 @@ using IterativeSolvers, Preconditioners
 using BenchmarkTools
 
 # ======================================================
-# FILES TO LOAD
-# ======================================================
-
-# Custom types
-include("eFEM/MeshTypes.jl")
-include("eFEM/ParameterTypes.jl")
-include("eFEM/ProblemTypes.jl")
-include("eFEM/SolutionTypes.jl")
-
-# Mesh input/generation
-include("eFEM/MeshGeneration.jl")
-include("eFEM/GMSHreader.jl")
-include("eFEM/MeshTransform.jl")
-
-# Generate Matrices
-include("eFEM/Basis.jl")
-include("eFEM/BilinearForms.jl")
-include("eFEM/MatrixGeneration.jl")
-include("eFEM/BoundaryConditions.jl")
-
-# Solve Problem
-include("eFEM/Assembly.jl")
-include("eFEM/TimeStepping.jl")
-include("eFEM/Solver.jl")
-
-# PostProcessing
-include("eFEM/vtkExport.jl")
-include("eFEM/ErrorAnalysis.jl")
-include("eFEM/DomainQuadrature.jl")
-include("eFEM/PostProcessing.jl")
-include("eFEM/TracerGenerate.jl")
-
-# Particles
-include("part/CellLists.jl")
-include("part/fgt.jl")
-include("part/ParticleTypes.jl")
-include("part/UpdateParticles.jl")
-
-include("part/AdhesionForce.jl")
-
-# ======================================================
 # EXPORTED FUNCTIONS
 # ======================================================
 
 # MeshTypes.jl
-export AbstractMesh,
-       getBoundaries
+export AbstractMesh
+
+export getBoundaries
 
 # ParameterTypes.jl
 export PoissonParam,
@@ -180,5 +140,46 @@ export BarycentricVelocityInterp_CL!,
        AdhesionForce!,
        computeCohesion_CL!,
        LennardJonesForceMagnitude
+
+# ======================================================
+# FILES TO LOAD
+# ======================================================
+
+# Custom types
+include("eFEM/MeshTypes.jl")
+include("eFEM/ParameterTypes.jl")
+include("eFEM/ProblemTypes.jl")
+include("eFEM/SolutionTypes.jl")
+
+# Mesh input/generation
+include("eFEM/MeshGeneration.jl")
+include("eFEM/GMSHreader.jl")
+include("eFEM/MeshTransform.jl")
+
+# Generate Matrices
+include("eFEM/Basis.jl")
+include("eFEM/BilinearForms.jl")
+include("eFEM/MatrixGeneration.jl")
+include("eFEM/BoundaryConditions.jl")
+
+# Solve Problem
+include("eFEM/Assembly.jl")
+include("eFEM/TimeStepping.jl")
+include("eFEM/Solver.jl")
+
+# PostProcessing
+include("eFEM/vtkExport.jl")
+include("eFEM/ErrorAnalysis.jl")
+include("eFEM/DomainQuadrature.jl")
+include("eFEM/PostProcessing.jl")
+include("eFEM/TracerGenerate.jl")
+
+# Particles
+include("part/CellLists.jl")
+include("part/fgt.jl")
+include("part/ParticleTypes.jl")
+include("part/UpdateParticles.jl")
+
+include("part/AdhesionForce.jl")
 
 end # module eFEMpart
