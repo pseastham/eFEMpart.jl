@@ -95,3 +95,5 @@ function FluidMesh(file_name::String)
   mesh::FluidMesh = FluidMesh(fn)
   return mesh
 end
+
+getBoundaries(mesh) = mesh.bdry.idnames.names

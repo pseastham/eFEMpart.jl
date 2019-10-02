@@ -55,7 +55,8 @@ include("part/AdhesionForce.jl")
 # ======================================================
 
 # MeshTypes.jl
-export AbstractMesh
+export AbstractMesh,
+       getBoundaries
 
 # ParameterTypes.jl
 export PoissonParam,
