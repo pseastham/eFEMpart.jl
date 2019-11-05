@@ -63,7 +63,8 @@ export pointTransform,
 # Basis.jl
 export derivShape2D,
        shapeEval,
-       GaussEdge
+       GaussEdge,
+       FEMstats
 
 # MatrixGeneration.jl
 export Mass2DMatrix
