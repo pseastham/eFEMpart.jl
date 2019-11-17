@@ -133,7 +133,7 @@ function Problem(mesh::ScalarMesh,Nodes,bcfun,OpType)
   end
   dNodesArr::Vector{DirichletArray} = filter(isDirichletArray,bcfun)
   if length(dNodesArr)>0
-    dBCarr = [dNodesArr[1][i] for i in dNodes]
+    dBCarr = [dNodesArr[1].v[i] for i in dNodes]
     push!(bcValNodes,dBCarr)
     push!(bcValNamesSym,:dBC)
   end
@@ -144,11 +144,11 @@ function Problem(mesh::ScalarMesh,Nodes,bcfun,OpType)
   if (length(nNodesFun)>0) || (length(nNodesArr)>0)
     if length(nNodesFun)>0
       nBCarr = [nNodesFun[1].f(mesh.xy[i].x,mesh.xy[i].y)
-                                for i in nNodes]
+                                for i=1:length(nNodes)]
       push!(bcValNodes,nBCarr)
       push!(bcValNamesSym,:nBC)
     elseif length(nNodesArr)>0
-      nBCarr = [nNodesArr[1][i] for i in nNodes]
+      nBCarr = [nNodesArr[1].v[i] for i=1:length(nNodes)]
       push!(bcValNodes,nBCarr)
       push!(bcValNamesSym,:nBC)
     end
@@ -170,7 +170,7 @@ function Problem(mesh::ScalarMesh,Nodes,bcfun,OpType)
   end
   rNodesArr::Vector{DirichletArray} = filter(isRobinArray,bcfun)
   if length(rNodesArr)>0
-    rBCarr = [rNodesArr[1][i] for i in rNodes]
+    rBCarr = [rNodesArr[1].v[i] for i in rNodes]
     push!(bcValNodes,rBCarr)
     push!(bcValNamesSym,:rBC)
   end
@@ -185,7 +185,7 @@ function Problem(mesh::ScalarMesh,Nodes,bcfun,OpType)
       push!(bcValNodes,farr)
       push!(bcValNamesSym,:forcing)
     elseif length(fNodesArr)>0
-      farr = [fNodesArr[1][i] for i=1:length(mesh.xy)]
+      farr = [fNodesArr[1].v[i] for i=1:length(mesh.xy)]
       push!(bcValNodes,farr)
       push!(bcValNamesSym,:forcing)
     end
@@ -255,11 +255,11 @@ function Problem(mesh::FluidMesh,Nodes,bcfun,OperatorType)
   end
   dNodesArr::Vector{DirichletFunction} = filter(isDirichletArray,bcfun)
   if length(dNodesArr)==2
-    dUBCarr = [dNodesArr[1][i] for i in dUNodes]
+    dUBCarr = [dNodesArr[1].v[i] for i in dUNodes]
     push!(bcValNodes,dUBCarr)
     push!(bcValNamesSym,:dUBC)
 
-    dVBCarr = [dNodesArr[2][i] for i in dVNodes]
+    dVBCarr = [dNodesArr[2].v[i] for i in dVNodes]
     push!(bcValNodes,dVBCarr)
     push!(bcValNamesSym,:dVBC)
   end
@@ -290,8 +290,8 @@ function Problem(mesh::FluidMesh,Nodes,bcfun,OperatorType)
     push!(bcValNodes,farrY)
     push!(bcValNamesSym,:forcingY)
   elseif length(fNodesArr)==2
-    farrX = [fNodesArr[1][i] for i=1:length(mesh.xy)]
-    farrY = [fNodesArr[2][i] for i=1:length(mesh.xy)]
+    farrX = [fNodesArr[1].v[i] for i=1:length(mesh.xy)]
+    farrY = [fNodesArr[2].v[i] for i=1:length(mesh.xy)]
     push!(bcValNodes,farrX)
     push!(bcValNamesSym,:forcingX)
     push!(bcValNodes,farrY)
