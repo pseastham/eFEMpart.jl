@@ -7,6 +7,10 @@
 # General solver for scalar problems
 function solve(prob::Problem,mesh::S,param::T) where 
                 {S<:AbstractMesh,T<:AbstractParameter}
+  if !(prob.OperatorType in [:Poisson2D,:AdvDiff2D,:Stokes2D,:Darcy2D,:StokesAS,:AdvDiffAS,:Brinkman2D,:BrinkmanMP2D])
+    error("operator type not recognized")
+  end
+
   # generate linear operator matrix
   LinOp = GenerateSystem(mesh,prob,param)
 
@@ -46,7 +50,7 @@ end
 
 # solve function without parameter included (for :Poisson2D)
 function solve(prob::Problem,mesh::S) where S<:AbstractMesh
-   param = PoissonParam(1.0);  return solve(prob,mesh,param)
+  param = PoissonParam(1.0);  return solve(prob,mesh,param)
 end
 
 # General solver for scalar problems
