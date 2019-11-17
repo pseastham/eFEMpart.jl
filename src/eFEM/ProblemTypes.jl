@@ -7,6 +7,7 @@
 abstract type AbstractProblem  end
 abstract type BoundaryID       end
 abstract type BoundaryFunction end
+abstract type BoundaryArray end
 
 struct DirichletID <: BoundaryID id::Vector{Symbol} end
 struct NeumannID   <: BoundaryID id::Vector{Symbol} end
@@ -16,6 +17,11 @@ struct DirichletFunction <: BoundaryFunction f::Function end
 struct NeumannFunction   <: BoundaryFunction f::Function end
 struct RobinFunction     <: BoundaryFunction f::Function end
 struct ForcingFunction   <: BoundaryFunction f::Function end
+
+struct DirichletArray <: BoundaryArray v::Vector end
+struct NeumannArray   <: BoundaryArray v::Vector end
+struct RobinArray     <: BoundaryArray v::Vector end
+struct ForcingArray   <: BoundaryArray v::Vector end
 
 #### constructors ####
 
@@ -34,28 +40,46 @@ end
 function Dirichlet(f::Function)
   return DirichletFunction(f)
 end
+function Dirichlet(v::Vector)
+  return DirichletArray(v)
+end
 
 function Neumann(f::Function)
   return NeumannFunction(f)
+end
+function Neumann(v::Vector)
+  return NeumannArray(v)
 end
 
 function Robin(f::Function)
   return RobinFunction(f)
 end
+function Robin(v::Vector)
+  return RobinArray(v)
+end
 
 function Forcing(f::Function)
   return ForcingFunction(f)
 end
+function Forcing(v::Vector)
+  return ForcingArray(v)
+end
 
 #### Methods #####
 
-isDirichletID(x)       = (typeof(x)==DirichletID       ? true : false)
-isNeumannID(x)         = (typeof(x)==NeumannID         ? true : false)
-isRobinID(x)           = (typeof(x)==RobinID           ? true : false)
+isDirichletID(x)       = (typeof(x)==DirichletID ? true : false)
+isNeumannID(x)         = (typeof(x)==NeumannID   ? true : false)
+isRobinID(x)           = (typeof(x)==RobinID     ? true : false)
+
 isDirichletFunction(x) = (typeof(x)==DirichletFunction ? true : false)
 isNeumannFunction(x)   = (typeof(x)==NeumannFunction   ? true : false)
 isRobinFunction(x)     = (typeof(x)==RobinFunction     ? true : false)
 isForcingFunction(x)   = (typeof(x)==ForcingFunction   ? true : false)
+
+isDirichletArray(x) = (typeof(x)==DirichletArray ? true : false)
+isNeumannArray(x)   = (typeof(x)==NeumannArray   ? true : false)
+isRobinArray(x)     = (typeof(x)==RobinArray     ? true : false)
+isForcingArray(x)   = (typeof(x)==ForcingArray   ? true : false)
 
 ############################
 ###### Problem Types #######
@@ -98,8 +122,8 @@ function Problem(mesh::ScalarMesh,Nodes,bcfun,OpType)
     push!(bcIDNamesSym,:rNodes)
   end
 
-
   # derive boundary value information
+  # dirichlet
   dNodesFun::Vector{DirichletFunction} = filter(isDirichletFunction,bcfun)
   if length(dNodesFun)>0
     dBCarr::Vector{Float64} = [dNodesFun[1].f(mesh.xy[i].x,mesh.xy[i].y)
@@ -107,13 +131,27 @@ function Problem(mesh::ScalarMesh,Nodes,bcfun,OpType)
     push!(bcValNodes,dBCarr)
     push!(bcValNamesSym,:dBC)
   end
+  dNodesArr::Vector{DirichletArray} = filter(isDirichletArray,bcfun)
+  if length(dNodesArr)>0
+    dBCarr::Vector{Float64} = [dNodesArr[1][i] for i in dNodes]
+    push!(bcValNodes,dBCarr)
+    push!(bcValNamesSym,:dBC)
+  end
 
+  # neumann
   nNodesFun::Vector{NeumannFunction} = filter(isNeumannFunction,bcfun)
-  if length(nNodesFun)>0
-    nBCarr::Vector{Float64} = [nNodesFun[1].f(mesh.xy[i].x,mesh.xy[i].y)
-                               for i in nNodes]
-    push!(bcValNodes,nBCarr)
-    push!(bcValNamesSym,:nBC)
+  nNodesArr::Vector{NeumannArray} = filter(isNeumannArray,bcfun)
+  if (length(nNodesFun)>0) || (length(nNodesArr)>0)
+    if length(nNodesFun)>0
+      nBCarr::Vector{Float64} = [nNodesFun[1].f(mesh.xy[i].x,mesh.xy[i].y)
+                                for i in nNodes]
+      push!(bcValNodes,nBCarr)
+      push!(bcValNamesSym,:nBC)
+    elseif length(nNodesArr)>0
+      nBCarr::Vector{Float64} = [nNodesArr[1][i] for i in nNodes]
+      push!(bcValNodes,nBCarr)
+      push!(bcValNamesSym,:nBC)
+    end
   else
     if :nNodes in bcIDNamesSym
       nBCarr = zeros(Float64,length(nNodes))
@@ -122,6 +160,7 @@ function Problem(mesh::ScalarMesh,Nodes,bcfun,OpType)
     end
   end
 
+  # robin
   rNodesFun::Vector{RobinFunction} = filter(isRobinFunction,bcfun)
   if length(rNodesFun)>0
     rBCarr::Vector{Float64} = [rNodesFun[1].f(mesh.xy[i].x,mesh.xy[i].y)
@@ -129,13 +168,27 @@ function Problem(mesh::ScalarMesh,Nodes,bcfun,OpType)
     push!(bcValNodes,rBCarr)
     push!(bcValNamesSym,:rBC)
   end
+  rNodesArr::Vector{DirichletArray} = filter(isRobinArray,bcfun)
+  if length(rNodesArr)>0
+    rBCarr::Vector{Float64} = [rNodesArr[1][i] for i in rNodes]
+    push!(bcValNodes,rBCarr)
+    push!(bcValNamesSym,:rBC)
+  end
 
+  # forcing
   fNodesFun::Vector{ForcingFunction} = filter(isForcingFunction,bcfun)
-  if length(fNodesFun)>0
-    farr::Vector{Float64} = [fNodesFun[1].f(mesh.xy[i].x,mesh.xy[i].y)
-                               for i=1:length(mesh.xy)]
-    push!(bcValNodes,farr)
-    push!(bcValNamesSym,:forcing)
+  fNodesArr::Vector{ForcingArray} = filter(isForcingArray,bcfun)
+  if (length(fNodesFun)>0) || (length(fNodesArr)>0)
+    if length(fNodesFun)>0
+      farr::Vector{Float64} = [fNodesFun[1].f(mesh.xy[i].x,mesh.xy[i].y)
+                                for i=1:length(mesh.xy)]
+      push!(bcValNodes,farr)
+      push!(bcValNamesSym,:forcing)
+    elseif length(fNodesArr)>0
+      farr::Vector{Float64} = [fNodesArr[1][i] for i=1:length(mesh.xy)]
+      push!(bcValNodes,farr)
+      push!(bcValNamesSym,:forcing)
+    end
   else
     farr = zeros(Float64,length(mesh.xy))
     push!(bcValNodes,farr)
@@ -200,6 +253,16 @@ function Problem(mesh::FluidMesh,Nodes,bcfun,OperatorType)
     push!(bcValNodes,dVBCarr)
     push!(bcValNamesSym,:dVBC)
   end
+  dNodesArr::Vector{DirichletFunction} = filter(isDirichletArray,bcfun)
+  if length(dNodesArr)==2
+    dUBCarr::Vector{Float64} = [dNodesArr[1][i] for i in dUNodes]
+    push!(bcValNodes,dUBCarr)
+    push!(bcValNamesSym,:dUBC)
+
+    dVBCarr::Vector{Float64} = [dNodesArr[2][i] for i in dVNodes]
+    push!(bcValNodes,dVBCarr)
+    push!(bcValNamesSym,:dVBC)
+  end
 
   nNodesFun::Vector{NeumannFunction} = filter(isNeumannFunction,bcfun)
   if length(nNodesFun)==1
@@ -216,11 +279,19 @@ function Problem(mesh::FluidMesh,Nodes,bcfun,OperatorType)
   end
 
   fNodesFun::Vector{ForcingFunction} = filter(isForcingFunction,bcfun)
+  fNodesArr::Vector{ForcingArray} = filter(isForcingArray,bcfun)
   if length(fNodesFun)==2
     farrX::Vector{Float64} = [fNodesFun[1].f(mesh.xy[i].x,mesh.xy[i].y)
                                for i=1:length(mesh.xy)]
     farrY::Vector{Float64} = [fNodesFun[2].f(node.x,node.y)
                                for node in mesh.xy]
+    push!(bcValNodes,farrX)
+    push!(bcValNamesSym,:forcingX)
+    push!(bcValNodes,farrY)
+    push!(bcValNamesSym,:forcingY)
+  elseif length(fNodesArr)==2
+    farrX::Vector{Float64} = [fNodesArr[1][i] for i=1:length(mesh.xy)]
+    farrY::Vector{Float64} = [fNodesArr[2][i] for i=1:length(mesh.xy)]
     push!(bcValNodes,farrX)
     push!(bcValNamesSym,:forcingX)
     push!(bcValNodes,farrY)
