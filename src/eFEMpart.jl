@@ -86,7 +86,8 @@ export vtksave,
        ScalarData,
        ScalarNames,
        VectorData,
-       VectorNames
+       VectorNames,
+       SURF_UNSTRUCTURED_TO_VTK
 
 # ErrorAnalysis.jl
 export DomainNorm,
@@ -96,7 +97,7 @@ export DomainNorm,
 export DomainQuad,
        SurfaceQuad,
        SurfaceFlux,
-       Surface,
+       mySurface,
        VelocityFlux
 
 # PostProcessing.jl
