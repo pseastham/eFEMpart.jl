@@ -79,6 +79,7 @@ function GenerateSystem(mesh::R,prob::S,param::T) where
   # POISSON ✓
   if prob.OperatorType == :Poisson2D
     LinOp.Op,LinOp.rhs = Laplace2DMatrix(mesh,prob.bcval[:forcing],param)
+    LinOp.Op *= param.κ
 
   # DARCY -- NOT TESTED YET
   elseif prob.OperatorType == :Darcy2D

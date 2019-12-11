@@ -146,7 +146,6 @@ function GMSH_QUAD_READER(file_name::String)
     if isElements(ln)
       elementsLineStart = lineNumber+2
       numElements = parse(Int,lines[lineNumber+1])
-
       for elm = 1:numElements
         elmStr = split(lines[lineNumber+elm+1]," ")
         elType = str2int(elmStr[2])
