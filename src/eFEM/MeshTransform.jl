@@ -22,10 +22,22 @@ end
 Given three colinear points p, q, r, the function checks if
 point q lies on line segment 'pr'
 """
+#function onSegment(p,q,r)
+#  if (q[1] <= maximum([p[1], r[1]]) && q[1] >= minimum([p[1],r[1]]) &&
+#          q[2] <= maximum([p[2], r[2]]) && q[2] >= minimum([p[2], r[2]]))
+#      return true
+#  else
+#    return false
+#  end
+#end
+function distance(a,b)
+    return sqrt((a[1] - b[1])^2 + (a[2] - b[2])^2)
+end
+
 function onSegment(p,q,r)
-  if (q[1] <= maximum([p[1], r[1]]) && q[1] >= minimum([p[1],r[1]]) &&
-          q[2] <= maximum([p[2], r[2]]) && q[2] >= minimum([p[2], r[2]]))
-      return true
+  val = abs(distance(p, q) + distance(q, r) - distance(p, r))
+  if val < 1e-12 
+    return true
   else
     return false
   end
@@ -420,16 +432,7 @@ function pointTransform(xyA,cmA,UA,point)
   foundInside = false
   foundVal = false
 
-  # check over all nodes in Q1 for Q2 match
-  #nodeTOL = 1e0
-  #for ti=1:nptsA
-  #    if sqrt((xyA[ti,1]-point[1])^2 + (xyA[ti,2]-point[2])^2) < nodeTOL
-  #      println("found!")
-  #      Uinterp = UA[ti]
-  #      foundVal = true
-  #      break
-  #    end
-  #end
+  #println("transformed point")
 
   # loop over elements in A to find which one contains above point
   if foundVal==false
@@ -446,9 +449,6 @@ function pointTransform(xyA,cmA,UA,point)
         if isInside(quad,4,point)
           s,t = reverseQuadMap(quad,point)
 
-          #println("s=",round(s,2))
-          #println("t=",round(t,2))
-
           phi,_,_ = shape2D(s,t,1)
 
           x = shapeEval([p1[1],p2[1],p3[1],p4[1]],phi)
@@ -456,7 +456,7 @@ function pointTransform(xyA,cmA,UA,point)
 
           maxerr = maximum([abs(x-point[1]),abs(y-point[2])])
           if maxerr > 1e-2
-            error("(s,t) error is too large, = ",maxerr)
+            #error("(s,t) error is too large, = ",maxerr)
           end
           #println("good transform")
           Uinterp = shapeEval(UA[c],phi)
@@ -464,13 +464,65 @@ function pointTransform(xyA,cmA,UA,point)
         # check whether point is on side of element
         else
           if onSegment(p1,point,p2)
-            #println("on Segment!")
+            s = 0.0; t=-1.0
+
+            phi,_,_ = shape2D(s,t,1)
+  
+            x = shapeEval([p1[1],p2[1],p3[1],p4[1]],phi)
+            y = shapeEval([p1[2],p2[2],p3[2],p4[2]],phi)
+  
+            maxerr = maximum([abs(x-point[1]),abs(y-point[2])])
+            if maxerr > 1e-2
+              #error("(s,t) error is too large, = ",maxerr)
+            end
+            #println("good transform")
+            Uinterp = shapeEval(UA[c],phi)
+            foundInside = true
           elseif onSegment(p2,point,p3)
-            #println("on Segment!")
+            s = 1.0; t=0.0
+
+            phi,_,_ = shape2D(s,t,1)
+  
+            x = shapeEval([p1[1],p2[1],p3[1],p4[1]],phi)
+            y = shapeEval([p1[2],p2[2],p3[2],p4[2]],phi)
+  
+            maxerr = maximum([abs(x-point[1]),abs(y-point[2])])
+            if maxerr > 1e-2
+              #error("(s,t) error is too large, = ",maxerr)
+            end
+            #println("good transform")
+            Uinterp = shapeEval(UA[c],phi)
+            foundInside = true
           elseif onSegment(p3,point,p4)
-            #println("on Segment!")
+            s = 0.0; t=1.0
+
+            phi,_,_ = shape2D(s,t,1)
+  
+            x = shapeEval([p1[1],p2[1],p3[1],p4[1]],phi)
+            y = shapeEval([p1[2],p2[2],p3[2],p4[2]],phi)
+  
+            maxerr = maximum([abs(x-point[1]),abs(y-point[2])])
+            if maxerr > 1e-2
+              #error("(s,t) error is too large, = ",maxerr)
+            end
+            #println("good transform")
+            Uinterp = shapeEval(UA[c],phi)
+            foundInside = true
           elseif onSegment(p4,point,p1)
-            #println("on Segment!")
+            s = -1.0; t=0.0
+
+            phi,_,_ = shape2D(s,t,1)
+  
+            x = shapeEval([p1[1],p2[1],p3[1],p4[1]],phi)
+            y = shapeEval([p1[2],p2[2],p3[2],p4[2]],phi)
+  
+            maxerr = maximum([abs(x-point[1]),abs(y-point[2])])
+            if maxerr > 1e-2
+              #error("(s,t) error is too large, = ",maxerr)
+            end
+            #println("good transform")
+            Uinterp = shapeEval(UA[c],phi)
+            foundInside = true
           end     
         end
       end
@@ -478,8 +530,8 @@ function pointTransform(xyA,cmA,UA,point)
   end
 
   if !(foundInside || foundVal)
-    #errorstr = string("point (",point[1],",",point[2],") not inside mesh")
-    #error(errorstr)
+    errorstr = string("point (",point[1],",",point[2],") not inside mesh")
+    error(errorstr)
     return 0.0
   end
 
