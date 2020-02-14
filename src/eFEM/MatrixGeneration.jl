@@ -8,6 +8,9 @@
 function Mass2DMatrix(mesh)
     return assembleScalar(mesh,localMass2D!,0.0)
 end
+function Mass2DMatrix(mesh,scalarFunc)
+    return assembleScalar(mesh,localMassWithScalar2D!,scalarFunc)
+end
 
 # LAPLACE 2D
 function Laplace2DMatrix(mesh,farr,param::T) where T<:AbstractDummyParameter

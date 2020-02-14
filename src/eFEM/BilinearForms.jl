@@ -30,6 +30,42 @@ function localMass2D!(mesh,el,xN,yN,w,s,t,nGaussNodes,nNodesPerElm,
 end
 
 """
+  localMassWithScalar2D!()
+
+Computes local mass matrix for 2D geometries, e.g. for use in discretized time derivative
+"""
+function localMassWithScalar2D!(mesh,el,xN,yN,w,s,t,nGaussNodes,nNodesPerElm,
+                       At,phi,dphidx,dphidy,dphids,dphidt,order,param::Vector{T}) where T<:Real
+  # generate local stiffness matrices
+  getNodes!(xN,yN,mesh,el,nGaussNodes)
+  fill!(At,zero(Float64))
+  
+  αNodes = zeros(T,nGaussNodes)
+
+  # generate local stiffness matrices
+  getNodes!(xN,yN,mesh,el,nGaussNodes)
+  fill!(At,zero(T))
+  for i=1:nGaussNodes
+    αNodes[i] = param[mesh.cm[el].NodeList[i]]
+  end
+
+  for gpt=1:nGaussNodes
+    shape2D!(phi,dphids,dphidt,s[gpt],t[gpt],order)
+    derivShape2D!(phi,dphidx,dphidy,dphids,dphidt,s[gpt],t[gpt],xN,yN,order)
+    jac = jacCalc(xN,yN,dphids,dphidt)
+    αg  = shapeEval(αNodes,phi)
+
+    for tj = 1:nNodesPerElm, ti = 1:nNodesPerElm
+      integrand = αg*phi[ti]*phi[tj]*jac
+      At[ti,tj] += integrand*w[gpt]
+    end
+  end
+
+  nothing
+end
+
+
+"""
   localLaplace2D!()
 
 Computes local laplace matrix for 2D geometries. 
