@@ -118,7 +118,7 @@ function localDarcy2D!(mesh,el,xN,yN,w,s,t,nGaussNodes,nNodesPerElm,
     αg  = shapeEval(αNodes,phi)
 
     for tj = 1:nNodesPerElm, ti = 1:nNodesPerElm
-    integrand = αg*(dphidx[ti]*dphidx[tj] + dphidy[ti]*dphidy[tj])/jac
+    integrand = (dphidx[ti]*dphidx[tj] + dphidy[ti]*dphidy[tj])/(jac*αg)
     At[ti,tj] += integrand*w[gpt]
     end
   end

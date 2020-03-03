@@ -31,12 +31,12 @@ end
 mutable struct AdvDiffConstParam <: AbstractConstantParameter
   u::Vector{Float64}
   v::Vector{Float64}
-  κ::Float64
+  Pe::Float64
 end
 mutable struct AdvDiffVarParam <: AbstractVariableParameter
   u::Vector{Float64}
   v::Vector{Float64}
-  κ::Vector{Float64}
+  Pe::Vector{Float64}
 end
 
 mutable struct FluidConstParam <: AbstractConstantParameter

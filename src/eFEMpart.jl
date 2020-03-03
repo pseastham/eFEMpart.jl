@@ -98,7 +98,8 @@ export DomainQuad,
        SurfaceQuad,
        SurfaceFlux,
        mySurface,
-       VelocityFlux
+       VelocityFlux,
+       SurfaceInterp
 
 # PostProcessing.jl
 export computeStress,

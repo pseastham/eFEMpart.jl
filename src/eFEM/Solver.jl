@@ -144,7 +144,7 @@ function ApplyBC!(LinOp::LinearOperator,mesh::S,prob::Problem,param::T,
 
     if :rNodes in bc(prob)
       AdvDiffRobin!(mesh.xy,mesh.cm,prob.bcid[:rNodes],
-                    LinOp.Op,LinOp.rhs,hcat(param.wx,param.wy))
+                    LinOp.Op,LinOp.rhs,hcat(param.u,param.v))
     end
 
   # STOKES 2D or BRINKMAN 2D or BRINKMAN MULTIPHASE 2D

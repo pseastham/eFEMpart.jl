@@ -112,6 +112,41 @@ function SurfaceQuad(mesh::M,u::S,surf::mySurface,N::Int) where
 end
 
 """
+  Performs interpolation along a surface (line)
+"""
+function SurfaceInterp(mesh::M,u::Vector{Float64},surf::mySurface,N::Int) where 
+  {M<:AbstractMesh}
+  (mesh.order==:Linear ? order=1 : order=2)
+  (order==1 ? nGpt=2 : nGpt=3)
+
+  # Define 2 points
+  P = surf.P; Q = surf.Q
+  rlen = sqrt((P.x-Q.x)^2 + (P.y-Q.y)^2)
+
+  # Interpolate N segments (N+1 points)
+  Δt = rlen/N
+  xN = zeros(Float64,N+1)
+  yN = zeros(Float64,N+1)
+  uN = zeros(Float64,N+1)
+  tx,ty = ComputeTangent(P,Q)
+
+  xN[1] = P.x; yN[1] = P.y
+  for i=2:(N+1)
+    xN[i] = xN[1] + (i-1)*Δt*tx
+    yN[i] = yN[1] + (i-1)*Δt*ty
+  end
+
+  # Interpolate solution at N+1 points
+  for i=1:(N+1)
+    point = [xN[i];yN[i]]
+    uN[i] = pointTransform(mesh,u,point)
+  end
+
+  # return quad
+  return uN
+end
+
+"""
   for some scalar field c, computes grad(c)*n across a surface
 """
 function SurfaceFlux(mesh::M,u::Vector{Float64},surf::mySurface,Nquad::Int) where 
