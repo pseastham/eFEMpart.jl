@@ -161,7 +161,7 @@ function addModules()
 end
 
 function install_fgt()
-    println("installing figtree...requires system owner permission")
+    println("installing figtree...")
     #run(`sudo mkdir -p src/part`)
     mkpath("src/part")
     cd("src/part")
@@ -194,7 +194,7 @@ function install_fgt()
     # add LD_LIBRARY_PATH to bash startup
     f=open(bashstart,"a")
     println(f)
-    println(f,"export LD_LIBRARY_PATH=$(pwdir)")
+    println(f,"export LD_LIBRARY_PATH=$(pwdir):\$LD_LIBRARY_PATH")
     close(f)
 
     # re-run bash file to load LD_LIBRARY_PATH
