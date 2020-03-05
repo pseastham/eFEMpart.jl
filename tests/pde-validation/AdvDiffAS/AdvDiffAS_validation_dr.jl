@@ -8,22 +8,21 @@ function main()
     # load mesh
     mesh = squareMesh([-2,2,0,1],N,order)
     
-    varname      = "chemicalAxisym"
     OperatorType = :AdvDiffAS
    
-    κ = 2.3
+    Pe = 2.3
     windX(x,y) = -x^4*y^2 + 5.9; windY(x,y) = x^3*y^3
     wx = [windX.(mesh.xy[i].x,mesh.xy[i].y) for i=1:length(mesh.xy)]
     wy = [windY.(mesh.xy[i].x,mesh.xy[i].y) for i=1:length(mesh.xy)]
-    param  = AdvDiffParam(wx,wy,κ)
+    param  = AdvDiffParam(wx,wy,Pe*ones(length(mesh.xy)))
 
     dNodes = Dirichlet(:left,:right,:top,:bottom)
     dBCf = Dirichlet((x,y) -> x^4*y^4)
-    ff   = Forcing((x,y) -> 4*5.9*x^3*y^4 - 4*κ*x^2*y^2*(4*x^2 + 3*y^2))
+    ff   = Forcing((x,y) -> 4*5.9*x^3*y^4 - 4/Pe*x^2*y^2*(4*x^2 + 3*y^2))
     Nodes = [dNodes]
     bcfun = [dBCf,ff]
 
-    prob = Problem(mesh,Nodes,bcfun,varname,OperatorType)
+    prob = Problem(mesh,Nodes,bcfun,OperatorType)
     sol = solve(prob,mesh,param)
 
     elapsed = time() - start

@@ -807,23 +807,23 @@ end
 function localLaplaceVarAS!(mesh,el,xN,yN,w,s,t,nGaussNodes,nNodesPerElm,
                             At,phi,dphidx,dphidy,dphids,dphidt,order,parameter)
   
-  κNodes = zeros(Float64,nGaussNodes)                          
+  PeNodes = zeros(Float64,nGaussNodes)                          
   # generate local stiffness matrices
   getNodes!(xN,yN,mesh,el,nGaussNodes)
   # zero out At
   fill!(At,zero(Float64))
   for i=1:nGaussNodes
-    κNodes[i] = parameter[mesh.cm[el].NodeList[i]]
+    PeNodes[i] = parameter[mesh.cm[el].NodeList[i]]
   end
   for gpt=1:nGaussNodes
     shape2D!(phi,dphids,dphidt,s[gpt],t[gpt],order)
     derivShape2D!(phi,dphidx,dphidy,dphids,dphidt,s[gpt],t[gpt],xN,yN,order)
     jac = jacCalc(xN,yN,dphids,dphidt)
-    κg = shapeEval(κNodes,phi)
+    Peg = shapeEval(PeNodes,phi)
     yg = shapeEval(yN,phi)
 
     for ti = 1:nNodesPerElm, tj = 1:nNodesPerElm
-      integrand = κg*(dphidx[ti]*dphidx[tj] + dphidy[ti]*dphidy[tj])/jac
+      integrand = (dphidx[ti]*dphidx[tj] + dphidy[ti]*dphidy[tj])/jac/Peg
       At[ti,tj] += integrand*w[gpt]*yg
     end
   end
