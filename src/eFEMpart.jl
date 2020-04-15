@@ -178,9 +178,9 @@ include("eFEM/PostProcessing.jl")
 include("eFEM/TracerGenerate.jl")
 
 # Particles
+include("part/ParticleTypes.jl")
 include("part/CellLists.jl")
 include("part/fgt.jl")
-include("part/ParticleTypes.jl")
 include("part/UpdateParticles.jl")
 
 include("part/AdhesionForce.jl")

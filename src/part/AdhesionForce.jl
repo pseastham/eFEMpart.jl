@@ -1,10 +1,10 @@
-# Functions for computing particle-wall contact forces of 
+# Functions for computing particle-wall contact forces of
 # via quadrature of lennard-jones potential forces
 
-include("CellLists.jl")      # loads in Point2D type
-include("ParticleTypes.jl")  # load Wall types
-include("CohesionForce.jl")  # loads in LJ force function
-include("isInside.jl")       # loads onSegment()
+#include("CellLists.jl")      # loads in Point2D type
+#include("ParticleTypes.jl")  # load Wall types
+#include("CohesionForce.jl")  # loads in LJ force function
+#include("isInside.jl")       # loads onSegment()
 
 ### Compute nearest point to particle on LineWall, CircleWall, and ArcWall
 function NearestPoint!(point::Point2D{T},node::Point2D{T},wall::LineWall) where T<:Real
@@ -19,7 +19,7 @@ function NearestPoint!(point::Point2D{T},node::Point2D{T},wall::LineWall) where 
     ℓ2 = ax^2+ay^2
 
     dotprod = ax*bx + ay*by
-    
+
     point.x = dotprod*ax/ℓ2 + Ax
     point.y = dotprod*ay/ℓ2 + Ay
 
@@ -133,7 +133,7 @@ function generateQuadNodes!(xquad::Vector{T},yquad::Vector{T},point::Point2D{T},
 end
 
 # function to determine whether quadrature node (sx,sy) is within line
-function isInLine(wall::LineWall{T},sx::T,sy::T,s::Point2D{T}) where T<:Real 
+function isInLine(wall::LineWall{T},sx::T,sy::T,s::Point2D{T}) where T<:Real
     s.x=sx; s.y=sy
     return onSegment(wall.nodes[1],s,wall.nodes[2])                         # onSegment is located in isInside.jl
 end
@@ -176,17 +176,17 @@ end
 # ϵ = strength of lennard jones potential
 # radius = particle radius
 # xquad,yquad = quadrature points
-# k = cutoff percentage 
+# k = cutoff percentage
 function wallTrapQuad(node::Point2D{T},wall::LineWall{T},
                       xquad::Vector{T},yquad::Vector{T},
                       ϵ::T,particleradius::T,k,s::Point2D{T}) where T<:Real
     if length(xquad) != length(yquad)
         throw(DimensionMismatch("xquad and yquad must be same length"))
-    end    
+    end
 
     N = length(xquad)
     Δs = sqrt((wall.nodes[1].x - wall.nodes[2].x)^2 + (wall.nodes[1].y - wall.nodes[2].y)^2)/(N-1)
-    
+
     # this should change to radius + 0.5*wall.width once this feature
     # is added to walls datatype
     d = 1.0536*2*particleradius
@@ -196,7 +196,7 @@ function wallTrapQuad(node::Point2D{T},wall::LineWall{T},
     # for each particle
     for ti=2:N
         if isInLine(wall,xquad[ti],yquad[ti],s)
-            # compute vector from wall to node 
+            # compute vector from wall to node
             qxKm1 = xquad[ti-1] - node.x; qyKm1 = yquad[ti-1] - node.y
             qxK   = xquad[ti]   - node.x;   qyK = yquad[ti]   - node.y
 
@@ -216,7 +216,7 @@ function wallTrapQuad(node::Point2D{T},wall::CircleWall{T},
                         ϵ::T,particleradius::T,k,s::Point2D{T}) where T<:Real
     if length(xquad) != length(yquad)
         throw(DimensionMismatch("xquad and yquad must be same length"))
-    end    
+    end
 
     N = length(xquad)
     cx = wall.center.x; cy = wall.center.y
@@ -232,8 +232,8 @@ function wallTrapQuad(node::Point2D{T},wall::CircleWall{T},
     # for each particle
     for ti=1:N
         if isInLine(wall,xquad[ti],yquad[ti],s)
-            # compute vector from x,y to p 
-            qx=xquad[ti]-node.x; qy=yquad[ti]-node.y 
+            # compute vector from x,y to p
+            qx=xquad[ti]-node.x; qy=yquad[ti]-node.y
 
             # compute strength of LJ force
             Fx,Fy = ForceCalculation(ϵ,d,k,qx,qy)
@@ -259,7 +259,7 @@ function wallTrapQuad(node::Point2D{T},wall::ArcWall{T},
                         ϵ::T,particleradius::T,k,s::Point2D{T}) where T<:Real
     if length(xquad) != length(yquad)
         throw(DimensionMismatch("xquad and yquad must be same length"))
-    end    
+    end
 
     N = length(xquad)
     cx = wall.nodes[2].x; cy = wall.nodes[2].y
@@ -281,7 +281,7 @@ function wallTrapQuad(node::Point2D{T},wall::ArcWall{T},
     # for each particle
     for ti=1:N
         if isInLine(wall,xquad[ti],yquad[ti],s)
-            # compute vector from x,y to p 
+            # compute vector from x,y to p
             qx=xquad[ti]-node.x
             qy=yquad[ti]-node.y
 
@@ -324,7 +324,7 @@ function AdhesionForce!(afX::Vector{T},afY::Vector{T},pList::Vector{Point2D{T}},
             Fx,Fy = wallTrapQuad(pList[tp],wList[tw],xquad,yquad,ϵ,rList[tp],k,pointOnWall)
             afX[tp] += Fx
             afY[tp] += Fy
-        end 
+        end
     end
 
     nothing

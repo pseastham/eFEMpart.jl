@@ -1,10 +1,10 @@
-# Generates and updates cell list object, and generates mapping for 
+# Generates and updates cell list object, and generates mapping for
 # finite element mesh elements to a corresponding cell list cells
 
-include("ParticleTypes.jl")  # to load in Point2D type
+#include("ParticleTypes.jl")  # to load in Point2D type
 
 # -----------------
-# TYPE DEFINITIONS 
+# TYPE DEFINITIONS
 # -----------------
 
 mutable struct Cell
@@ -20,7 +20,7 @@ mutable struct CellList
 end
 
 # ------------
-# CONSTRUCTOR 
+# CONSTRUCTOR
 # ------------
 
 """

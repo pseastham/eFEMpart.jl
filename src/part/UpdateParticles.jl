@@ -1,9 +1,9 @@
 # File containing functions to update particle positions based on different forces
 
 # computes seepage velocities at particle positions
-include("SeepageForce.jl")   # itself calls CellLists.jl, isInside.jl, BarycentricInterpolation.jl
-include("CohesionForce.jl")  # itself calls CellLists.jl
-include("AdhesionForce.jl")  # itself calls CellLists.jl, SinkholeTypes.jl, CohesionForce.jl, isInside.jl
+#include("SeepageForce.jl")   # itself calls CellLists.jl, isInside.jl, BarycentricInterpolation.jl
+#include("CohesionForce.jl")  # itself calls CellLists.jl
+#include("AdhesionForce.jl")  # itself calls CellLists.jl, SinkholeTypes.jl, CohesionForce.jl, isInside.jl
 
 # Uses:
 #   1. Graviational Force
@@ -66,7 +66,7 @@ INPUT:
     pList:     list of particle positions (in Point2D datatype)
     rList:     list of particle radii
     wList:     list of all walls for particles to interact against
-    u,v:       2D velocity components 
+    u,v:       2D velocity components
     paramArr:  array of scalar parameters -- might switch out for Parameters.jl datatypes
 
 OUTPUT:
@@ -85,7 +85,7 @@ function computeParticleVelocity_all(mesh,pList::Vector{Point2D{T}},rList::Vecto
                                         cfX::Vector{T},cfY::Vector{T},afX::Vector{T},afY::Vector{T}) where {T<:Real, W<:AbstractWall}
     # G:      gravitation parameter
     # rc:     cutoff ratio
-    # ϵ:      strength of LJ force   
+    # ϵ:      strength of LJ force
     # k:      multiple of equilibrium below which we should consider adhesion force calculations (i.e. k=2, k=5, etc)
     # Nquad:  number of quadrature nodes for particle-wall interaction (adhesion)
     G,rc,ϵ,k,Nquad = paramArr
@@ -96,7 +96,7 @@ function computeParticleVelocity_all(mesh,pList::Vector{Point2D{T}},rList::Vecto
     # USED FOR TESTING
     # -----------------
     particleVolume  = 1.0
-    particleDensity = 1.0 
+    particleDensity = 1.0
 
     # GENERATE PARTICLE CELL LIST --
     # in future might want to create 2 particle cell lists,
@@ -108,7 +108,7 @@ function computeParticleVelocity_all(mesh,pList::Vector{Point2D{T}},rList::Vecto
     updateCellList!(particleCL,pList)
 
     # 1. compute gravitational force
-    gfX = zeros(Nparticles) 
+    gfX = zeros(Nparticles)
     gfY = -G*ones(Nparticles)
 
     # 2. interpolate seepage velocity of fluid at position of particles
@@ -148,7 +148,7 @@ function computeParticleVelocity_all_nofluid(pList::Vector{Point2D{T}},rList::Ve
                                             cfX::Vector{T},cfY::Vector{T},afX::Vector{T},afY::Vector{T}) where {T<:Real, W<:AbstractWall}
     # G:      gravitation parameter
     # rc:     cutoff ratio
-    # ϵ:      strength of LJ force   
+    # ϵ:      strength of LJ force
     # k:      multiple of equilibrium below which we should consider adhesion force calculations (i.e. k=2, k=5, etc)
     # Nquad:  number of quadrature nodes for particle-wall interaction (adhesion)
     G,rc,ϵ,k,Nquad = paramArr
@@ -171,7 +171,7 @@ function computeParticleVelocity_all_nofluid(pList::Vector{Point2D{T}},rList::Ve
     updateCellList!(particleCL,pList)
 
     # 1. compute gravitational force
-    gfX = zeros(Nparticles) 
+    gfX = zeros(Nparticles)
     gfY = -G*ones(Nparticles)
 
     # 2. interpolate seepage velocity of fluid at position of particles
