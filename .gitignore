@@ -1,13 +1,16 @@
+*.jl.*.cov
+*.jl.cov
+*.jl.mem
+.DS_Store
+/Manifest.toml
+/dev/
+/docs/build/
+/docs/site/
+
 // files to ignore
 *.vtk
 *.png
 *.jld
 
 // shared objects
-*.so 
-
-// specific files
-examples/solutions/*
-tests/pde-validation/*/data/*
-tests/pde-validation/*/figures/*
-tests/pde-validation/*/solutions/*
+*.so
