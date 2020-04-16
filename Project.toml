@@ -3,6 +3,11 @@ uuid = "41aaff19-0fd2-4d09-9883-08f7e7860046"
 authors = ["Patrick Eastham"]
 version = "0.1.0"
 
+[deps]
+IterativeSolvers = "42fd0dbc-a981-5370-80f2-aaf504508153"
+Preconditioners = "af69fa37-3177-5a40-98ee-561f696e4fcd"
+SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
+
 [compat]
 julia = "1.3.1"
 
