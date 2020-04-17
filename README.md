@@ -7,9 +7,9 @@ Finite Element code in the [Julia language](https://julialang.org/) focused on c
 # Installation
 
 In Julia v1.0 (and v0.7) you can install eFEMpart.jl from the Pkg REPL:
-
+```
 pkg> add https://github.com/pseastham/eFEMpart.jl.git
-
+```
 which will track the master branch of the package.
 
 Note: the installation options below for Linux and Mac OS will hopefully become obsolete after some updates.
