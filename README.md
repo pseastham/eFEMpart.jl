@@ -14,35 +14,6 @@ which will track the master branch of the package.
 
 Note: the installation options below for Linux and Mac OS will hopefully become obsolete after some updates.
 
-## Linux
-
-- download Julia 1.0.* from [the Julia downloads page](https://julialang.org/downloads/)
-- copy eFEMpart into a folder where it won't move
-- use Julia to run `install_script.jl`
-
-Note: eFEMpart installation requires that you build from source a C++ object library. If you are running into errors during the installation process, make sure you have all required developer tools installed on your computer.
-
-## Mac OS
-
-The install file should work as long as the terminal uses Bash, but Mac OS was not explicitely considered when writing the install script. Feel free to email me if you have a specific issue.
-
-## Windows
-
-eFEMpart is not supported on Windows. 
-
-# Dependencies
-
-The following packages will be installed via the `install_script.jl` script:
-
-- [JLD](https://github.com/JuliaIO/JLD.jl)
-- [IterativeSolvers](https://github.com/JuliaMath/IterativeSolvers.jl)
-- [Preconditioners](https://github.com/mohamed82008/Preconditioners.jl)
-- [BenchmarkTools](https://github.com/JuliaCI/BenchmarkTools.jl)
-- [Plots](http://docs.juliaplots.org/latest/)
-- [PyPlot](https://github.com/JuliaPy/PyPlot.jl)
-- [PyCall](https://github.com/JuliaPy/PyCall.jl)
-- [LaTeXStrings](https://github.com/stevengj/LaTeXStrings.jl)
-
 # Meshes
 
 For ractangular geometries, you can use built-in geometry code. For more complicated geometries we suggest building your mesh with an external library (such as [GMSH](http://gmsh.info/)). See the [meshes wiki](https://github.com/pseastham/eFEMpart/wiki/Docs:-Meshes) for how this is used in practice.
