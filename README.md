@@ -1,10 +1,18 @@
-# eFEMpart
+# eFEMpart.jl
 
 [![DOI](https://zenodo.org/badge/164060006.svg)](https://zenodo.org/badge/latestdoi/164060006)
 
 Finite Element code in the [Julia language](https://julialang.org/) focused on complex fluid-dynamic and porous-media applications, with the possibility of including a particle simulator in the framework of the discrete element method. The 'eFEM' component allows the use of Finite Elements discretizations to solve common problems in fluid dynamics, and the 'part' refers to mesh-free particle methods (discrete element method) primarily aimed at granular-media simulations where continuum constitutive laws are unavailable.
 
 # Installation
+
+In Julia v1.0 (and v0.7) you can install eFEMpart.jl from the Pkg REPL:
+
+pkg> add https://github.com/pseastham/eFEMpart.jl.git
+
+which will track the master branch of the package.
+
+Note: the installation options below for Linux and Mac OS will hopefully become obsolete after some updates.
 
 ## Linux
 
