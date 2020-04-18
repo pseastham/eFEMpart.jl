@@ -9,7 +9,7 @@
 using LinearAlgebra, Plots
 gr(size=(900,300))
 
-include("../../src/part/fgt.jl")  # loads in functions to be tests
+#include("../../src/part/fgt.jl")  # loads in functions to be tests
 
 function fgtTest()
     d = 2                           # dimension of data
