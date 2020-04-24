@@ -6,23 +6,16 @@ Finite Element code in the [Julia language](https://julialang.org/) focused on c
 
 # Installation
 
-eFEMpart.jl is an unregistered package only available on Linux systems. Before eFEMpart.jl can be installed, you must install three other unregistered packages (in order). To install using the REPL, type
+eFEMpart.jl is an unregistered package only available on Linux systems that couples two other packages together: [eFEM.jl](https://github.com/pseastham/eFEM.jl) and [StokesParticles.jl](https://github.com/pseastham/StokesParticles.jl). To install using the REPL, type the following four commands (in order)
 
-`pkg> add https://github.com/pseastham/StokesParticlesBuilder`
+```
+pkg> add https://github.com/pseastham/StokesParticlesBuilder
+pkg> add https://github.com/pseastham/StokesParticles.jl
+pkg> add https://github.com/pseastham/eFEM.jl
+pkg> add https://github.com/pseastham/eFEMpart.jl
+```
 
-followed by 
-
-`pkg> add https://github.com/pseastham/StokesParticles.jl`
-
-followed by 
-
-`pkg> add https://github.com/pseastham/eFEM.jl`
-
-followed by 
-
-`pkg> add https://github.com/pseastham/eFEMpart.jl`
-
-To enter the Pkg environment from the REPL, type `]`. The first add gives your Julia access to the Figtree linux_x86-64 binaries, whose source is available at [here](http://users.umiacs.umd.edu/~morariu/figtree/) (note: I am unaffiliated with that project, but appreciate their work).
+To enter the Pkg environment from the REPL, type `]`. The first `add` gives you access to the FIGTree linux_x86-64 binaries, whose source is available at [here](http://users.umiacs.umd.edu/~morariu/figtree/) (note: I am unaffiliated with that project, but appreciate their work).
 
 # Meshes
 
