@@ -1,5 +1,7 @@
 # eFEMpart.jl
 
+[![Build Status](https://travis-ci.com/pseastham/eFEMpart.jl.svg?branch=master)](https://travis-ci.com/pseastham/eFEMpart.jl)
+[![Codecov](https://codecov.io/gh/pseastham/eFEMpart.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/pseastham/eFEMpart.jl)
 [![DOI](https://zenodo.org/badge/164060006.svg)](https://zenodo.org/badge/latestdoi/164060006)
 
 Finite Element code in the [Julia language](https://julialang.org/) focused on complex fluid-dynamic and porous-media applications, with the possibility of including a particle simulator in the framework of the discrete element method. The 'eFEM' component allows the use of Finite Elements discretizations to solve common problems in fluid dynamics, and the 'part' refers to mesh-free particle methods (discrete element method) primarily aimed at granular-media simulations where continuum constitutive laws are unavailable.
