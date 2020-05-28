@@ -18,7 +18,7 @@ script:
     Pkg.add(Pkg.PackageSpec(url="https://github.com/pseastham/StokesParticlesBuilder"));
     Pkg.add(Pkg.PackageSpec(url="https://github.com/pseastham/StokesParticles.jl"));
     Pkg.build();
-    Pkg.test("StokesParticles"; coverage=true)'
+    Pkg.test("eFEMpart"; coverage=true)'
 
 after_success:
   - julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
