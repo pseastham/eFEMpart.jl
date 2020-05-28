@@ -1,5 +1,7 @@
 using Documenter, eFEMpart
 
+push!(LOAD_PATH,"../src/")
+
 makedocs(;
     modules=[eFEMpart],
     format=Documenter.HTML(),
