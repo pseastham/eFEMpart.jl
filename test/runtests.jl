@@ -1,6 +1,5 @@
-using eFEMpart
-using Test
+using SafeTestsets
 
-@testset "eFEMpart.jl" begin
-    # Write your own tests here.
+@time begin
+    @time @safetestset "Cell List Tests" begin include("cl_test.jl") end
 end
