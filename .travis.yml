@@ -18,8 +18,6 @@ script:
     Pkg.add(Pkg.PackageSpec(url="https://github.com/pseastham/StokesParticlesBuilder"));
     Pkg.add(Pkg.PackageSpec(url="https://github.com/pseastham/StokesParticles.jl"));
     Pkg.build();
-    Pkg.test("eFEM"; coverage=false);
-    Pkg.test("StokesParticles"; coverage=false);
     Pkg.test("eFEMpart"; coverage=true)'
 
 after_success:
