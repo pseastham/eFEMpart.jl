@@ -35,6 +35,7 @@ jobs:
           Pkg.add([PackageSpec(url="https://github.com/pseastham/StokesParticlesBuilder"),
             PackageSpec(url="https://github.com/pseastham/StokesParticles.jl"),
             PackageSpec(url="https://github.com/pseastham/eFEM.jl")]);
+          Pkg.develop(PackageSpec(path=pwd()));
           Pkg.instantiate();
           include("docs/make.jl");'
       after_success: skip
