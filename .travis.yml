@@ -14,9 +14,9 @@ notifications:
 script:
   - julia --project --check-bounds=yes -e '
     import Pkg;
-    Pkg.add(Pkg.PackageSpec(url="https://github.com/pseastham/eFEM"));
+    Pkg.add(Pkg.PackageSpec(url="https://github.com/pseastham/eFEM.jl"));
     Pkg.add(Pkg.PackageSpec(url="https://github.com/pseastham/StokesParticlesBuilder"));
-    Pkg.add(Pkg.PackageSpec(url="https://github.com/pseastham/StokesParticles"));
+    Pkg.add(Pkg.PackageSpec(url="https://github.com/pseastham/StokesParticles.jl"));
     Pkg.build();
     Pkg.test("StokesParticles"; coverage=true)'
 
@@ -32,9 +32,9 @@ jobs:
       julia: 1.3
       script: julia --project=docs -e '
           using Pkg;
-          Pkg.add(PackageSpec(url="https://github.com/pseastham/eFEM"));
+          Pkg.add(PackageSpec(url="https://github.com/pseastham/eFEM.jl"));
           Pkg.add(PackageSpec(url="https://github.com/pseastham/StokesParticlesBuilder"));
-          Pkg.add(PackageSpec(url="https://github.com/pseastham/StokesParticles"));
+          Pkg.add(PackageSpec(url="https://github.com/pseastham/StokesParticles.jl"));
           Pkg.develop(PackageSpec(path=pwd()));
           Pkg.instantiate();
           include("docs/make.jl");'
