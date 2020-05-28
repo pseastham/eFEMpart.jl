@@ -32,9 +32,9 @@ jobs:
       julia: 1.3
       script: julia --project=docs -e '
           using Pkg;
-          Pkg.add(PackageSpec(url="https://github.com/pseastham/eFEM.jl"));
-          Pkg.add(PackageSpec(url="https://github.com/pseastham/StokesParticles.jl"));
-          Pkg.develop(PackageSpec(path=pwd()));
+          Pkg.add([PackageSpec(url="https://github.com/pseastham/StokesParticlesBuilder"),
+            PackageSpec(url="https://github.com/pseastham/StokesParticles.jl"),
+            PackageSpec(url="https://github.com/pseastham/eFEM.jl")]);
           Pkg.instantiate();
           include("docs/make.jl");'
       after_success: skip
