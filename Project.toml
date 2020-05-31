@@ -4,6 +4,7 @@ authors = ["Patrick Eastham"]
 version = "0.1.0"
 
 [deps]
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 StokesParticles = "1705063e-ae85-4622-8975-eebdf1f90980"
 eFEM = "2c183d4b-6912-41f6-9bbe-3a8bfc9d38a6"
