@@ -3,16 +3,15 @@
 #
 # index of femCLmap corresponds to cell index
 # values of femCLmap[jj] correspond to index of elements inside cell jj
-function femGenerateMap(mesh::M,totalBounds::Vector{Float64},L::Float64) where M#<:AbstractMesh
+function generate_femap(mesh::M,totalBounds::Vector{Float64},L::Float64) where M<:AbstractMesh
     Nnodes = length(mesh.xy)
-
     numNodesPerElm = (mesh.order == :Linear ? 4 : 9)
 
     # generate particle List for FEM nodes
-    particleList = [Particle2D(Point2D(mesh.xy[i].x,mesh.xy[i].y),0.0,0.0) for i=1:Nnodes]
+    particleList = [Particle2D(Point2D(mesh.xy[i].x,mesh.xy[i].y),0.0,0) for i=1:Nnodes]
 
-    tempCL = generateCellList(particleList,totalBounds,L)
-    femCLmap = Array{Array{Int}}(undef,length(tempCL.cells))
+    tempCL = StokesParticles.generate_cell_list(particleList,totalBounds,L)
+    femap = Array{Array{Int}}(undef,length(tempCL.cells))
 
     # initialize element array
     elementArray = Array{Int}(undef,numNodesPerElm)
@@ -23,23 +22,23 @@ function femGenerateMap(mesh::M,totalBounds::Vector{Float64},L::Float64) where M
 
         #for each node in that cell
         for nodeInd in tempCL.cells[cellInd].particleIDList
-        fill!(elementArray,zero(Int))
+            fill!(elementArray,zero(Int))
 
-        # map node index to element
-        getElementFromNode!(elementArray,mesh,nodeInd)
+            # map node index to element
+            getElementFromNode!(elementArray,mesh,nodeInd)
 
-        for ti=1:numNodesPerElm
-            if elementArray[ti] != 0
-            push!(tempArr,elementArray[ti])
+            for ti=1:numNodesPerElm
+                if elementArray[ti] != 0
+                    push!(tempArr,elementArray[ti])
+                end
             end
-        end
         end
 
         # assign elements to femCL as 'nodes'
-        femCLmap[cellInd] = unique(tempArr)
+        femap[cellInd] = unique(tempArr)
     end
 
-    return femCLmap
+    return femap
 end 
 
 """
@@ -88,3 +87,17 @@ function interpFGT!(v::Array{Float64},pList,mesh,h::Float64,ε::Float64,
     # return nothing -- updates in-place
     nothing
 end
+
+function getElementFromNode!(elementArray::Vector{Int},mesh::M,nodeInd::Int) where M<:AbstractMesh
+    nElm = length(mesh.cm)
+  
+    tk = 1
+    for elmInd=1:nElm
+      if nodeInd in mesh.cm[elmInd].NodeList
+        elementArray[tk] = elmInd
+        tk += 1
+      end
+    end
+  
+    nothing
+  end
