@@ -71,8 +71,8 @@ function interpFGT!(v::Array{Float64},pList,mesh,h::Float64,ε::Float64,
 
     # update source array
     for ti=1:N
-        x[2*ti-1] = pList[ti].x
-        x[2*ti]   = pList[ti].y
+        x[2*ti-1] = pList[ti].pos.x
+        x[2*ti]   = pList[ti].pos.y
     end
 
     # update target array -- really should only have to do this once! room for improvement
@@ -82,7 +82,7 @@ function interpFGT!(v::Array{Float64},pList,mesh,h::Float64,ε::Float64,
     end
 
     # run interpolation routine
-    fgt!(v,d,M,N,h,ε,x,y,q,W)
+    StokesParticles.fgt!(v,d,M,N,h,ε,x,y,q,W)
 
     # return nothing -- updates in-place
     nothing

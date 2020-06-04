@@ -7,7 +7,8 @@ using Reexport
 
 export update_particles_noFEMcl!,
        update_particles!,
-       generate_femap
+       generate_femap,
+       interpFGT!
 
 export scratch_data
 
