@@ -3,7 +3,7 @@
 #
 # index of femCLmap corresponds to cell index
 # values of femCLmap[jj] correspond to index of elements inside cell jj
-function generate_femap(mesh::M,totalBounds::Vector{Float64},L::Float64) where M<:AbstractMesh
+function generate_femap(mesh::M,totalBounds::Vector{Float64},L::Float64) where M<:eFEM.AbstractMesh
     Nnodes = length(mesh.xy)
     numNodesPerElm = (mesh.order == :Linear ? 4 : 9)
 
@@ -88,7 +88,7 @@ function interpFGT!(v::Array{Float64},pList,mesh,h::Float64,ε::Float64,
     nothing
 end
 
-function getElementFromNode!(elementArray::Vector{Int},mesh::M,nodeInd::Int) where M<:AbstractMesh
+function getElementFromNode!(elementArray::Vector{Int},mesh::M,nodeInd::Int) where M<:eFEM.AbstractMesh
     nElm = length(mesh.cm)
   
     tk = 1
